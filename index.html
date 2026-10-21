@@ -83,6 +83,21 @@ h2{font-size:23px}
 #bookLessons .controls{gap:8px}
 @media(max-width:520px){.subject-tab{min-height:58px;font-size:18px!important}}
 
+/* semester exam styles */
+
+.exam-subjects{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.exam-subjects button{min-height:50px;font-size:17px}
+.exam-question{border:1px solid #dbeafe;border-radius:14px;padding:14px;margin:12px 0;background:#fff}
+.exam-question h4{margin:0 0 10px;line-height:1.5}
+.exam-options{display:grid;gap:8px}
+.exam-option{display:flex;gap:10px;align-items:flex-start;border:1px solid #e2e8f0;border-radius:10px;padding:10px;cursor:pointer}
+.exam-option input{margin-top:4px;flex-shrink:0}
+.exam-feedback{margin-top:8px;font-size:14px;padding:9px;border-radius:9px}
+.exam-feedback.good{background:#dcfce7;color:#166534}
+.exam-feedback.bad{background:#fee2e2;color:#991b1b}
+.exam-score{font-size:23px;font-weight:800;color:#1d4ed8;margin:12px 0}
+@media(max-width:520px){.exam-subjects{grid-template-columns:1fr}.exam-question{padding:11px}}
+
 </style>
 </head>
 <body>
@@ -149,6 +164,21 @@ h2{font-size:23px}
   </section>
 
 
+
+
+<section class="panel" id="semesterExam">
+  <h2>📝 Đề tham khảo thi học kì I</h2>
+  <p class="small">Làm thử như khi kiểm tra ở lớp. Chọn môn, bấm bắt đầu, hoàn thành câu hỏi rồi nộp bài để xem điểm và lời giải.</p>
+  <div class="controls exam-subjects">
+    <button type="button" class="primary" id="examMathBtn" onclick="startSemesterExam('math')">🔢 Đề Toán</button>
+    <button type="button" class="secondary" id="examVietBtn" onclick="startSemesterExam('viet')">📚 Đề Tiếng Việt</button>
+  </div>
+  <div class="week-card">
+    <h3 id="examHeading">Chọn một môn để bắt đầu</h3>
+    <p id="examInstructions">Đề mẫu tự biên soạn theo các nội dung học kì I trong mục lục bạn cung cấp. Đây là đề tham khảo, không phải đề thi chính thức của trường.</p>
+    <div id="examWorkArea"></div>
+  </div>
+</section>
 
   <section class="panel" id="weeklyLearning">
     <h2>🗓️ Luyện tập theo tuần lớp 2</h2>
@@ -607,6 +637,85 @@ function renderQuiz(generate=false){
   });
   document.querySelector("#quizForm button[type=submit]").disabled=false;
 }
+
+const semesterExamBanks = {
+ math: [
+  {q:"Số gồm 5 chục và 8 đơn vị là số nào?",a:["85","58","508","50"],c:1,e:"5 chục là 50, thêm 8 đơn vị được 58."},
+  {q:"Số liền sau của 69 là:",a:["68","70","79","60"],c:1,e:"Số liền sau của 69 là 70."},
+  {q:"Tính: 27 + 8 =",a:["35","34","36","29"],c:0,e:"27 + 8 = 35."},
+  {q:"Tính: 43 − 6 =",a:["39","37","36","47"],c:1,e:"43 − 6 = 37."},
+  {q:"Tính: 36 + 27 =",a:["53","63","62","73"],c:1,e:"36 + 27 = 63."},
+  {q:"Tính: 72 − 38 =",a:["44","34","46","40"],c:1,e:"72 − 38 = 34."},
+  {q:"Một túi gạo nặng 5 kg, túi khác nặng 3 kg. Cả hai túi nặng:",a:["2 kg","8 kg","15 kg","6 kg"],c:1,e:"5 + 3 = 8 kg."},
+  {q:"Can có 10 l nước, rót ra 4 l. Trong can còn:",a:["6 l","14 l","5 l","4 l"],c:0,e:"10 − 4 = 6 l."},
+  {q:"Hình tứ giác có bao nhiêu cạnh?",a:["3 cạnh","4 cạnh","5 cạnh","6 cạnh"],c:1,e:"Hình tứ giác có 4 cạnh."},
+  {q:"Kim đồng hồ chỉ 7 giờ. Sau 2 giờ là:",a:["8 giờ","9 giờ","10 giờ","5 giờ"],c:1,e:"7 giờ thêm 2 giờ là 9 giờ."}
+ ],
+ viet: [
+  {q:"Đọc đoạn văn: “Sáng nào, Lan cũng tự gấp chăn, xếp sách vở rồi mới ăn sáng.” Lan làm gì trước khi ăn sáng?",a:["Xem ti vi","Gấp chăn và xếp sách vở","Đi chơi","Tưới cây"],c:1,e:"Đoạn văn cho biết Lan gấp chăn và xếp sách vở trước khi ăn sáng."},
+  {q:"Từ nào chỉ người?",a:["chạy","xanh","học sinh","đẹp"],c:2,e:"“Học sinh” là từ chỉ người."},
+  {q:"Từ nào chỉ hoạt động?",a:["bông hoa","đọc sách","hiền lành","cái bàn"],c:1,e:"“Đọc sách” chỉ hoạt động."},
+  {q:"Từ nào chỉ đặc điểm?",a:["nhảy","bút chì","chăm chỉ","cô giáo"],c:2,e:"“Chăm chỉ” chỉ đặc điểm."},
+  {q:"Câu nào được viết hoa đúng?",a:["mẹ đưa em đi học.","Mẹ đưa em đi học.","Mẹ Đưa Em đi học.","mẹ Đưa em đi học."],c:1,e:"Đầu câu viết hoa chữ cái đầu tiên."},
+  {q:"Điền dấu câu phù hợp: “Bạn đã làm bài xong chưa__”",a:[".","?","! ",","],c:1,e:"Đây là câu hỏi nên dùng dấu chấm hỏi."},
+  {q:"Từ trái nghĩa với “chăm chỉ” gần nhất là:",a:["siêng năng","lười biếng","vui vẻ","nhanh nhẹn"],c:1,e:"“Lười biếng” trái nghĩa với “chăm chỉ”."},
+  {q:"Chọn câu nói lịch sự khi muốn mượn bút:",a:["Đưa bút đây!","Cho mình mượn bút nhé, cảm ơn bạn.","Bút đâu?","Mình lấy nhé!"],c:1,e:"Câu nói lịch sự có lời nhờ và lời cảm ơn."},
+  {q:"Chọn câu kể đúng trật tự từ:",a:["Sân trường chơi các bạn.","Các bạn chơi ở sân trường.","Chơi các bạn trường sân.","Ở chơi sân trường các bạn."],c:1,e:"“Các bạn chơi ở sân trường.” là câu rõ nghĩa."},
+  {q:"Đọc đoạn văn: “Nam thấy một chú mèo con đứng bên đường. Em nhẹ nhàng bế mèo vào chỗ an toàn và nhờ người lớn giúp đỡ.” Nam đã làm gì?",a:["Bỏ đi ngay","Trêu chọc mèo","Đưa mèo đến chỗ an toàn và nhờ người lớn","Mang mèo đi bán"],c:2,e:"Nam đưa mèo đến chỗ an toàn và nhờ người lớn giúp đỡ."}
+ ]
+};
+let activeExamSubject = null;
+let examSubmitted = false;
+function startSemesterExam(which){
+ activeExamSubject=which; examSubmitted=false;
+ const isMath=which==="math";
+ document.getElementById("examMathBtn").className=isMath?"primary":"secondary";
+ document.getElementById("examVietBtn").className=isMath?"secondary":"primary";
+ document.getElementById("examHeading").textContent=isMath?"Đề tham khảo Toán – Học kì I":"Đề tham khảo Tiếng Việt – Học kì I";
+ document.getElementById("examInstructions").textContent=isMath
+  ?"Gợi ý thời gian: 35 phút · 10 câu trắc nghiệm · Mỗi câu 1 điểm. Nội dung: số đến 100, cộng trừ, kg/l, hình phẳng, thời gian."
+  :"Gợi ý thời gian: 35 phút · 10 câu trắc nghiệm · Mỗi câu 1 điểm. Nội dung: đọc hiểu, từ chỉ sự vật/hoạt động/đặc điểm, câu, dấu câu và viết hoa.";
+ const root=document.getElementById("examWorkArea");
+ root.innerHTML="";
+ const form=document.createElement("form");form.id="semesterExamForm";
+ semesterExamBanks[which].forEach((item,i)=>{
+  const card=document.createElement("div");card.className="exam-question";
+  const title=document.createElement("h4");title.textContent=`Câu ${i+1}. ${item.q}`;card.appendChild(title);
+  const opts=document.createElement("div");opts.className="exam-options";
+  item.a.forEach((answer,j)=>{
+   const label=document.createElement("label");label.className="exam-option";
+   const radio=document.createElement("input");radio.type="radio";radio.name="examq"+i;radio.value=String(j);
+   const span=document.createElement("span");span.textContent=answer;
+   label.append(radio,span);opts.appendChild(label);
+  });
+  card.appendChild(opts);
+  const fb=document.createElement("div");fb.className="exam-feedback";fb.id="examfb"+i;fb.style.display="none";card.appendChild(fb);
+  form.appendChild(card);
+ });
+ const actions=document.createElement("div");actions.className="controls";
+ const submit=document.createElement("button");submit.type="submit";submit.className="primary";submit.textContent="Nộp bài và xem điểm ✓";
+ const reset=document.createElement("button");reset.type="button";reset.className="secondary";reset.textContent="Làm lại đề ↻";reset.onclick=()=>startSemesterExam(which);
+ actions.append(submit,reset);form.appendChild(actions);
+ const score=document.createElement("div");score.className="exam-score";score.id="examScore";score.style.display="none";
+ form.addEventListener("submit",function(ev){
+  ev.preventDefault();if(examSubmitted)return;
+  let scoreValue=0,answered=0;
+  semesterExamBanks[which].forEach((item,i)=>{
+   const chosen=form.querySelector(`input[name="examq${i}"]:checked`);
+   const fb=document.getElementById("examfb"+i);fb.style.display="block";
+   if(chosen)answered++;
+   if(chosen&&Number(chosen.value)===item.c){scoreValue++;fb.className="exam-feedback good";fb.textContent="Đúng! "+item.e;}
+   else{fb.className="exam-feedback bad";fb.textContent=(chosen?"Chưa đúng. ":"Chưa chọn đáp án. ")+"Đáp án: "+item.a[item.c]+". "+item.e;}
+  });
+  score.textContent=`Kết quả: ${scoreValue}/10 điểm · Đã trả lời ${answered}/10 câu`;
+  score.style.display="block";examSubmitted=true;
+  form.querySelectorAll("input").forEach(input=>input.disabled=true);
+  submit.disabled=true;
+ });
+ root.appendChild(score);root.appendChild(form);
+ root.scrollIntoView({behavior:"smooth",block:"start"});
+}
+
 function getHistory(){try{return JSON.parse(localStorage.getItem(HISTORY_KEY)||"[]");}catch(e){return [];}}
 function saveHistory(item){const history=getHistory();history.unshift(item);localStorage.setItem(HISTORY_KEY,JSON.stringify(history.slice(0,20)));renderHistory();}
 function renderHistory(){
