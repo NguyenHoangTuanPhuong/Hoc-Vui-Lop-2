@@ -1099,8 +1099,13 @@ function startSemesterExam(which){
  openMainSection("semesterExam");
  activeExamSubject=which; examSubmitted=false;
  const isMath=which==="math";
- document.getElementById("examMathBtn").className=isMath?"primary":"secondary";
- document.getElementById("examVietBtn").className=isMath?"secondary":"primary";
+ const examMathBtn=document.getElementById("examMathBtn");
+ const examVietBtn=document.getElementById("examVietBtn");
+ // Chỉ hiển thị nút của môn đang được chọn; không trộn Toán và Tiếng Việt trong cùng khu vực đề thi.
+ examMathBtn.className=isMath?"primary":"secondary";
+ examVietBtn.className=isMath?"secondary":"primary";
+ examMathBtn.style.display=isMath?"inline-flex":"none";
+ examVietBtn.style.display=isMath?"none":"inline-flex";
  document.getElementById("examHeading").textContent=isMath?"Đề tham khảo Toán – Học kì I":"Đề tham khảo Tiếng Việt – Học kì I";
  document.getElementById("examInstructions").textContent=isMath
   ?"Đề Toán có câu hỏi về số, phép tính và bài toán ngắn. Em đọc kỹ rồi chọn một đáp án nhé!"
