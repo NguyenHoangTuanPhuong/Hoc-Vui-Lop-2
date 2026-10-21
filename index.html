@@ -535,7 +535,25 @@ function openSubjectResults(){
 function openSubject(which){ bookSubject=which; bookSemester=1; const sel=document.getElementById('bookSemester'); if(sel)sel.value='1'; switchBookSubject(which); openMainSection('bookLessons'); }
 function changeBookSemester(value){ bookSemester=Number(value)||1; initBookLessons(); }
 
-function currentBookChapters(){ return bookSubject === "math" ? bookOneChapters : vietOneChapters; }
+const vietTwoChapters = [
+ {name:"5. Vẻ đẹp quanh em", lessons:[
+  ["Bài 1. Chuyện bốn mùa",0],["Bài 2. Mùa nước nổi",0],["Bài 3. Họa mi hót",0],["Bài 4. Tết đến rồi",1],
+  ["Bài 5. Giọt nước và biển lớn",0],["Bài 6. Ánh vàng",0],["Bài 7. Hạt thóc",1],["Bài 8. Lũy tre",0]]},
+ {name:"6. Hành tinh xanh của em", lessons:[
+  ["Bài 9. Vè chim",0],["Bài 10. Khủng long",0],["Bài 11. Sự tích cây thì là",0],["Bài 12. Bờ tre đón khách",1],
+  ["Bài 13. Tiếng chổi tre",0],["Bài 14. Cỏ non cười rồi",1],["Bài 15. Những con sao biển",0],["Bài 16. Tạm biệt cánh cam",1]]},
+ {name:"7. Giao tiếp và kết nối", lessons:[
+  ["Bài 17. Những cách chào độc đáo",0],["Bài 18. Thư viện biết đi",1],["Bài 19. Cảm ơn anh hà mã",0],["Bài 20. Từ chú bồ câu đến in-tơ-net",1]]},
+ {name:"8. Con người Việt Nam", lessons:[
+  ["Bài 21. Mai An Tiêm",0],["Bài 22. Thư gửi bố ngoài đảo",1],["Bài 23. Bóp nát quả cam",0],["Bài 24. Chiếc rễ đa tròn",0]]},
+ {name:"9. Việt Nam quê hương em", lessons:[
+  ["Bài 25. Đất nước chúng mình",0],["Bài 26. Trên các miền đất nước",1],["Bài 27. Chuyện quả bầu",0],["Bài 28. Khám phá đáy biển ở Trường Sa",1],
+  ["Bài 29. Hồ Gươm",0],["Bài 30. Cánh đồng quê em",1]]}
+];
+function currentBookChapters(){
+ if(bookSubject === "math") return bookSemester===1 ? bookOneChapters : [];
+ return bookSemester===2 ? vietTwoChapters : vietOneChapters;
+}
 function switchBookSubject(which){
  bookSubject = which;
  const math = which === "math";
@@ -544,7 +562,7 @@ function switchBookSubject(which){
  const subjectNotice=document.getElementById("currentSubjectNotice");
  if(subjectNotice) subjectNotice.textContent = math ? "🔢 Đang ở môn Toán — chỉ hiển thị bài Toán." : "📚 Đang ở môn Tiếng Việt — chỉ hiển thị bài Tiếng Việt.";
  document.getElementById("lessonPickerTitle").textContent = math ? "🔢 Chọn bài Toán em muốn luyện" : "📚 Chọn bài Tiếng Việt em muốn luyện";
- document.getElementById("chapterLabel").textContent = "② Chọn chủ điểm";
+ document.getElementById("chapterLabel").textContent = math ? "② Chọn chương" : "② Chọn chủ điểm";
  document.getElementById("bookChapter").setAttribute("aria-label", math ? `Chọn chương sách Toán học kì ${bookSemester}` : `Chọn chủ điểm Tiếng Việt học kì ${bookSemester}`);
  document.getElementById("bookLesson").setAttribute("aria-label", math ? `Chọn bài Toán học kì ${bookSemester}` : `Chọn bài Tiếng Việt học kì ${bookSemester}`);
  initBookLessons();
@@ -552,18 +570,18 @@ function switchBookSubject(which){
 function initBookLessons(){
  const ch=document.getElementById("bookChapter"), le=document.getElementById("bookLesson");
  ch.innerHTML="";
- if(bookSemester===2){
-  const o=document.createElement("option");o.value="0";o.textContent="Nội dung học kì 2";ch.appendChild(o);
-  le.innerHTML="";
-  const item=document.createElement("option");item.value="-1";item.textContent="Ngân hàng bài học học kì 2 đang được bổ sung";le.appendChild(item);
-  document.getElementById("bookLessonTitle").textContent="Học kì 2 · "+(bookSubject==="math"?"Toán":"Tiếng Việt");
-  document.getElementById("bookLessonDesc").textContent="Khung học kì 2 đã được tạo. Danh sách bài và câu hỏi sẽ được bổ sung sau khi đối chiếu đúng mục lục sách giáo khoa.";
+ const chapters=currentBookChapters();
+ if(!chapters.length){
+  const c=document.createElement("option");c.value="0";c.textContent="Nội dung học kì 2 đang được bổ sung";ch.appendChild(c);
+  const l=document.createElement("option");l.value="-1";l.textContent="Chưa có danh sách bài Toán học kì 2";le.innerHTML="";le.appendChild(l);
+  document.getElementById("bookLessonTitle").textContent="Toán · Học kì 2";
+  document.getElementById("bookLessonDesc").textContent="Danh sách bài Toán học kì 2 chưa được rà soát trong lần cập nhật này.";
   return;
  }
- currentBookChapters().forEach((c,i)=>{const o=document.createElement("option");o.value=i;o.textContent=c.name;ch.appendChild(o);});
+ chapters.forEach((c,i)=>{const o=document.createElement("option");o.value=i;o.textContent=c.name;ch.appendChild(o);});
  function fillLessons(){
-  const c=currentBookChapters()[Number(ch.value)||0];le.innerHTML="";
-  c.lessons.forEach((l)=>{const o=document.createElement("option");o.value=currentBookChapters().flatMap(x=>x.lessons).findIndex(x=>x[0]===l[0]);o.textContent=l[0];le.appendChild(o);});
+  const c=chapters[Number(ch.value)||0];le.innerHTML="";
+  c.lessons.forEach((l)=>{const o=document.createElement("option");o.value=chapters.flatMap(x=>x.lessons).findIndex(x=>x[0]===l[0]);o.textContent=l[0];le.appendChild(o);});
   updateBookLessonInfo();
  }
  ch.onchange=fillLessons; le.onchange=updateBookLessonInfo; fillLessons();
@@ -577,10 +595,10 @@ function updateBookLessonInfo(){
  document.getElementById("bookLessonTitle").textContent=l.title;
  document.getElementById("bookLessonDesc").textContent = bookSubject==="math"
   ? "Bài tập Toán tự biên soạn theo kiến thức của bài."
-  : "Luyện đọc hiểu, từ và câu, chính tả hoặc viết câu theo nội dung bài.";
+  : "Câu hỏi theo chủ điểm và kĩ năng trong SGK; ngữ liệu đọc là đoạn bổ trợ tự biên soạn.";
 }
 function startBookLesson(){
- if(bookSemester===2){ alert("Nội dung bài học và ngân hàng câu hỏi học kì 2 đang được bổ sung sau khi đối chiếu mục lục sách. Hiện bạn có thể luyện các bài học kì 1."); return; }
+ if(bookSubject==="math" && bookSemester===2){alert("Danh sách bài Toán học kì 2 chưa được rà soát trong bản này.");return;}
  const id=Number(document.getElementById("bookLesson").value)||0;
  const l=getBookLessons()[id]; if(!l)return;
  activeBookLesson=id; topicIndex=l.topic;
@@ -599,7 +617,7 @@ function startBookLesson(){
   document.getElementById("vietSubject").classList.add("active");
   renderTopics();renderQuiz(true);
   document.getElementById("quizTitle").textContent="📚 "+l.title;
-  document.getElementById("quizDesc").textContent="Bài tập Tiếng Việt tự biên soạn theo kỹ năng của bài học.";
+  document.getElementById("quizDesc").textContent="Câu hỏi bổ trợ theo chủ điểm và kĩ năng của bài học; không chép nguyên văn SGK.";
   document.getElementById("generationNote").textContent="Đề luyện theo "+l.title+". Câu hỏi được biên soạn mới, không chép nguyên văn sách.";
  }
  document.getElementById("quizForm").scrollIntoView({behavior:"smooth",block:"start"});
@@ -838,7 +856,7 @@ function makeDynamicMathQuestion(topicIndex){
   return {q,a:shuffled,c:correctValue===undefined?-1:shuffled.indexOf(correctValue),e};
 }
 
-function createVietLessonQuestions(id,count){
+function createVietSemester1Questions(id,count){
  // Ngân hàng câu hỏi Tiếng Việt được gắn riêng với từng bài trong SGK Kết nối tri thức 2, tập 1.
  // Đoạn đọc và câu hỏi là nội dung tự biên soạn; không chép văn bản SGK.
  const lessons = [
@@ -890,6 +908,56 @@ function createVietLessonQuestions(id,count){
   make("Chọn câu có ý nghĩa gần với nội dung bài “"+item.topic+"”.",item.sentence,["Em bỏ mặc mọi người khi cần giúp đỡ.","Em không cần quan tâm đến bài học.","Em làm ngược lại mọi việc được nhắc đến."],"Câu đúng phù hợp với nội dung và thông điệp của bài.")
  ];
  return shuffleArray(pool).slice(0,Math.min(count,pool.length));
+}
+
+// Ngữ liệu bổ trợ được tự biên soạn; trọng tâm kỹ năng được đối chiếu với mục lục/hoạt động ghi trong SGK Tiếng Việt 2 Kết nối tri thức.
+// Không chép nguyên văn các văn bản đọc trong SGK.
+const vietTwoDetails = [
+ {topic:"Chuyện bốn mùa",passage:"Bốn mùa Xuân, Hạ, Thu, Đông cùng kể về những điều mình đem đến cho thiên nhiên và con người. Bà Đất nhắc rằng mùa nào cũng có ích.",ask:"Theo đoạn đọc bổ trợ, ai nhắc rằng mùa nào cũng có ích?",ans:"Bà Đất",bad:["Nàng Xuân","Nàng Hạ","Một bạn nhỏ"],word:"mùa",wordAsk:"Từ nào gọi tên một khoảng thời gian trong năm?",spell:"các mùa",sentence:"Mỗi mùa đều có vẻ đẹp riêng.",extra:"Nhận biết ích lợi của các mùa",skillQ:"Chọn câu nêu đặc điểm.",skillA:"Mùa xuân tươi đẹp.",skillBad:["Mùa xuân đến rồi?","Mùa xuân! đến","mùa xuân tươi đẹp"],skillE:"Câu nêu đặc điểm cho biết đặc điểm của sự vật; đầu câu viết hoa."},
+ {topic:"Mùa nước nổi",passage:"Đến mùa nước nổi, nước dâng trên đồng. Người dân đi lại bằng xuồng và quan sát sự thay đổi của cảnh vật.",ask:"Người dân trong đoạn bổ trợ đi lại bằng gì?",ans:"Xuồng",bad:["Tàu hỏa","Xe điện","Máy bay"],word:"dâng",wordAsk:"Từ nào diễn tả mực nước cao lên?",spell:"nước nổi",sentence:"Nước dâng trên cánh đồng.",extra:"Quan sát cảnh vật trong mùa nước nổi",skillQ:"Từ nào viết đúng chính tả?",skillA:"chăm chỉ",skillBad:["chăm chĩ","trăm chỉ","chăm trỉ"],skillE:"Chọn từ viết đúng; phần chính tả của bài trong sách luyện phân biệt c/ch, tr/ch và ac/at."},
+ {topic:"Họa mi hót",passage:"Buổi sáng, chim họa mi đậu trên cành cây và cất tiếng hót trong trẻo. Tiếng chim làm khu vườn thêm vui.",ask:"Chim họa mi làm gì vào buổi sáng?",ans:"Cất tiếng hót",bad:["Bơi dưới ao","Đào đất","Xây tổ bằng gạch"],word:"trong trẻo",wordAsk:"Từ nào miêu tả âm thanh rõ, thanh và dễ nghe?",spell:"họa mi",sentence:"Chim họa mi hót rất hay.",extra:"Cảm nhận âm thanh của thiên nhiên",skillQ:"Câu nào nêu hoạt động?",skillA:"Chim họa mi hót.",skillBad:["Chim họa mi nhỏ bé.","Chim họa mi!","Chim họa mi ở đâu?"],skillE:"Câu nêu hoạt động cho biết sự vật làm gì."},
+ {topic:"Tết đến rồi",passage:"Trước Tết, gia đình Mai dọn dẹp nhà cửa và chuẩn bị hoa. Mai viết lời chúc gửi ông bà.",ask:"Mai viết gì để gửi ông bà?",ans:"Lời chúc",bad:["Thời khóa biểu","Danh sách lớp","Bản tin thời tiết"],word:"lời chúc",wordAsk:"Cụm từ nào dùng để bày tỏ điều tốt đẹp mong gửi đến người khác?",spell:"Tết đến rồi",sentence:"Chúc ông bà mạnh khỏe, vui vẻ.",extra:"Phong tục và lời chúc ngày Tết",skillQ:"Lời nào phù hợp để viết thiệp chúc Tết?",skillA:"Chúc ông bà năm mới mạnh khỏe!",skillBad:["Đưa con quyển sách.","Bạn đang ở đâu?","Hôm qua trời mưa."],skillE:"Mục luyện tập của bài gắn với từ ngữ ngày Tết, câu nêu hoạt động và viết thiệp chúc Tết."},
+ {topic:"Giọt nước và biển lớn",passage:"Một giọt nước nhỏ theo dòng suối ra sông rồi hòa vào biển. Trên hành trình ấy, giọt nước gặp nhiều cảnh vật.",ask:"Cuối hành trình, giọt nước hòa vào đâu?",ans:"Biển",bad:["Ngọn núi","Sa mạc","Mái nhà"],word:"hòa vào",wordAsk:"Cụm từ nào diễn tả việc nhập vào cùng một nơi?",spell:"giọt nước",sentence:"Giọt nước theo dòng suối ra biển.",extra:"Hành trình của nước trong tự nhiên",skillQ:"Chọn câu kể đúng dấu câu.",skillA:"Giọt nước nhỏ theo dòng suối.",skillBad:["Giọt nước nhỏ theo dòng suối?","giọt nước nhỏ theo dòng suối.","Giọt nước nhỏ theo dòng suối,"],skillE:"Dùng dấu chấm ở cuối câu kể; viết hoa đầu câu."},
+ {topic:"Ánh vàng",passage:"Nắng vàng chiếu xuống vườn cây. Những chiếc lá sáng lên, còn các bạn nhỏ vui vẻ quan sát cảnh vật.",ask:"Ánh nắng chiếu xuống đâu?",ans:"Vườn cây",bad:["Dưới đáy biển","Trong lớp học","Bên trong chiếc hộp"],word:"ánh nắng",wordAsk:"Cụm từ nào chỉ ánh sáng từ mặt trời?",spell:"nắng vàng",sentence:"Nắng vàng chiếu khắp khu vườn.",extra:"Quan sát vẻ đẹp của ánh sáng và thiên nhiên",skillQ:"Từ nào nêu đặc điểm của nắng trong câu “Nắng vàng”?",skillA:"vàng",skillBad:["chiếu","vườn","xuống"],skillE:"Bài luyện tập tập trung vào từ ngữ về cây cối và câu nêu hoạt động."},
+ {topic:"Hạt thóc",passage:"Hạt thóc được tạo nên từ công sức của người nông dân. Để có hạt gạo, người làm ruộng phải chăm sóc cây lúa qua nhiều công đoạn.",ask:"Ai góp công làm ra hạt thóc?",ans:"Người nông dân",bad:["Người lái tàu","Thợ xây","Bác sĩ"],word:"chăm sóc",wordAsk:"Cụm từ nào chỉ việc quan tâm để cây phát triển?",spell:"hạt thóc",sentence:"Người nông dân chăm sóc ruộng lúa.",extra:"Trân trọng công sức lao động làm ra hạt gạo",skillQ:"Chọn câu kể về một việc đã chứng kiến hoặc tham gia.",skillA:"Em cùng ông chăm sóc luống rau.",skillBad:["Luống rau xanh không?","Ôi, luống rau đẹp quá!","Rau, xanh, ông."],skillE:"Mục luyện tập của bài có kể lại một sự việc đã chứng kiến hoặc tham gia."},
+ {topic:"Lũy tre",passage:"Lũy tre đứng bên con đường làng. Gió thổi làm lá tre xào xạc, bóng tre che mát cho người đi đường.",ask:"Lũy tre giúp người đi đường điều gì?",ans:"Che mát",bad:["Làm đường rộng hơn","Tạo ra tiếng còi","Thắp sáng ban đêm"],word:"xào xạc",wordAsk:"Từ nào gợi tả tiếng lá cây lay động?",spell:"lũy tre",sentence:"Lũy tre xanh mát bên đường làng.",extra:"Vẻ đẹp và ích lợi của lũy tre",skillQ:"Câu nào nêu đặc điểm?",skillA:"Lũy tre xanh mát.",skillBad:["Lũy tre che mát.","Lũy tre ở đâu?","Lũy tre!"],skillE:"Bài luyện tập có mở rộng vốn từ thiên nhiên và câu nêu đặc điểm."},
+ {topic:"Vè chim",passage:"Nhiều loài chim có hình dáng, tiếng kêu và cách kiếm ăn khác nhau. Quan sát chim giúp ta hiểu thêm về thế giới động vật.",ask:"Quan sát chim giúp ta hiểu thêm về điều gì?",ans:"Thế giới động vật",bad:["Máy móc trong nhà","Các phương tiện giao thông","Các môn thể thao"],word:"loài",wordAsk:"Từ nào dùng để gọi một nhóm sinh vật cùng loại?",spell:"loài chim",sentence:"Mỗi loài chim có đặc điểm riêng.",extra:"Nhận biết đặc điểm của các loài chim",skillQ:"Chọn từ thuộc nhóm từ chỉ muông thú hoặc động vật.",skillA:"chim sẻ",skillBad:["cái bàn","chạy nhanh","màu xanh"],skillE:"Bài này gắn với luyện đọc vè chim; bài tiếp theo mở rộng vốn từ về muông thú và giới thiệu tranh ảnh con vật."},
+ {topic:"Khủng long",passage:"Khủng long từng sống trên Trái Đất từ rất lâu. Ngày nay, các nhà khoa học tìm hiểu chúng qua hóa thạch.",ask:"Ngày nay, các nhà khoa học tìm hiểu khủng long qua gì?",ans:"Hóa thạch",bad:["Thời khóa biểu","Hạt giống","Vỏ ốc mới"],word:"hóa thạch",wordAsk:"Từ nào chỉ dấu tích sinh vật cổ được lưu lại trong đất đá?",spell:"khủng long",sentence:"Các nhà khoa học nghiên cứu hóa thạch.",extra:"Tìm hiểu động vật thời tiền sử",skillQ:"Câu hỏi nào kết thúc bằng dấu chấm hỏi?",skillA:"Khủng long sống từ bao giờ?",skillBad:["Khủng long rất lớn.","Khủng long thật thú vị!","Khủng long sống từ bao giờ."],skillE:"Mục luyện tập của bài có vốn từ về muông thú và dấu chấm, dấu chấm hỏi, dấu chấm than."},
+ {topic:"Sự tích cây thì là",passage:"Trong một câu chuyện tưởng tượng, tên gọi của cây thì là được giải thích qua một sự việc. Truyện giúp người đọc nhớ tên cây và đặc điểm của nó.",ask:"Câu chuyện tập trung giải thích điều gì?",ans:"Tên gọi của cây thì là",bad:["Cách xem giờ","Cách làm đồ chơi","Lịch học ở trường"],word:"sự tích",wordAsk:"Cụm từ nào thường chỉ câu chuyện giải thích nguồn gốc một sự vật?",spell:"cây thì là",sentence:"Cây thì là có tên gọi thật thú vị.",extra:"Đặc điểm và tên gọi của cây cối",skillQ:"Chọn từ viết đúng theo mẫu phân biệt âm đầu trong bài.",skillA:"thì là",skillBad:["thi là","thì láh","thi lá"],skillE:"Câu hỏi chính tả cần luyện theo các cặp âm/vần trong SGK; đây là câu bổ trợ, không phải chép bài chính tả."},
+ {topic:"Bờ tre đón khách",passage:"Bên bờ tre, các con vật ghé qua và chào nhau. Cảnh vật trở nên nhộn nhịp khi mọi người biết đón tiếp nhau thân thiện.",ask:"Điều gì làm cảnh vật trở nên nhộn nhịp?",ans:"Các con vật ghé qua và chào nhau",bad:["Mọi vật biến mất","Trời tối hoàn toàn","Cánh đồng bị bỏ trống"],word:"đón tiếp",wordAsk:"Từ nào chỉ việc chào đón người đến?",spell:"bờ tre",sentence:"Các bạn vui vẻ chào đón khách.",extra:"Cách các con vật giao tiếp với nhau",skillQ:"Câu nào nêu đặc điểm của một con vật?",skillA:"Chú thỏ có bộ lông trắng.",skillBad:["Chú thỏ nhảy qua cỏ.","Chú thỏ ở đâu?","Chú thỏ!"],skillE:"Bài luyện tập mở rộng vốn từ về vật nuôi và câu nêu đặc điểm của các loài vật."},
+ {topic:"Tiếng chổi tre",passage:"Khi phố còn yên tĩnh, người công nhân vệ sinh đã quét đường. Tiếng chổi tre đều đặn báo hiệu một ngày mới bắt đầu.",ask:"Người công nhân vệ sinh làm gì?",ans:"Quét đường",bad:["Dạy học","Lái máy bay","Đánh đàn"],word:"vệ sinh",wordAsk:"Từ nào liên quan đến giữ gìn đường phố sạch sẽ?",spell:"chổi tre",sentence:"Cô lao công quét đường sạch sẽ.",extra:"Trân trọng người làm công việc giữ gìn môi trường",skillQ:"Khi làm phiền người khác, em nên nói gì?",skillA:"Mình xin lỗi bạn.",skillBad:["Bạn phải tự chịu!","Mình không quan tâm.","Đi chỗ khác!"],skillE:"Bài luyện tập gắn với từ ngữ bảo vệ môi trường, dấu phẩy và viết lời xin lỗi."},
+ {topic:"Cỏ non cười rồi",passage:"Sau cơn mưa, những ngọn cỏ non vươn lên xanh mướt. Giọt nước long lanh trên lá làm bãi cỏ trông tươi mới.",ask:"Cỏ non trông thế nào sau cơn mưa?",ans:"Xanh mướt và tươi mới",bad:["Khô héo hoàn toàn","Bằng kim loại","Biến thành đá"],word:"long lanh",wordAsk:"Từ nào miêu tả ánh sáng lấp lánh?",spell:"cỏ non",sentence:"Cỏ non xanh mướt sau cơn mưa.",extra:"Cảm nhận vẻ đẹp của thiên nhiên",skillQ:"Chọn câu có dấu phẩy dùng phù hợp.",skillA:"Sau cơn mưa, cỏ non xanh mướt.",skillBad:["Sau, cơn mưa cỏ non xanh mướt.","Sau cơn mưa cỏ, non xanh mướt.","Sau cơn mưa cỏ non, xanh mướt."],skillE:"Bài luyện tập về môi trường có nội dung dấu phẩy và viết lời xin lỗi; câu này chỉ là bài bổ trợ dấu câu."},
+ {topic:"Những con sao biển",passage:"Sao biển sống dưới biển và có hình dáng đặc biệt. Khi quan sát sinh vật biển, chúng ta cần giữ môi trường sống của chúng sạch sẽ.",ask:"Khi quan sát sinh vật biển, chúng ta cần làm gì?",ans:"Giữ môi trường sống sạch sẽ",bad:["Vứt rác xuống nước","Bắt mọi con vật đem về","Làm bẩn bãi biển"],word:"sinh vật",wordAsk:"Từ nào gọi chung những cơ thể sống?",spell:"sao biển",sentence:"Chúng em cùng bảo vệ môi trường biển.",extra:"Bảo vệ môi trường sống của sinh vật biển",skillQ:"Việc nào góp phần bảo vệ môi trường?",skillA:"Thu gom rác đúng nơi quy định.",skillBad:["Vứt túi ni-lông xuống biển.","Bẻ cành cây để chơi.","Đổ nước bẩn ra bãi cát."],skillE:"Bài có hoạt động nói và nghe về bảo vệ môi trường."},
+ {topic:"Tạm biệt cánh cam",passage:"Một bạn nhỏ gặp cánh cam trong vườn và quan sát nó. Bạn quyết định để cánh cam trở về nơi sống tự nhiên.",ask:"Bạn nhỏ quyết định làm gì với cánh cam?",ans:"Để cánh cam trở về nơi sống tự nhiên",bad:["Làm hại cánh cam","Bỏ cánh cam vào thùng rác","Sơn cánh cam bằng màu khác"],word:"tự nhiên",wordAsk:"Từ nào chỉ môi trường vốn có của cây cối, con vật?",spell:"cánh cam",sentence:"Em nhẹ nhàng để cánh cam về vườn.",extra:"Yêu quý và bảo vệ những con vật nhỏ bé",skillQ:"Chọn cặp từ viết đúng.",skillA:"sạch sẽ",skillBad:["sạch xẽ","sạch sẻ","sạch sể"],skillE:"Bài luyện tập mở rộng vốn từ về loài vật nhỏ bé và dấu câu; phần chính tả có phân biệt s/x và hỏi/ngã."},
+ {topic:"Những cách chào độc đáo",passage:"Ở mỗi nơi, mọi người có thể chào nhau bằng lời nói hoặc cử chỉ khác nhau. Khi gặp người khác, ta nên chào hỏi lịch sự.",ask:"Khi gặp người khác, ta nên làm gì?",ans:"Chào hỏi lịch sự",bad:["Quay mặt đi","Nói lời thiếu tôn trọng","Cắt ngang lời người khác"],word:"lịch sự",wordAsk:"Từ nào chỉ cách cư xử lễ phép, tôn trọng?",spell:"chào hỏi",sentence:"Em lễ phép chào người lớn.",extra:"Tôn trọng sự khác nhau trong cách giao tiếp",skillQ:"Câu nào là lời chào phù hợp?",skillA:"Cháu chào bác ạ!",skillBad:["Này, đứng lại!","Bác đi đâu?" ,"Không nói gì rồi bỏ đi."],skillE:"Bài nói và nghe trong SGK kể chuyện “Lớp học viết thư”; luyện từ ngữ chỉ đặc điểm và dấu câu."},
+ {topic:"Thư viện biết đi",passage:"Một chiếc xe chở nhiều cuốn sách đến trường vùng xa. Các bạn nhỏ chọn sách, cùng đọc và kể cho nhau nghe điều thú vị.",ask:"Chiếc xe mang gì đến trường vùng xa?",ans:"Nhiều cuốn sách",bad:["Đồ dùng nhà bếp","Các loại cây","Dụng cụ thể thao"],word:"thư viện",wordAsk:"Từ nào chỉ nơi có nhiều sách để mọi người đọc hoặc mượn?",spell:"cuốn sách",sentence:"Chúng em cùng đọc sách trong thư viện.",extra:"Đưa sách đến gần trẻ em và khuyến khích đọc sách",skillQ:"Câu nào nêu đặc điểm của đồ dùng học tập?",skillA:"Quyển vở có bìa màu xanh.",skillBad:["Em mở quyển vở.","Quyển vở ở đâu?","Quyển vở!"],skillE:"Mục luyện tập của bài có vốn từ chỉ đặc điểm, dấu chấm/phẩy/chấm than và viết đoạn giới thiệu đồ dùng học tập."},
+ {topic:"Cảm ơn anh hà mã",passage:"Khi được bạn giúp đỡ, hà mã vui vẻ nói lời cảm ơn. Lời cảm ơn khiến người giúp mình cảm thấy được trân trọng.",ask:"Khi được giúp đỡ, hà mã làm gì?",ans:"Nói lời cảm ơn",bad:["Giận dữ bỏ đi","Giả vờ không biết","Chê bai người giúp"],word:"cảm ơn",wordAsk:"Cụm từ nào dùng để bày tỏ sự biết ơn?",spell:"cảm ơn",sentence:"Em cảm ơn bạn đã giúp mình.",extra:"Biết nói lời cảm ơn đúng lúc",skillQ:"Chọn lời cảm ơn phù hợp.",skillA:"Cảm ơn bạn đã nhặt giúp quyển vở.",skillBad:["Bạn phải làm thế mà.","Tôi không cần bạn.","Đưa đây ngay!"],skillE:"Bài học hướng đến giao tiếp lịch sự và nói lời cảm ơn."},
+ {topic:"Từ chú bồ câu đến in-tơ-net",passage:"Ngày trước, người ta có thể gửi tin nhắn nhờ chim bồ câu đưa thư. Ngày nay, Internet giúp nhiều người trao đổi thông tin nhanh chóng.",ask:"Ngày nay, công cụ nào giúp trao đổi thông tin nhanh chóng?",ans:"Internet",bad:["Cối xay gió","Đèn dầu","Thuyền nan"],word:"kết nối",wordAsk:"Từ nào chỉ việc liên hệ, trao đổi với nhau?",spell:"in-tơ-net",sentence:"Internet giúp mọi người trao đổi thông tin.",extra:"Sự thay đổi của cách liên lạc qua thời gian",skillQ:"Chọn câu có dấu phẩy dùng đúng.",skillA:"Ngày nay, mọi người có nhiều cách liên lạc.",skillBad:["Ngày, nay mọi người có nhiều cách liên lạc.","Ngày nay mọi người, có nhiều cách liên lạc.","Ngày nay mọi người có, nhiều cách liên lạc."],skillE:"Mục luyện tập của bài mở rộng vốn từ giao tiếp, kết nối và luyện dấu chấm, dấu phẩy."},
+ {topic:"Mai An Tiêm",passage:"Mai An Tiêm chăm chỉ lao động và tìm cách trồng dưa trên đảo. Câu chuyện nhắc người đọc về sự cần cù và tự lập.",ask:"Mai An Tiêm làm gì trên đảo?",ans:"Chăm chỉ lao động và trồng dưa",bad:["Ngồi chờ người khác làm thay","Bỏ mặc mọi việc","Phá hỏng cây trồng"],word:"tự lập",wordAsk:"Từ nào chỉ việc chủ động làm những điều mình có thể làm?",spell:"Mai An Tiêm",sentence:"Mai An Tiêm chăm chỉ lao động.",extra:"Tinh thần cần cù, tự lập",skillQ:"Chọn câu nêu hoạt động của con người.",skillA:"Mai An Tiêm trồng dưa.",skillBad:["Mai An Tiêm chăm chỉ.","Mai An Tiêm là ai?","Mai An Tiêm!"],skillE:"Mục luyện tập có vốn từ nghề nghiệp, câu nêu hoạt động và viết lời cảm ơn chú bộ đội hải quân."},
+ {topic:"Thư gửi bố ngoài đảo",passage:"Một bạn nhỏ viết thư kể chuyện học tập và gửi lời hỏi thăm đến bố đang làm nhiệm vụ ngoài đảo. Bạn mong bố luôn mạnh khỏe.",ask:"Bạn nhỏ gửi thư cho ai?",ans:"Bố đang làm nhiệm vụ ngoài đảo",bad:["Người bán hàng","Bạn cùng lớp ở nhà","Người giao thư không quen"],word:"hỏi thăm",wordAsk:"Cụm từ nào thể hiện sự quan tâm đến tình hình của người khác?",spell:"ngoài đảo",sentence:"Con mong bố luôn mạnh khỏe.",extra:"Tình cảm gia đình và sự quan tâm người thân",skillQ:"Chọn lời cảm ơn phù hợp gửi đến chú bộ đội hải quân.",skillA:"Cháu cảm ơn các chú đã bảo vệ biển đảo.",skillBad:["Các chú phải làm vậy.","Cháu không quan tâm.","Đưa cháu món quà ngay."],skillE:"Mục luyện tập có viết lời cảm ơn các chú bộ đội hải quân."},
+ {topic:"Bóp nát quả cam",passage:"Một cậu bé rất muốn được tham gia việc nước. Khi không được giao việc như mong muốn, cậu bộc lộ quyết tâm mạnh mẽ.",ask:"Cậu bé thể hiện điều gì nổi bật?",ans:"Lòng yêu nước và quyết tâm",bad:["Sự thờ ơ","Niềm vui mua đồ chơi","Sự lười biếng"],word:"quyết tâm",wordAsk:"Từ nào chỉ ý chí cố gắng thực hiện điều đã đặt ra?",spell:"quả cam",sentence:"Cậu bé thể hiện quyết tâm mạnh mẽ.",extra:"Lòng yêu nước của người nhỏ tuổi",skillQ:"Chọn câu nêu đặc điểm.",skillA:"Cậu bé rất quyết tâm.",skillBad:["Cậu bé bóp quả cam.","Cậu bé ở đâu?","Cậu bé!"],skillE:"Mục luyện tập mở rộng vốn từ về Bác Hồ, câu nêu đặc điểm và kể một sự việc."},
+ {topic:"Chiếc rễ đa tròn",passage:"Một chiếc rễ đa được uốn thành hình tròn và trồng xuống đất. Cây lớn lên, trở thành chỗ vui chơi cho các bạn nhỏ.",ask:"Chiếc rễ đa được uốn thành hình gì?",ans:"Hình tròn",bad:["Hình tam giác","Hình ngôi sao","Hình chữ nhật"],word:"uốn",wordAsk:"Từ nào chỉ việc làm cong một vật theo hình mong muốn?",spell:"chiếc rễ",sentence:"Chiếc rễ đa được uốn thành hình tròn.",extra:"Sự quan tâm đến trẻ em và cách làm việc sáng tạo",skillQ:"Chọn cách viết đúng tên riêng người.",skillA:"Bác Hồ",skillBad:["bác hồ","Bác hồ","bác Hồ"],skillE:"Bài luyện tập có viết hoa tên riêng người và phân biệt một số vần."},
+ {topic:"Đất nước chúng mình",passage:"Đất nước có nhiều vùng miền, cảnh đẹp và con người cần cù. Mỗi người có thể góp phần làm quê hương tốt đẹp hơn.",ask:"Đoạn bổ trợ nói đất nước có những gì?",ans:"Nhiều vùng miền, cảnh đẹp và con người cần cù",bad:["Chỉ có một cảnh vật","Không có người dân","Chỉ có biển"],word:"quê hương",wordAsk:"Từ nào chỉ nơi gắn bó, thân thuộc với mỗi người?",spell:"đất nước",sentence:"Em yêu đất nước Việt Nam.",extra:"Tình yêu và niềm tự hào về đất nước",skillQ:"Chọn câu giới thiệu.",skillA:"Đây là đất nước Việt Nam thân yêu.",skillBad:["Đất nước có đẹp không?","Ôi, đẹp quá!","Hãy yêu đất nước!"],skillE:"Mục luyện tập gắn với vốn từ về sản phẩm các miền đất nước và câu giới thiệu."},
+ {topic:"Trên các miền đất nước",passage:"Mỗi miền đất nước có sản phẩm, cảnh quan và nét sinh hoạt riêng. Những điều ấy tạo nên sự phong phú của Việt Nam.",ask:"Điều gì tạo nên sự phong phú của Việt Nam?",ans:"Sản phẩm, cảnh quan và nét sinh hoạt riêng của mỗi miền",bad:["Tất cả nơi đều giống nhau","Chỉ có một nghề","Không có cảnh quan"],word:"miền",wordAsk:"Từ nào chỉ một vùng rộng của đất nước?",spell:"địa lí",sentence:"Mỗi miền đất nước có nét đẹp riêng.",extra:"Khám phá sản phẩm và nét riêng của các miền",skillQ:"Chọn tên địa lí được viết hoa đúng.",skillA:"Trường Sa",skillBad:["trường sa","Trường sa","trường Sa"],skillE:"Bài luyện tập có viết hoa tên địa lí và giới thiệu sản phẩm làm từ tre hoặc gỗ."},
+ {topic:"Chuyện quả bầu",passage:"Một câu chuyện dân gian kể về quả bầu và nguồn gốc các dân tộc. Truyện nhắc mọi người sống đoàn kết, yêu thương nhau.",ask:"Câu chuyện nhắc mọi người điều gì?",ans:"Đoàn kết, yêu thương nhau",bad:["Chia rẽ nhau","Không giúp đỡ ai","Chỉ nghĩ đến mình"],word:"đoàn kết",wordAsk:"Từ nào chỉ việc cùng gắn bó, chung sức?",spell:"quả bầu",sentence:"Mọi người đoàn kết và yêu thương nhau.",extra:"Tình đoàn kết giữa các dân tộc",skillQ:"Chọn câu kể lại một sự việc.",skillA:"Hôm qua, em cùng bạn chăm sóc vườn cây.",skillBad:["Bạn có vui không?","Ôi, vui quá!","Chăm sóc, vườn, cây."],skillE:"Mục luyện tập của bài có kể chuyện quả bầu và viết đoạn kể sự việc đã chứng kiến hoặc tham gia."},
+ {topic:"Khám phá đáy biển ở Trường Sa",passage:"Dưới đáy biển có nhiều sinh vật và cảnh quan thú vị. Việc khám phá biển cần đi cùng ý thức bảo vệ môi trường biển đảo.",ask:"Khi khám phá biển, chúng ta cần có ý thức gì?",ans:"Bảo vệ môi trường biển đảo",bad:["Vứt rác xuống biển","Làm hại sinh vật","Bẻ san hô mang về"],word:"khám phá",wordAsk:"Từ nào chỉ việc tìm hiểu điều mới lạ?",spell:"Trường Sa",sentence:"Chúng em cùng bảo vệ biển đảo.",extra:"Tìm hiểu và bảo vệ thế giới dưới biển",skillQ:"Chọn từ thuộc nhóm loài vật dưới biển.",skillA:"sao biển",skillBad:["chim sẻ","mèo con","gà trống"],skillE:"Mục luyện tập có vốn từ về các loài vật dưới biển và dấu chấm, dấu phẩy."},
+ {topic:"Hồ Gươm",passage:"Hồ Gươm là một địa danh nổi tiếng ở Hà Nội. Nơi đây gắn với truyền thuyết và là cảnh đẹp được nhiều người biết đến.",ask:"Hồ Gươm nằm ở thành phố nào?",ans:"Hà Nội",bad:["Huế","Cần Thơ","Đà Lạt"],word:"địa danh",wordAsk:"Từ nào chỉ tên một nơi chốn?",spell:"Hồ Gươm",sentence:"Hồ Gươm là cảnh đẹp của Hà Nội.",extra:"Tìm hiểu địa danh và truyền thuyết gắn với quê hương",skillQ:"Tên địa danh nào viết hoa đúng?",skillA:"Hồ Gươm",skillBad:["hồ gươm","Hồ gươm","hồ Gươm"],skillE:"Bài có hoạt động nói về quê hương, đất nước và luyện viết hoa tên riêng địa lí."},
+ {topic:"Cánh đồng quê em",passage:"Buổi sớm, cánh đồng lúa xanh trải rộng. Người nông dân ra đồng chăm sóc lúa, mong mùa màng tốt tươi.",ask:"Người nông dân ra đồng để làm gì?",ans:"Chăm sóc lúa",bad:["Đọc sách trong thư viện","Tập bơi ở biển","Xem phim trong rạp"],word:"mùa màng",wordAsk:"Từ nào chỉ sản phẩm thu được từ việc trồng trọt theo mùa?",spell:"cánh đồng",sentence:"Người nông dân chăm sóc lúa trên cánh đồng.",extra:"Vẻ đẹp quê hương và công việc của người thân",skillQ:"Chọn câu nêu hoạt động/công việc.",skillA:"Bố em trồng lúa trên cánh đồng.",skillBad:["Bố em rất chăm chỉ.","Bố em là ai?","Bố em!"],skillE:"Mục luyện tập có vốn từ về nghề nghiệp, câu nêu hoạt động/công việc và viết về công việc người thân."}
+];
+function createVietSemester2Questions(id,count){
+ const item=vietTwoDetails[id]||vietTwoDetails[0];
+ const make=(q,correct,wrong,e)=>{let vals=[correct,...wrong].map(x=>String(x).trim()).filter((x,i,a)=>x&&a.indexOf(x)===i);let k=1;while(vals.length<4){const v="Phương án "+k++;if(!vals.includes(v))vals.push(v);}const choices=shuffleArray(vals.slice(0,4));return {q,a:choices,c:choices.indexOf(correct),e};};
+ const pool=[
+  make("Đọc đoạn bổ trợ theo chủ đề “"+item.topic+"”: "+item.passage+" "+item.ask,item.ans,item.bad,"Đáp án dựa trên đoạn đọc bổ trợ tự biên soạn, không phải trích nguyên văn SGK."),
+  make(item.wordAsk,item.word,["cái bàn","chạy nhanh","bầu trời"].filter(x=>x!==item.word),"Từ/cụm từ phù hợp là “"+item.word+"”."),
+  make(item.skillQ,item.skillA,item.skillBad,item.skillE),
+  make("Chọn câu viết đúng, phù hợp với chủ đề “"+item.topic+"”.",item.sentence,["hôm nay em vui.","Câu này có đúng không","Bạn, sách, chạy."],"Câu đúng cần viết hoa đầu câu và diễn đạt trọn ý."),
+  make("Nội dung/kĩ năng nào gắn với bài “"+item.topic+"” theo mục lục và hoạt động học tập?",item.extra,["Tính phép nhân trong phạm vi 100","Đọc giờ trên đồng hồ","Nhận biết hình tứ giác"],"Trọng tâm được xây dựng theo chủ điểm và hoạt động học tập nêu trong SGK; đoạn đọc là ngữ liệu bổ trợ.")
+ ];
+ return shuffleArray(pool).slice(0,Math.max(1,Math.min(count,pool.length)));
+}
+function createVietLessonQuestions(id,count){
+ return bookSemester===2 ? createVietSemester2Questions(id,count) : createVietSemester1Questions(id,count);
 }
 
 function generateNewQuiz(){renderQuiz(true);}
@@ -1099,13 +1167,8 @@ function startSemesterExam(which){
  openMainSection("semesterExam");
  activeExamSubject=which; examSubmitted=false;
  const isMath=which==="math";
- const examMathBtn=document.getElementById("examMathBtn");
- const examVietBtn=document.getElementById("examVietBtn");
- // Chỉ hiển thị nút của môn đang được chọn; không trộn Toán và Tiếng Việt trong cùng khu vực đề thi.
- examMathBtn.className=isMath?"primary":"secondary";
- examVietBtn.className=isMath?"secondary":"primary";
- examMathBtn.style.display=isMath?"inline-flex":"none";
- examVietBtn.style.display=isMath?"none":"inline-flex";
+ document.getElementById("examMathBtn").className=isMath?"primary":"secondary";
+ document.getElementById("examVietBtn").className=isMath?"secondary":"primary";
  document.getElementById("examHeading").textContent=isMath?"Đề tham khảo Toán – Học kì I":"Đề tham khảo Tiếng Việt – Học kì I";
  document.getElementById("examInstructions").textContent=isMath
   ?"Đề Toán có câu hỏi về số, phép tính và bài toán ngắn. Em đọc kỹ rồi chọn một đáp án nhé!"
