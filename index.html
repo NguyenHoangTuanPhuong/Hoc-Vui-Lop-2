@@ -483,15 +483,6 @@ function createBookLessonQuestions(id,count){
  }
  return qs;
 }
-function startBookLesson(){
- const id=Number(document.getElementById("bookLesson").value)||0;const l=getBookLessons()[id];activeBookLesson=id;subject="math";topicIndex=l.topic;
- document.getElementById("mathSubject").classList.add("active");document.getElementById("vietSubject").classList.remove("active");
- renderTopics();renderQuiz(true);document.getElementById("quizTitle").textContent="📘 "+l.title;
- document.getElementById("quizDesc").textContent="Bài tập tự biên soạn theo kiến thức của bài học này.";
- document.getElementById("generationNote").textContent="Đề riêng theo "+l.title+" · Có thể tạo đề mới để đổi số liệu.";
- document.getElementById("quizForm").scrollIntoView({behavior:"smooth",block:"start"});
-}
-
 const weeklyPlan = [
  {w:1,sem:1,title:"Khởi động năm học",focus:"Ôn kiến thức nền tảng và nề nếp học tập.",math:0,mathFocus:"Ôn số đến 100, đọc viết số, số liền trước và liền sau.",viet:0,vietFocus:"Đọc đoạn văn ngắn, tìm nhân vật và sự việc chính."},
  {w:2,sem:1,title:"Số và cách diễn đạt",focus:"Đọc kỹ yêu cầu, trình bày câu trả lời rõ ràng.",math:0,mathFocus:"So sánh số, xếp số theo thứ tự.",viet:1,vietFocus:"Nhận biết từ chỉ sự vật, hoạt động và đặc điểm."},
