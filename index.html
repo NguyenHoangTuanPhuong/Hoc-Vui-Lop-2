@@ -84,8 +84,6 @@ h2{font-size:23px}
 @media(max-width:520px){.subject-tab{min-height:58px;font-size:18px!important}}
 
 /* Giao diện thi thử thân thiện với học sinh lớp 2 */
-#examSubjectBanner{padding:12px 14px;margin:12px 0;border-radius:14px;background:#dbeafe;border:2px solid #93c5fd;color:#1d4ed8;font-size:19px;font-weight:800;text-align:center}
-#examSubjectBanner.viet{background:#ffedd5;border-color:#fdba74;color:#9a3412}
 #semesterExam{background:linear-gradient(180deg,#fff 0%,#f8fbff 100%);border:2px solid #dbeafe}
 #semesterExam>h2{font-size:25px;color:#1d4ed8}
 .exam-intro{display:flex;gap:12px;align-items:flex-start;background:#fff7d6;border:2px solid #fde68a;border-radius:16px;padding:14px;margin:12px 0}
@@ -198,6 +196,7 @@ main>section:not(#homeMenu){display:none}
     <div class="subjects home-subjects">
       <button class="subject" onclick="openSubject('math')"><span class="emoji">🔢</span><span><strong>Toán</strong><br><span class="small">Bài học, ôn tập và đề thi</span></span></button>
       <button class="subject" onclick="openSubject('viet')"><span class="emoji">📚</span><span><strong>Tiếng Việt</strong><br><span class="small">Đọc hiểu, từ câu và chính tả</span></span></button>
+      <button class="subject" onclick="openMainSection('englishLessons'); initEnglishLessons()"><span class="emoji">🔤</span><span><strong>Tiếng Anh</strong><br><span class="small">Global Success · Units 1–16</span></span></button>
       <button class="subject" onclick="openMainSection('tipsPanel')"><span class="emoji">💡</span><span><strong>Mẹo học tập</strong><br><span class="small">Mẹo nhỏ giúp con học tốt hơn</span></span></button>
     </div>
   </section>
@@ -234,6 +233,36 @@ main>section:not(#homeMenu){display:none}
     <p class="small">Bài tập được tự biên soạn theo kiến thức của từng môn. Một số dạng bài sẽ tiếp tục được bổ sung.</p>
   </section>
 
+
+  <section class="panel" id="englishLessons">
+    <button class="back-home" type="button" onclick="openMainSection('homeMenu')">🏠 Về trang chủ</button>
+    <h2>🔤 Tiếng Anh lớp 2 · Global Success</h2>
+    <p class="small">Chọn học kì và Unit để luyện từ vựng, mẫu câu và hội thoại ngắn. Nội dung câu hỏi được tự biên soạn theo chủ điểm sách.</p>
+    <div class="controls">
+      <label for="englishSemester">Học kì:</label>
+      <select id="englishSemester" class="chip" onchange="initEnglishLessons()"><option value="1">Học kì 1 · Units 1–8</option><option value="2">Học kì 2 · Units 9–16</option></select>
+      <label for="englishUnit">Chọn Unit:</label>
+      <select id="englishUnit" class="chip" onchange="updateEnglishInfo()"></select>
+    </div>
+    <div class="week-card">
+      <h3 id="englishUnitTitle">Unit 1: At my birthday party</h3>
+      <p id="englishUnitDesc">Từ vựng và mẫu câu theo bài học.</p>
+      <p><strong>Trọng tâm:</strong> <span id="englishVocab"></span></p>
+      <p><strong>Mẫu câu:</strong> <span id="englishPattern"></span></p>
+      <button class="primary" type="button" onclick="startEnglishLesson()">▶ BẮT ĐẦU LUYỆN TIẾNG ANH</button>
+    </div>
+    <div class="week-card" style="margin-top:14px">
+      <h3>📝 Ôn tập học kì Tiếng Anh</h3>
+      <p>Đề tổng hợp riêng cho học kì đang chọn, gồm từ vựng và mẫu câu của các Unit đã học.</p>
+      <button class="primary" type="button" onclick="startEnglishExam()">🌟 Làm đề ôn tập học kì</button>
+    </div>
+    <div id="englishQuizArea" style="display:none;margin-top:16px">
+      <h3 id="englishQuizTitle">Luyện tập</h3>
+      <p class="small" id="englishQuizHint">Choose the best answer.</p>
+      <form id="englishQuizForm"></form>
+      <div id="englishResult" class="week-card" style="display:none" aria-live="polite"></div>
+    </div>
+  </section>
 
   <section class="panel" id="subjectPicker">
     <h2>🎒 Hôm nay em muốn học gì?</h2>
@@ -277,7 +306,10 @@ main>section:not(#homeMenu){display:none}
   <button class="back-home" type="button" onclick="openMainSection('homeMenu')">🏠 Về trang chủ</button>
   <h2>🌟 Câu hỏi tổng hợp & đề thi học kì</h2>
   <div class="exam-intro"><span class="mascot" aria-hidden="true">🦉</span><p><strong>Em làm bài thật bình tĩnh nhé!</strong><br>Đọc câu hỏi, chọn một đáp án. Làm xong, bấm nút xanh để xem kết quả và lời giải.</p></div>
-  <div class="exam-subject-banner" id="examSubjectBanner" role="status">🔢 Đề thi môn Toán</div>
+  <div class="controls exam-subjects" role="group" aria-label="Chọn môn thi thử">
+    <button type="button" class="primary" id="examMathBtn" onclick="startSemesterExam('math')">🔢 Toán vui</button>
+    <button type="button" class="secondary" id="examVietBtn" onclick="startSemesterExam('viet')">📚 Tiếng Việt</button>
+  </div>
   <div class="exam-settings"><label for="examQuestionCount">Em muốn làm bao nhiêu câu?</label><select id="examQuestionCount"><option value="5">5 câu · Làm quen</option><option value="10" selected>10 câu · Thử sức</option></select></div>
   <div class="week-card">
     <h3 id="examHeading">Chọn môn em thích để bắt đầu nhé!</h3>
@@ -351,7 +383,7 @@ main>section:not(#homeMenu){display:none}
 <footer>🌈 Góc học tập của Nguyễn Vũ Trúc Giang · Bố làm tặng con yêu · Không yêu cầu đăng nhập<br><strong>Người sáng tạo: Nguyễn Hoàng Tuấn Phương</strong></footer>
 <script>
 function openMainSection(id){
- const ids=['homeMenu','bookLessons','subjectPicker','quizPanel','result','semesterExam','roadmapPanel','progressPanel','tipsPanel'];
+ const ids=['homeMenu','bookLessons','englishLessons','subjectPicker','quizPanel','result','semesterExam','roadmapPanel','progressPanel','tipsPanel'];
  ids.forEach(x=>{const el=document.getElementById(x);if(el)el.style.display=(x===id)?'block':'none';});
  if(id==='homeMenu') document.getElementById('homeMenu').style.display='grid';
  if(id==='bookLessons') document.getElementById('bookLessons').style.display='block';
@@ -1312,11 +1344,8 @@ function startSemesterExam(which){
  openMainSection("semesterExam");
  activeExamSubject=which; examSubmitted=false;
  const isMath=which==="math";
- const banner=document.getElementById("examSubjectBanner");
- if(banner){
-  banner.textContent=isMath?"🔢 Đề thi môn Toán":"📚 Đề thi môn Tiếng Việt";
-  banner.className="exam-subject-banner"+(isMath?"":" viet");
- }
+ document.getElementById("examMathBtn").className=isMath?"primary":"secondary";
+ document.getElementById("examVietBtn").className=isMath?"secondary":"primary";
  document.getElementById("examHeading").textContent=isMath?"Đề tham khảo Toán – Học kì I":"Đề tham khảo Tiếng Việt – Học kì I";
  document.getElementById("examInstructions").textContent=isMath
   ?"Đề Toán có câu hỏi về số, phép tính và bài toán ngắn. Em đọc kỹ rồi chọn một đáp án nhé!"
@@ -1376,6 +1405,150 @@ function startSemesterExam(which){
  });
  root.appendChild(score);root.appendChild(form);
  root.scrollIntoView({behavior:"smooth",block:"start"});
+}
+
+// Tiếng Anh 2 Global Success: cấu trúc Unit dựa trên mục lục SGK.
+const englishUnits = [
+ {n:1,title:"At my birthday party",topic:"Bữa tiệc sinh nhật",words:["pasta","popcorn","pizza"],pattern:"The popcorn is yummy.",kind:"food",questions:[
+  ["Which word means a kind of food?",["pasta","river","tent","shirt"],0,"Pasta là một món ăn."],
+  ["Complete: The popcorn is ___.",["yummy","under","sister","road"],0,"Yummy nghĩa là ngon."],
+  ["Which word starts with the /p/ sound?",["pizza","kite","sea","river"],0,"Pizza bắt đầu bằng âm /p/."],
+  ["What can you eat at a birthday party?",["popcorn","blanket","road","kitten"],0,"Popcorn là đồ ăn."],
+  ["Choose the correct sentence.",["The pizza is yummy.","The pizza are yummy.","Pizza yummy the is.","The pizza am yummy."],0,"Với danh từ số ít dùng “is”."]]},
+ {n:2,title:"In the backyard",topic:"Ở sân sau",words:["kite","bike","kitten"],pattern:"Is she flying a kite? Yes, she is. / No, she isn't.",kind:"backyard",questions:[
+  ["Which word means “con diều”?",["kite","bike","kitten","cake"],0,"Kite nghĩa là con diều."],
+  ["Which one is a small cat?",["kitten","kite","table","grapes"],0,"Kitten là mèo con."],
+  ["Complete: Is she flying a ___?",["kite","pizza","shirt","river"],0,"Cụm đúng là “flying a kite”."],
+  ["Choose the short answer for “Is she flying a kite?” when the answer is yes.",["Yes, she is.","Yes, she do.","Yes, she can.","Yes, she are."],0,"Câu trả lời ngắn dùng “Yes, she is.”"],
+  ["Which word rhymes most closely with “bike”?",["kite","cake","sea","tent"],0,"Bike và kite có vần giống nhau."]]},
+ {n:3,title:"At the seaside",topic:"Ở bờ biển",words:["sail","sand","sea"],pattern:"Let's look at the sea!",kind:"seaside",questions:[
+  ["Which word means “biển”?",["sea","sand","sail","farm"],0,"Sea nghĩa là biển."],
+  ["What can you feel on a beach under your feet?",["sand","popcorn","blanket","grapes"],0,"Sand là cát."],
+  ["Complete: Let's look at the ___.",["sea","kitten","shirt","café"],0,"Mẫu câu của chủ điểm dùng “sea”."],
+  ["Which word is related to a boat moving on water?",["sail","sister","cake","classroom"],0,"Sail liên quan đến buồm/thuyền buồm."],
+  ["Choose the correct sentence.",["Let's look at the sea!","Let's looks at the sea!","Let's looking the sea!","Let's looked at sea!"],0,"Sau “Let's” dùng động từ nguyên mẫu."]]},
+ {n:4,title:"In the countryside",topic:"Ở miền quê",words:["rainbow","river","road"],pattern:"What can you see?",kind:"countryside",questions:[
+  ["Which word means “cầu vồng”?",["rainbow","river","road","zoo"],0,"Rainbow nghĩa là cầu vồng."],
+  ["Which one is a natural flow of water?",["river","road","shirt","cake"],0,"River nghĩa là dòng sông."],
+  ["Complete: What can you ___?",["see","sister","tent","pizza"],0,"Mẫu câu hỏi là “What can you see?”"],
+  ["Which word starts with the letter r?",["road","kite","sea","bike"],0,"Road bắt đầu bằng chữ r."],
+  ["Choose a countryside word.",["river","popcorn","shorts","café"],0,"River phù hợp chủ điểm miền quê."]]},
+ {n:5,title:"In the classroom",topic:"Trong lớp học",words:["question","square","quiz"],pattern:"What’s he doing? He’s doing a quiz.",kind:"classroom",questions:[
+  ["Which word means “câu hỏi”?",["question","river","kite","tent"],0,"Question nghĩa là câu hỏi."],
+  ["Which word means “hình vuông”?",["square","bike","sand","cake"],0,"Square nghĩa là hình vuông."],
+  ["Which word means “câu đố”?",["quiz","grapes","shoes","sister"],0,"Quiz nghĩa là câu đố."],
+  ["Which item carries your school things?",["school bag","sea","rainbow","kitten"],0,"School bag là cặp sách."],
+  ["Choose the correct question.",["What's this?","What this is?","What's these?","This what?"],0,"Mẫu câu hỏi đồ vật là “What's this?”"]]},
+ {n:6,title:"On the farm",topic:"Ở nông trại",words:["box","fox","ox"],pattern:"Is there a fox? Yes, there is. / No, there isn’t.",kind:"farm",questions:[
+  ["Which word means “cái hộp”?",["box","cow","horse","kitten"],0,"Box nghĩa là cái hộp."],
+  ["Which word means “con cáo”?",["fox","kite","grapes","tent"],0,"Fox nghĩa là con cáo."],
+  ["Which word means “bò u”?",["ox","shoes","cake","table"],0,"Ox nghĩa là bò u."],
+  ["Which word names an animal?",["duck","road","sand","pen"],0,"Duck là tên một con vật."],
+  ["Choose the correct phrase.",["a cow","an cow","a horses","cow a"],0,"Dùng “a” trước “cow”."]]},
+ {n:7,title:"In the kitchen",topic:"Trong bếp",words:["juice","jelly","jam"],pattern:"Pass me the jam, please. Here you are.",kind:"kitchen",questions:[
+  ["Which word means “nước ép”?",["juice","rice","lemon","road"],0,"Juice nghĩa là nước ép."],
+  ["Which word is a yellow fruit?",["lemon","tent","bike","book"],0,"Lemon là quả chanh."],
+  ["Complete: Do you have any ___?",["rice","sister","road","shirt"],0,"Rice nghĩa là gạo/cơm."],
+  ["Choose a kitchen word.",["lemon","rainbow","playground","campsite"],0,"Lemon là thực phẩm trong bếp."],
+  ["Choose the correct short answer.",["No, I don't.","No, I isn't.","No, I aren't.","No, I doesn't."],0,"Với “Do you…?”, trả lời “No, I don't.”"]]},
+ {n:8,title:"In the village",topic:"Ở làng quê",words:["village","van","volleyball"],pattern:"Can you draw a van? Yes, I can. / No, I can’t.",kind:"village",questions:[
+  ["Which word means “ngôi làng”?",["village","path","puddle","cake"],0,"Village nghĩa là ngôi làng."],
+  ["Which word means “xe tải”?",["van","gate","bike","pen"],0,"Van nghĩa là xe tải."],
+  ["Complete: Is there a ___?",["gate","grapes","shorts","pizza"],0,"Gate phù hợp với cấu trúc câu hỏi."],
+  ["Choose the correct short answer.",["Yes, there is.","Yes, there are.","Yes, it do.","Yes, she is."],0,"Với “Is there…?”, dùng “Yes, there is.”"],
+  ["Which word is related to a village path?",["path","popcorn","sister","juice"],0,"Path nghĩa là lối đi."]]},
+ {n:9,title:"In the grocery store",topic:"Ở cửa hàng tạp hóa",words:["yogurt","yams","yo-yos"],pattern:"What do you want? I want some yogurt.",kind:"grocery",questions:[
+  ["Which word means “sữa chua”?",["yogurt","meat","chicken","table"],0,"Yogurt nghĩa là sữa chua."],
+  ["Which word means “khoai”?",["yams","river","kite","shirt"],0,"Yams nghĩa là khoai."],
+  ["Which word means “đồ chơi yo-yo”?",["yo-yos","muches","is","are a"],0,"Yo-yos là đồ chơi yo-yo."],
+  ["Complete: What do you ___?",["want","playground","campsite","classroom"],0,"Mẫu câu hỏi là “What do you want?”."],
+  ["Choose the correct answer to “What do you want?”",["I want some yogurt.","gate","road","tent"],0,"Mẫu câu trả lời là “I want some yogurt.”"]]},
+ {n:10,title:"At the zoo",topic:"Ở sở thú",words:["zebra","zoo","zebu"],pattern:"What animal is this? It's a ...",kind:"zoo",questions:[
+  ["Which word means “sở thú”?",["zoo","zebra","zebu","river"],0,"Zoo nghĩa là sở thú."],
+  ["Which animal has black and white stripes?",["zebra","duck","cow","horse"],0,"Zebra là ngựa vằn."],
+  ["Complete: It's a ___.",["zebra","juice","shirt","road"],0,"Zebra là tên con vật."],
+  ["Choose the correct question about an animal.",["What animal is this?","Where animal this?","What this animal are?","How animal is?"],0,"Mẫu câu hỏi về con vật là “What animal is this?”"],
+  ["Which word begins with z?",["zoo","kite","sea","bike"],0,"Zoo bắt đầu bằng chữ z."]]},
+ {n:11,title:"In the playground",topic:"Ở sân chơi",words:["sliding","riding","driving"],pattern:"They're ...",kind:"playground",questions:[
+  ["Which word means “đang trượt”?",["sliding","riding","driving","eating"],0,"Sliding nghĩa là đang trượt."],
+  ["Complete: They're ___ cars.",["driving","drive","drives","drove"],0,"Sau “They're” dùng dạng V-ing trong mẫu câu này."],
+  ["Which activity is related to a playground?",["sliding","cooking rice","buying meat","sleeping in a tent"],0,"Sliding là hoạt động vui chơi."],
+  ["Choose the correct contraction for “They are”.",["They're","They's","They is","They am"],0,"They're là dạng viết gọn của They are."],
+  ["Choose the correct sentence.",["They're riding bikes.","They're rides bikes.","They riding are bikes.","They're ride bikes."],0,"Mẫu câu đúng: They're + V-ing."]]},
+ {n:12,title:"At the café",topic:"Ở quán cà phê",words:["grapes","cake","table"],pattern:"The cake is on the table.",kind:"cafe",questions:[
+  ["Which word means “bánh ngọt”?",["cake","grapes","table","tent"],0,"Cake nghĩa là bánh."],
+  ["Which word means “quả nho”?",["grapes","cake","river","shorts"],0,"Grapes nghĩa là nho."],
+  ["Complete: The cake is ___ the table.",["on","in a","under to","are"],0,"On the table nghĩa là ở trên bàn."],
+  ["Where can you order a drink and a cake?",["café","farm","classroom","campsite"],0,"Café là quán cà phê."],
+  ["Choose the correct sentence.",["The grapes are on the table.","The grapes is on the table.","The grapes am on table.","Grapes the are table on."],0,"Grapes là danh từ số nhiều nên dùng “are”."]]},
+ {n:13,title:"In the maths class",topic:"Trong giờ Toán",words:["eleven","thirteen","fourteen","fifteen"],pattern:"What number is it? It's eleven.",kind:"maths",questions:[
+  ["What number is “eleven”?",["11","12","13","15"],0,"Eleven là số 11."],
+  ["What number is “thirteen”?",["30","13","14","15"],1,"Thirteen là số 13."],
+  ["Complete: What number is it? It's ___.",["fourteen","table","river","cake"],0,"Fourteen là số 14."],
+  ["Which word means 15?",["eleven","thirteen","fourteen","fifteen"],3,"Fifteen là số 15."],
+  ["Choose the correct sentence.",["It's eleven.","It eleven is.","It's an eleven number is.","It are eleven."],0,"Mẫu câu là “It's eleven.”"]]},
+ {n:14,title:"At home",topic:"Ở nhà",words:["brother","sister","grandmother"],pattern:"How old is your brother? He's nineteen.",kind:"home",questions:[
+  ["Which word means “chị/em gái”?",["sister","brother","grandmother","table"],0,"Sister nghĩa là chị/em gái."],
+  ["Which word means “bà”?",["grandmother","brother","sister","café"],0,"Grandmother nghĩa là bà."],
+  ["Complete: How old is your ___?",["brother","grapes","tent","river"],0,"Brother nghĩa là anh/em trai."],
+  ["Choose the correct answer to “How old is your brother?”",["He's nineteen.","He's a table.","He's on the cake.","He's grapes."],0,"Câu trả lời nêu tuổi: He's nineteen."],
+  ["Which word names a family member?",["brother","road","sand","juice"],0,"Brother là thành viên gia đình."]]},
+ {n:15,title:"In the clothes shop",topic:"Ở cửa hàng quần áo",words:["shirts","shoes","shorts"],pattern:"Where are the shoes? Over there.",kind:"clothes",questions:[
+  ["Which word means “giày”?",["shoes","shirts","shorts","grapes"],0,"Shoes nghĩa là giày."],
+  ["Which word means “quần soóc”?",["shorts","shoes","shirts","cake"],0,"Shorts nghĩa là quần soóc."],
+  ["Complete: Where are the ___?",["shoes","rice","river","kitten"],0,"Shoes phù hợp với câu hỏi."],
+  ["Choose the answer to “Where are the shoes?”",["Over there.","He's nineteen.","It's eleven.","Yes, I do."],0,"Over there nghĩa là ở đằng kia."],
+  ["Which word is clothing?",["shirt","puddle","sea","gate"],0,"Shirt là áo sơ mi/áo." ] ]},
+ {n:16,title:"At the campsite",topic:"Ở khu cắm trại",words:["tent","teapot","blanket"],pattern:"Is the blanket near the tent? No, it isn't. It's in the tent.",kind:"campsite",questions:[
+  ["Which word means “lều”?",["tent","teapot","blanket","table"],0,"Tent nghĩa là lều."],
+  ["Which word means “chăn”?",["blanket","tent","teapot","shoes"],0,"Blanket nghĩa là chăn."],
+  ["Which item is used to make tea?",["teapot","tent","shorts","sand"],0,"Teapot là ấm trà."],
+  ["Complete: The blanket is ___ the tent.",["in","at a","are","under to"],0,"In the tent nghĩa là ở trong lều."],
+  ["Choose the correct short answer to “Is the blanket near the tent?” when it is not near.",["No, it isn't.","No, it don't.","No, they aren't.","No, I am not."],0,"Với “Is the blanket…?”, dùng “No, it isn't.”"]]}
+];
+let englishActiveUnit=0, englishCurrentQuestions=[], englishSubmitted=false;
+function initEnglishLessons(){
+ const sem=Number(document.getElementById('englishSemester')?.value||1), select=document.getElementById('englishUnit');if(!select)return;
+ const units=englishUnits.filter(u=>sem===1?u.n<=8:u.n>=9);select.innerHTML='';
+ units.forEach(u=>{const o=document.createElement('option');o.value=String(u.n-1);o.textContent=`Unit ${u.n}: ${u.title}`;select.appendChild(o)});
+ englishActiveUnit=Number(select.value)||units[0].n-1;updateEnglishInfo();
+}
+function updateEnglishInfo(){
+ const select=document.getElementById('englishUnit');if(!select)return;englishActiveUnit=Number(select.value)||0;const u=englishUnits[englishActiveUnit];if(!u)return;
+ document.getElementById('englishUnitTitle').textContent=`Unit ${u.n}: ${u.title}`;
+ document.getElementById('englishUnitDesc').textContent=`Chủ điểm: ${u.topic}. Luyện từ vựng, nhận biết âm/chữ, hiểu mẫu câu và chọn câu đúng.`;
+ document.getElementById('englishVocab').textContent=u.words.join(', ');
+ document.getElementById('englishPattern').textContent=u.pattern;
+}
+function englishMakeQuestions(unitList,count){
+ let pool=[];unitList.forEach(u=>u.questions.forEach(q=>pool.push({q:q[0],a:q[1].slice(),c:q[2],e:q[3],unit:u.n,signature:q[0]})));
+ // Loại câu trùng nguyên văn, đảo thứ tự câu và đáp án; giữ chính xác chỉ số đáp án đúng.
+ const seen=new Set();pool=pool.filter(q=>{if(seen.has(q.signature))return false;seen.add(q.signature);return true;});
+ for(let i=pool.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[pool[i],pool[j]]=[pool[j],pool[i]];}
+ pool=pool.slice(0,Math.min(count,pool.length));
+ pool.forEach(q=>{const correct=q.a[q.c];for(let i=q.a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[q.a[i],q.a[j]]=[q.a[j],q.a[i]];}q.c=q.a.indexOf(correct);});
+ return pool;
+}
+function startEnglishLesson(){
+ updateEnglishInfo();const u=englishUnits[englishActiveUnit];if(!u)return;renderEnglishQuiz([u],false,`Unit ${u.n}: ${u.title}`);
+}
+function startEnglishExam(){
+ const sem=Number(document.getElementById('englishSemester').value||1),units=englishUnits.filter(u=>sem===1?u.n<=8:u.n>=9);
+ renderEnglishQuiz(units,true,`Đề ôn tập Tiếng Anh · Học kì ${sem}`);
+}
+function renderEnglishQuiz(units,isExam,title){
+ const area=document.getElementById('englishQuizArea'),form=document.getElementById('englishQuizForm'),result=document.getElementById('englishResult');
+ englishCurrentQuestions=englishMakeQuestions(units,isExam?10:5);englishSubmitted=false;
+ document.getElementById('englishQuizTitle').textContent=title;document.getElementById('englishQuizHint').textContent='Read the question and choose the best answer. Đọc câu hỏi rồi chọn đáp án đúng nhé!';
+ result.style.display='none';form.innerHTML='';
+ englishCurrentQuestions.forEach((q,i)=>{
+  const card=document.createElement('div');card.className='exam-question';const h=document.createElement('h4');h.textContent=`${i+1}. ${q.q}`;card.appendChild(h);const opts=document.createElement('div');opts.className='exam-options';
+  q.a.forEach((a,j)=>{const label=document.createElement('label');label.className='exam-option';const input=document.createElement('input');input.type='radio';input.name='engq'+i;input.value=j;const span=document.createElement('span');span.textContent=a;label.append(input,span);opts.appendChild(label)});
+  const fb=document.createElement('div');fb.className='exam-feedback';fb.id='engfb'+i;fb.style.display='none';card.append(opts,fb);form.appendChild(card);
+ });
+ const actions=document.createElement('div');actions.className='exam-actions';const submit=document.createElement('button');submit.type='submit';submit.className='primary';submit.textContent='🌟 Chấm điểm';const retry=document.createElement('button');retry.type='button';retry.className='secondary';retry.textContent='🔄 Làm đề khác';retry.onclick=()=>isExam?startEnglishExam():startEnglishLesson();actions.append(submit,retry);form.appendChild(actions);
+ form.onsubmit=(ev)=>{ev.preventDefault();if(englishSubmitted)return;let score=0;englishCurrentQuestions.forEach((q,i)=>{const chosen=form.querySelector(`input[name="engq${i}"]:checked`),fb=document.getElementById('engfb'+i);fb.style.display='block';if(chosen&&Number(chosen.value)===q.c){score++;fb.className='exam-feedback good';fb.textContent='Correct! '+q.e;}else{fb.className='exam-feedback bad';fb.textContent='Answer: '+q.a[q.c]+'. '+q.e;}});englishSubmitted=true;form.querySelectorAll('input').forEach(x=>x.disabled=true);submit.disabled=true;result.style.display='block';result.innerHTML=`<h3>🎉 Em được ${score}/${englishCurrentQuestions.length} điểm</h3><p>${score===englishCurrentQuestions.length?'Excellent! Tuyệt vời! 🌈':score>=Math.ceil(englishCurrentQuestions.length*.7)?'Great job! Con làm tốt lắm! ⭐':'Good try! Xem lại đáp án rồi thử lại nhé! 💪'}</p>`;result.scrollIntoView({behavior:'smooth',block:'center'});};
+ area.style.display='block';area.scrollIntoView({behavior:'smooth',block:'start'});
 }
 
 function getHistory(){try{return JSON.parse(localStorage.getItem(HISTORY_KEY)||"[]");}catch(e){return [];}}
