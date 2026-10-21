@@ -748,6 +748,137 @@ const semesterExamBanks = {
   {q:"Đọc đoạn văn: “Nam thấy một chú mèo con đứng bên đường. Em nhẹ nhàng bế mèo vào chỗ an toàn và nhờ người lớn giúp đỡ.” Nam đã làm gì?",a:["Bỏ đi ngay","Trêu chọc mèo","Đưa mèo đến chỗ an toàn và nhờ người lớn","Mang mèo đi bán"],c:2,e:"Nam đưa mèo đến chỗ an toàn và nhờ người lớn giúp đỡ."}
  ]
 };
+
+// Bổ sung câu hỏi tham khảo để mỗi lần làm lại có thể nhận một đề khác.
+(function expandSemesterExamBanks(){
+ const math=semesterExamBanks.math, viet=semesterExamBanks.viet;
+ const add=(bank,q,a,c,e)=>bank.push({q,a,c,e});
+ // Câu hỏi Toán biến thể số liệu, tự tính đáp án và tạo các phương án nhiễu.
+ for(let i=0;i<36;i++){
+  const a=10+rndExam(0,69), b=1+rndExam(0,Math.min(29,99-a));
+  const sum=a+b, wrong=[sum+1,sum-1,Math.max(0,sum-2)].filter(x=>x!==sum);
+  add(math,`Tính: ${a} + ${b} =`,[String(sum),String(wrong[0]),String(wrong[1]),String(wrong[2])],0,`${a} + ${b} = ${sum}.`);
+  const x=20+rndExam(0,79), y=rndExam(1,Math.min(19,x)); const dif=x-y;
+  const wrong2=[dif+1, dif+2, Math.max(0,dif-1)].filter(n=>n!==dif);
+  add(math,`Tính: ${x} − ${y} =`,[String(dif),String(wrong2[0]),String(wrong2[1]),String(wrong2[2])],0,`${x} − ${y} = ${dif}.`);
+ }
+ for(let i=0;i<12;i++){
+  const tens=1+rndExam(0,8), units=rndExam(0,9), n=tens*10+units;
+  add(math,`Số ${n} gồm mấy chục và mấy đơn vị?`,[`${tens} chục, ${units} đơn vị`,`${tens} chục, ${(units+1)%10} đơn vị`,`0 chục, ${n} đơn vị`,`${n} chục`],0,`${n} = ${tens*10} + ${units}, tức ${tens} chục và ${units} đơn vị.`);
+ }
+ // Ngân hàng Tiếng Việt mở rộng: kỹ năng ngôn ngữ và đọc hiểu ngắn.
+ const vietExtra=[
+  ["Từ nào chỉ đồ vật trong lớp học?",["thước kẻ","vui vẻ","chạy","đẹp"],0,"“Thước kẻ” là tên một đồ vật."],
+  ["Từ nào chỉ hoạt động?",["bầu trời","nhảy dây","xinh xắn","học sinh"],1,"“Nhảy dây” chỉ hoạt động."],
+  ["Từ nào chỉ đặc điểm của bông hoa?",["nở","hoa hồng","thơm ngát","cắm hoa"],2,"“Thơm ngát” nêu đặc điểm."],
+  ["Câu nào là câu hỏi?",["Em rất vui.","Bạn tên là gì?","Ôi, bông hoa đẹp quá!","Em hãy mở sách."],1,"Câu hỏi thường dùng để hỏi điều chưa biết và kết thúc bằng dấu hỏi."],
+  ["Câu nào là lời đề nghị lịch sự?",["Lấy hộ mình quyển sách nhé, cảm ơn bạn.","Đưa đây!","Nhanh lên!","Không cho mượn đâu!"],0,"Lời đề nghị lịch sự thể hiện sự tôn trọng người nghe."],
+  ["Từ gần nghĩa với “siêng năng” là:",["chăm chỉ","lười nhác","ồn ào","chậm chạp"],0,"“Siêng năng” gần nghĩa với “chăm chỉ”."],
+  ["Từ trái nghĩa với “cao” là:",["dài","thấp","rộng","to"],1,"“Thấp” trái nghĩa với “cao”."],
+  ["Chọn câu viết đúng dấu chấm câu.",["Bé đang đọc sách.","Bé đang đọc sách?", "Bé đang đọc sách,", "Bé đang đọc sách!"],0,"Câu kể thông thường kết thúc bằng dấu chấm."],
+  ["Đầu câu “hôm nay em đến trường.” cần sửa thế nào?",["Viết hoa chữ H trong “hôm”.","Viết hoa tất cả các từ.","Bỏ dấu chấm.","Viết hoa chữ cái đầu câu."],0,"Chữ đầu câu cần được viết hoa: “Hôm nay em đến trường.”"],
+  ["Đọc: “Minh tưới cây mỗi chiều. Nhờ được chăm sóc, cây xanh tốt và ra nhiều lá mới.” Vì sao cây xanh tốt?",["Vì Minh chăm sóc và tưới cây.","Vì cây được đem đi chơi.","Vì Minh hái hết lá.","Vì trời tối."],0,"Đoạn văn cho biết Minh tưới cây và chăm sóc cây."],
+  ["Đọc: “Giờ ra chơi, Hà cùng các bạn nhảy dây dưới sân trường.” Hà làm gì trong giờ ra chơi?",["Ngủ trong lớp","Nhảy dây cùng các bạn","Ăn tối","Tưới rau"],1,"Hà nhảy dây cùng các bạn dưới sân trường."],
+  ["Chọn câu kể đúng.",["Những chú chim đang hót trên cành.","Đang trên cành chim những hót.","Hót những chim cành trên.","Trên hót đang chim cành."],0,"Câu đúng có trật tự từ rõ ràng."],
+  ["Từ nào chỉ người thân trong gia đình?",["bà ngoại","cái cặp","nhanh nhẹn","đọc bài"],0,"“Bà ngoại” chỉ người thân trong gia đình."],
+  ["Khi được bạn giúp đỡ, em nên nói gì?",["Cảm ơn bạn nhé!","Đi chỗ khác!","Mặc kệ!","Đưa tiếp đây!"],0,"Nói lời cảm ơn là cách giao tiếp lịch sự."],
+  ["Từ nào chỉ sự vật?",["quyển vở","chạy nhanh","ngoan ngoãn","đang hát"],0,"“Quyển vở” là từ chỉ sự vật."],
+  ["Điền dấu phù hợp: “Ôi, bức tranh đẹp quá__”",["?",".","!",","],2,"Câu bộc lộ cảm xúc phù hợp với dấu chấm than."],
+  ["Đọc: “Trời mưa, Mai lấy áo mưa rồi đi chậm trên vỉa hè.” Mai làm gì khi trời mưa?",["Chạy giữa lòng đường","Lấy áo mưa và đi chậm trên vỉa hè","Bỏ áo mưa ở nhà","Đùa nghịch dưới lòng đường"],1,"Mai lấy áo mưa và đi chậm trên vỉa hè."],
+  ["Từ nào gần nghĩa với “vui vẻ”?",["hớn hở","buồn bã","lo lắng","mệt mỏi"],0,"“Hớn hở” gần nghĩa với “vui vẻ”."],
+  ["Chọn cách xưng hô phù hợp khi nói với cô giáo.",["Này, nghe đây!","Thưa cô, em xin phép phát biểu ạ.","Ê cô!","Cô phải nghe em!"],1,"Đây là cách nói lễ phép với cô giáo."],
+  ["Đọc: “Bố sửa chiếc xe đạp cho An. An vui vẻ cảm ơn bố rồi cất dụng cụ vào hộp.” Ai sửa xe đạp?",["An","Bố","Cô giáo","Bạn của An"],1,"Đoạn văn nói bố sửa chiếc xe đạp cho An."]
+ ];
+ vietExtra.forEach(x=>add(viet,x[0],x[1],x[2],x[3]));
+ // Mở rộng thêm các dạng bài Toán học kì I: so sánh, số liền trước/sau,
+ // bài toán có lời văn, đơn vị đo, hình học, xem giờ và phép tính.
+ const addMC=(bank,q,correct,wrong,e)=>{
+  const opts=[String(correct),...wrong.map(String)];
+  // Bảo đảm 4 phương án khác nhau để tránh câu hỏi có nhiều đáp án giống nhau.
+  const unique=[...new Set(opts)];
+  let k=1; while(unique.length<4){const v=String(Number(correct)+10*k++);if(!unique.includes(v))unique.push(v);}
+  add(bank,q,unique.slice(0,4),0,e);
+ };
+ for(let i=0;i<24;i++){
+  const n=10+rndExam(0,88);
+  addMC(math,`Số liền trước của ${n} là:`,n-1,[n+1,n-10,n],`Số liền trước của ${n} là ${n-1}.`);
+  const m=10+rndExam(0,88);
+  addMC(math,`Số liền sau của ${m} là:`,m+1,[m-1,m+10,m],`Số liền sau của ${m} là ${m+1}.`);
+  const a=10+rndExam(0,79), b=10+rndExam(0,99-a), sum=a+b;
+  addMC(math,`Tính nhẩm: ${a} + ${b} =`,sum,[sum+2,Math.max(0,sum-2),sum+10],`${a} + ${b} = ${sum}.`);
+  const x=20+rndExam(0,79), y=1+rndExam(0,Math.min(19,x-1)), d=x-y;
+  addMC(math,`Tính: ${x} − ${y} =`,d,[d+2,Math.max(0,d-2),x+y],`${x} − ${y} = ${d}.`);
+ }
+ for(let i=0;i<12;i++){
+  const a=12+rndExam(0,35), b=3+rndExam(0,20), total=a+b;
+  addMC(math,`Lan có ${a} nhãn vở, mẹ cho thêm ${b} nhãn vở. Lan có tất cả bao nhiêu nhãn vở?`,total,[total-b,total+ b,total-1],`Lấy ${a} + ${b} = ${total} nhãn vở.`);
+  const all=35+rndExam(0,45), used=5+rndExam(0,Math.min(25,all-5)), remain=all-used;
+  addMC(math,`Thư viện có ${all} quyển truyện, học sinh mượn ${used} quyển. Còn lại bao nhiêu quyển?`,remain,[all+used,remain+1,used],`Lấy ${all} − ${used} = ${remain} quyển.`);
+ }
+ const mathExtra=[
+  ["Số nào lớn hơn 67?",["76"," sixty","66","57"],0,"76 lớn hơn 67."],
+  ["Một hình tam giác có bao nhiêu đỉnh?",["2 đỉnh","3 đỉnh","4 đỉnh","5 đỉnh"],1,"Hình tam giác có 3 đỉnh."],
+  ["Một hình tứ giác có bao nhiêu đỉnh?",["3 đỉnh","4 đỉnh","5 đỉnh","6 đỉnh"],1,"Hình tứ giác có 4 đỉnh."],
+  ["1 dm bằng bao nhiêu cm?",["10 cm","1 cm","100 cm","5 cm"],0,"1 dm = 10 cm."],
+  ["Đơn vị phù hợp để đo chiều dài bút chì là:",["cm","kg","l","giờ"],0,"Chiều dài bút chì thường đo bằng xăng-ti-mét."],
+  ["Đơn vị phù hợp để cân một quả bí là:",["kg","cm","l","giờ"],0,"Khối lượng được đo bằng ki-lô-gam."],
+  ["Đồng hồ chỉ 3 giờ. Sau 1 giờ là:",["2 giờ","4 giờ","5 giờ","6 giờ"],1,"3 giờ thêm 1 giờ là 4 giờ."],
+  ["Số 90 gồm:",["9 chục và 0 đơn vị","0 chục và 9 đơn vị","9 chục và 9 đơn vị","90 chục"],0,"90 = 9 chục và 0 đơn vị."],
+  ["Kết quả của 50 + 30 là:",["80","20","70","90"],0,"50 + 30 = 80."],
+  ["Kết quả của 80 − 40 là:",["40","30","50","120"],0,"80 − 40 = 40."],
+  ["Trong các số 42, 24, 40, số bé nhất là:",["24","42","40","44"],0,"24 là số bé nhất."],
+  ["Trong các số 56, 65, 59, số lớn nhất là:",["65","56","59","50"],0,"65 là số lớn nhất."],
+  ["Có 2 chục que tính và 6 que tính rời. Có tất cả:",["26 que","20 que","8 que","62 que"],0,"2 chục là 20; 20 + 6 = 26."],
+  ["Một tuần có bao nhiêu ngày?",["7 ngày","5 ngày","10 ngày","12 ngày"],0,"Một tuần có 7 ngày."],
+  ["Số nào là số chẵn?",["34","35","41","27"],0,"34 có chữ số hàng đơn vị là 4 nên là số chẵn."]
+ ];
+ mathExtra.forEach(x=>add(math,x[0],x[1],x[2],x[3]));
+ // Sửa riêng câu có phương án chữ không phù hợp, đồng thời thêm ngân hàng Tiếng Việt theo nhiều mạch kỹ năng.
+ math[math.length-mathExtra.length].a=["76","68","66","57"];
+ const vietMore=[
+  ["Từ nào chỉ con vật?",["con thỏ","xanh biếc","chạy nhảy","hiền hậu"],0,"“Con thỏ” là tên một con vật."],
+  ["Từ nào chỉ cây cối?",["cây bàng","đọc sách","vui vẻ","nhanh nhẹn"],0,"“Cây bàng” chỉ cây cối."],
+  ["Từ nào chỉ đặc điểm của bạn học sinh?",["ngoan ngoãn","viết bài","cái bàn","bạn bè"],0,"“Ngoan ngoãn” chỉ đặc điểm."],
+  ["Từ nào chỉ hoạt động học tập?",["làm bài","bông hoa","màu đỏ","cô giáo"],0,"“Làm bài” chỉ hoạt động."],
+  ["Câu nào dùng dấu chấm hỏi đúng?",["Ai đang gõ cửa?","Em đi học.","Ôi, đẹp quá!","Hãy ngồi xuống."],0,"Câu hỏi kết thúc bằng dấu chấm hỏi."],
+  ["Câu nào là câu cảm?",["Ôi, chiếc bánh thơm quá!","Bạn tên là gì?","Em đang đọc sách.","Hãy mở cửa."],0,"Câu cảm bộc lộ cảm xúc."],
+  ["Câu nào là lời yêu cầu?",["Em hãy xếp hàng ngay ngắn.","Hôm nay trời đẹp.","Bạn đang ở đâu?","Ôi vui quá!"],0,"Câu yêu cầu dùng để đề nghị hoặc yêu cầu ai làm việc gì."],
+  ["Chọn cách hỏi thăm bạn khi bạn bị ốm.",["Bạn đã đỡ mệt chưa?","Sao bạn nghỉ học!","Đưa vở đây!","Bạn phải đi ngay!"],0,"Đây là lời hỏi thăm nhẹ nhàng, lịch sự."],
+  ["Từ nào gần nghĩa với “dũng cảm”?",["gan dạ","nhút nhát","lười biếng","buồn bã"],0,"“Gan dạ” gần nghĩa với “dũng cảm”."],
+  ["Từ nào trái nghĩa với “sạch sẽ”?",["bẩn thỉu","gọn gàng","tinh tươm","ngăn nắp"],0,"“Bẩn thỉu” trái nghĩa với “sạch sẽ”."],
+  ["Chọn câu viết đúng.",["Buổi sáng, em đến trường.","buổi sáng, em đến trường.","Buổi sáng, Em Đến Trường.","buổi sáng em đến trường"],0,"Đầu câu viết hoa và câu kể kết thúc bằng dấu chấm."],
+  ["Trong câu “Chú mèo nằm ngủ trên ghế.”, từ nào chỉ hoạt động?",["nằm ngủ","chú mèo","trên ghế","ghế"],0,"“Nằm ngủ” chỉ hoạt động/trạng thái của mèo."],
+  ["Trong câu “Bầu trời xanh thẳm.”, từ nào chỉ đặc điểm?",["xanh thẳm","bầu trời","trời","câu"],0,"“Xanh thẳm” chỉ đặc điểm của bầu trời."],
+  ["Đọc: “Vy thấy bạn làm rơi hộp bút nên nhặt lên trả bạn.” Vy đã làm gì?",["Nhặt hộp bút trả bạn","Giấu hộp bút","Đá hộp bút đi","Mang hộp bút về nhà"],0,"Vy nhặt hộp bút và trả lại bạn."],
+  ["Đọc: “Mỗi tối, Minh đọc sách cùng ông. Ông giải thích những điều Minh chưa hiểu.” Minh đọc sách cùng ai?",["Ông","Cô giáo","Em gái","Bạn thân"],0,"Minh đọc sách cùng ông."],
+  ["Đọc: “Trước khi ra khỏi nhà, Hà kiểm tra cặp sách và chào mẹ.” Hà làm gì trước khi ra khỏi nhà?",["Kiểm tra cặp sách và chào mẹ","Đi ngủ","Tưới cây","Xem phim"],0,"Hà kiểm tra cặp sách và chào mẹ."],
+  ["Khi muốn xin phép ra ngoài lớp, em nên nói:",["Thưa cô, cho em xin phép ra ngoài ạ.","Em đi đây!","Tránh ra!","Cô không cần biết."],0,"Lời xin phép cần lễ phép, rõ ràng."],
+  ["Từ nào chỉ đồ dùng học tập?",["cục tẩy","mưa rào","nhảy múa","hiền lành"],0,"“Cục tẩy” là đồ dùng học tập."],
+  ["Từ nào chỉ người trong trường học?",["bác bảo vệ","cái trống","sân trường","đọc bài"],0,"“Bác bảo vệ” chỉ người."],
+  ["Chọn câu có dấu phẩy phù hợp.",["Buổi sáng, em tập thể dục.","Buổi, sáng em tập thể dục.","Buổi sáng em, tập thể dục.","Buổi sáng em tập, thể dục."],0,"Dấu phẩy ngăn cách trạng ngữ đầu câu với phần còn lại."],
+  ["Đọc: “Mưa đã tạnh. Những giọt nước còn đọng trên lá lấp lánh dưới nắng.” Giọt nước đọng ở đâu?",["Trên lá","Dưới bàn","Trong cặp","Trên mái tóc"],0,"Đoạn văn nói giọt nước còn đọng trên lá."],
+  ["Từ nào gần nghĩa với “đoàn kết”?",["gắn bó","chia rẽ","cãi vã","xa lánh"],0,"“Gắn bó” gần nghĩa với đoàn kết."],
+  ["Chọn lời đáp phù hợp khi được khen.",["Mình cảm ơn bạn!","Biết rồi!","Kệ mình!","Bạn im đi!"],0,"Cảm ơn là lời đáp lịch sự khi được khen."],
+  ["Trong câu “Bé Lan hát rất hay.”, từ nào chỉ người?",["Bé Lan","hát","rất hay","hay"],0,"“Bé Lan” chỉ người."],
+  ["Câu nào diễn đạt đầy đủ ý?",["Đàn chim bay trên bầu trời.","Đàn chim trên.","Bay bầu trời đàn.","Trên đàn chim bay."],0,"Câu có trật tự từ rõ nghĩa và diễn đạt đầy đủ ý."],
+  ["Đọc: “Ngày chủ nhật, cả nhà cùng dọn dẹp nhà cửa. Nam lau bàn, chị xếp sách, mẹ tưới cây.” Nam làm việc gì?",["Lau bàn","Xếp sách","Tưới cây","Nấu cơm"],0,"Nam lau bàn."],
+  ["Từ nào chỉ âm thanh?",["tiếng chim hót","màu xanh","mềm mại","chạy nhanh"],0,"“Tiếng chim hót” là âm thanh."],
+  ["Chọn câu có từ chỉ hoạt động.",["Bé đang vẽ tranh.","Bông hoa đỏ thắm.","Chiếc bàn gỗ.","Bạn nhỏ chăm ngoan."],0,"“Vẽ” chỉ hoạt động."],
+  ["Khi vô tình làm bạn buồn, em nên nói:",["Mình xin lỗi bạn.","Tại bạn cả!","Kệ đi!","Không liên quan."],0,"Xin lỗi thể hiện sự chân thành và lịch sự."],
+  ["Đọc: “Sáng sớm, bác nông dân ra đồng. Bác chăm sóc lúa để cây lớn khỏe.” Bác nông dân làm việc ở đâu?",["Ngoài đồng","Trong thư viện","Ở sân chơi","Trong lớp học"],0,"Bác nông dân ra đồng làm việc."]
+ ];
+ vietMore.forEach(x=>add(viet,x[0],x[1],x[2],x[3]));
+})();
+function rndExam(min,max){return Math.floor(Math.random()*(max-min+1))+min;}
+function pickSemesterExam(which){
+ const pool=[...semesterExamBanks[which]];
+ for(let i=pool.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[pool[i],pool[j]]=[pool[j],pool[i]];}
+ return pool.slice(0,10).map(item=>{
+  const correct=item.a[item.c];const answers=[...item.a];
+  for(let i=answers.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[answers[i],answers[j]]=[answers[j],answers[i]];}
+  return {...item,a:answers,c:answers.indexOf(correct)};
+ });
+}
 let activeExamSubject = null;
 let examSubmitted = false;
 function startSemesterExam(which){
@@ -757,12 +888,13 @@ function startSemesterExam(which){
  document.getElementById("examVietBtn").className=isMath?"secondary":"primary";
  document.getElementById("examHeading").textContent=isMath?"Đề tham khảo Toán – Học kì I":"Đề tham khảo Tiếng Việt – Học kì I";
  document.getElementById("examInstructions").textContent=isMath
-  ?"Gợi ý thời gian: 35 phút · 10 câu trắc nghiệm · Mỗi câu 1 điểm. Nội dung: số đến 100, cộng trừ, kg/l, hình phẳng, thời gian."
-  :"Gợi ý thời gian: 35 phút · 10 câu trắc nghiệm · Mỗi câu 1 điểm. Nội dung: đọc hiểu, từ chỉ sự vật/hoạt động/đặc điểm, câu, dấu câu và viết hoa.";
+  ?"Gợi ý thời gian: 35 phút · 10 câu trắc nghiệm · Mỗi câu 1 điểm. Mỗi lượt chọn ngẫu nhiên 10 câu từ ngân hàng Toán, đồng thời đảo thứ tự đáp án."
+  :"Gợi ý thời gian: 35 phút · 10 câu trắc nghiệm · Mỗi câu 1 điểm. Mỗi lượt chọn ngẫu nhiên 10 câu từ ngân hàng Tiếng Việt, đồng thời đảo thứ tự đáp án.";
  const root=document.getElementById("examWorkArea");
  root.innerHTML="";
+ const examQuestions=pickSemesterExam(which);
  const form=document.createElement("form");form.id="semesterExamForm";
- semesterExamBanks[which].forEach((item,i)=>{
+ examQuestions.forEach((item,i)=>{
   const card=document.createElement("div");card.className="exam-question";
   const title=document.createElement("h4");title.textContent=`Câu ${i+1}. ${item.q}`;card.appendChild(title);
   const opts=document.createElement("div");opts.className="exam-options";
@@ -778,13 +910,13 @@ function startSemesterExam(which){
  });
  const actions=document.createElement("div");actions.className="controls";
  const submit=document.createElement("button");submit.type="submit";submit.className="primary";submit.textContent="Nộp bài và xem điểm ✓";
- const reset=document.createElement("button");reset.type="button";reset.className="secondary";reset.textContent="Làm lại đề ↻";reset.onclick=()=>startSemesterExam(which);
+ const reset=document.createElement("button");reset.type="button";reset.className="secondary";reset.textContent="Đề ngẫu nhiên khác ↻";reset.onclick=()=>startSemesterExam(which);
  actions.append(submit,reset);form.appendChild(actions);
  const score=document.createElement("div");score.className="exam-score";score.id="examScore";score.style.display="none";
  form.addEventListener("submit",function(ev){
   ev.preventDefault();if(examSubmitted)return;
   let scoreValue=0,answered=0;
-  semesterExamBanks[which].forEach((item,i)=>{
+  examQuestions.forEach((item,i)=>{
    const chosen=form.querySelector(`input[name="examq${i}"]:checked`);
    const fb=document.getElementById("examfb"+i);fb.style.display="block";
    if(chosen)answered++;
