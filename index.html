@@ -504,6 +504,23 @@ const bookOneChapters = [
   ["Bài 33. Ôn tập phép cộng, phép trừ trong phạm vi 20, 100",4],["Bài 34. Ôn tập hình phẳng",3],["Bài 35. Ôn tập đo lường",3],["Bài 36. Ôn tập chung",4]]}
 ];
 
+const bookTwoChapters = [
+ {name:"8. Phép nhân, phép chia",lessons:[
+  ["Bài 37. Phép nhân",2],["Bài 38. Thừa số, tích",2],["Bài 39. Bảng nhân 2",2],["Bài 40. Bảng nhân 5",2],["Bài 41. Phép chia",2],["Bài 42. Số bị chia, số chia, thương",2],["Bài 43. Bảng chia 2",2],["Bài 44. Bảng chia 5",2],["Bài 45. Luyện tập chung",2]]},
+ {name:"9. Làm quen với hình khối",lessons:[
+  ["Bài 46. Khối trụ, khối cầu",3],["Bài 47. Luyện tập chung",3]]},
+ {name:"10. Các số trong phạm vi 1 000",lessons:[
+  ["Bài 48. Đơn vị, chục, trăm, nghìn",0],["Bài 49. Các số tròn trăm, tròn chục, tròn nghìn",0],["Bài 50. So sánh các số tròn trăm, tròn chục, tròn nghìn",0],["Bài 51. Số có ba chữ số",0],["Bài 52. Viết số thành tổng các trăm, chục, đơn vị",0],["Bài 53. So sánh các số có ba chữ số",0],["Bài 54. Luyện tập chung",0]]},
+ {name:"11. Độ dài và đơn vị đo độ dài. Tiền Việt Nam",lessons:[
+  ["Bài 55. Đề-xi-mét, mét, ki-lô-mét",3],["Bài 56. Giới thiệu tiền Việt Nam",3],["Bài 57. Thực hành và trải nghiệm đo độ dài",3],["Bài 58. Luyện tập chung",3]]},
+ {name:"12. Phép cộng, phép trừ trong phạm vi 1 000",lessons:[
+  ["Bài 59. Phép cộng (không nhớ) trong phạm vi 1 000",1],["Bài 60. Phép cộng (có nhớ) trong phạm vi 1 000",1],["Bài 61. Phép trừ (không nhớ) trong phạm vi 1 000",1],["Bài 62. Phép trừ (có nhớ) trong phạm vi 1 000",1],["Bài 63. Luyện tập chung",1]]},
+ {name:"13. Làm quen với việc thống kê, xác suất",lessons:[
+  ["Bài 64. Thu thập, phân loại, kiểm đếm số liệu",4],["Bài 65. Biểu đồ tranh",4],["Bài 66. Chắc chắn, có thể, không thể",4],["Bài 67. Thực hành và trải nghiệm thu thập, phân loại, kiểm đếm số liệu",4]]},
+ {name:"14. Ôn tập cuối năm",lessons:[
+  ["Bài 68. Ôn tập các số trong phạm vi 1 000",0],["Bài 69. Ôn tập phép cộng, phép trừ trong phạm vi 100",1],["Bài 70. Ôn tập phép cộng, phép trừ trong phạm vi 1 000",1],["Bài 71. Ôn tập phép nhân, phép chia",2],["Bài 72. Ôn tập hình học",3],["Bài 73. Ôn tập đo lường",3],["Bài 74. Ôn tập kiểm đếm số liệu và lựa chọn khả năng",4],["Bài 75. Ôn tập chung",4]]}
+];
+
 const vietOneChapters = [
  {name:"1. Em lớn lên từng ngày", lessons:[
   ["Bài 1. Tôi là học sinh lớp 2",0],["Bài 2. Ngày hôm qua đâu rồi?",0],["Bài 3. Niềm vui của Bi và Bống",0],
@@ -551,7 +568,7 @@ const vietTwoChapters = [
   ["Bài 29. Hồ Gươm",0],["Bài 30. Cánh đồng quê em",1]]}
 ];
 function currentBookChapters(){
- if(bookSubject === "math") return bookSemester===1 ? bookOneChapters : [];
+ if(bookSubject === "math") return bookSemester===1 ? bookOneChapters : bookTwoChapters;
  return bookSemester===2 ? vietTwoChapters : vietOneChapters;
 }
 function switchBookSubject(which){
@@ -573,7 +590,7 @@ function initBookLessons(){
  const chapters=currentBookChapters();
  if(!chapters.length){
   const c=document.createElement("option");c.value="0";c.textContent="Nội dung học kì 2 đang được bổ sung";ch.appendChild(c);
-  const l=document.createElement("option");l.value="-1";l.textContent="Chưa có danh sách bài Toán học kì 2";le.innerHTML="";le.appendChild(l);
+  const l=document.createElement("option");l.value="-1";l.textContent=bookSubject==="math"?"Chưa có bài học":"Chưa có bài học";le.innerHTML="";le.appendChild(l);
   document.getElementById("bookLessonTitle").textContent="Toán · Học kì 2";
   document.getElementById("bookLessonDesc").textContent="Danh sách bài Toán học kì 2 chưa được rà soát trong lần cập nhật này.";
   return;
@@ -598,7 +615,7 @@ function updateBookLessonInfo(){
   : "Câu hỏi theo chủ điểm và kĩ năng trong SGK; ngữ liệu đọc là đoạn bổ trợ tự biên soạn.";
 }
 function startBookLesson(){
- if(bookSubject==="math" && bookSemester===2){alert("Danh sách bài Toán học kì 2 chưa được rà soát trong bản này.");return;}
+ 
  const id=Number(document.getElementById("bookLesson").value)||0;
  const l=getBookLessons()[id]; if(!l)return;
  activeBookLesson=id; topicIndex=l.topic;
@@ -721,6 +738,69 @@ function createBookLessonQuestions(id,count){
  }
  return qs;
 }
+
+// Ngân hàng Toán được tạo theo số bài và đúng mạch kiến thức trong SGK Toán 2 Kết nối tri thức.
+function createBookLessonQuestions(id,count){
+ const all=getBookLessons();
+ const lesson=all[id];
+ if(!lesson) return [];
+ const title=lesson.title;
+ const m=title.match(/Bài\s+(\d+)/i);
+ const num=m?Number(m[1]):0;
+ const R=(a,b)=>Math.floor(Math.random()*(b-a+1))+a;
+ const pick=(q,c,wrong,e)=>mcq(q,String(c),wrong.map(String),e);
+ const out=[];
+ for(let i=0;i<count;i++){
+  let a,b,c,q,e,w=[];
+  if(num<=2 || /số trong phạm vi 1 000|đơn vị, chục|số tròn|số có ba chữ số|viết số thành tổng|so sánh các số có ba chữ số/i.test(title)){
+   if(num===2){a=R(10,99);c=i%2?a+1:a-1;q=`Số liền ${i%2?"sau":"trước"} của ${a} là số nào?`;w=[c+2,c-2,a];e=`Số liền ${i%2?"sau":"trước"} của ${a} là ${c}.`;}
+   else if(num===1 || /đơn vị, chục|số có ba chữ số|viết số thành tổng/i.test(title)){a=R(100,999);let h=Math.floor(a/100),t=Math.floor(a/10)%10,u=a%10; if(/đơn vị, chục/i.test(title)){a=R(1,9)*100+R(0,9)*10+R(0,9);h=Math.floor(a/100);t=Math.floor(a/10)%10;u=a%10;} c=`${h} trăm, ${t} chục, ${u} đơn vị`;q=`Số ${a} gồm những hàng nào?`;w=[`${u} trăm, ${t} chục, ${h} đơn vị`,`${h} trăm, ${u} chục, ${t} đơn vị`,`${h} chục, ${t} đơn vị`];e=`${a} = ${h} trăm + ${t} chục + ${u} đơn vị.`;}
+   else {a=R(100,999);b=R(100,999);q=`Điền dấu thích hợp: ${a} ☐ ${b}`;c=a>b?">":a<b?"<":"=";w=[">","<","="].filter(x=>x!==c);e=`So sánh hàng trăm, rồi hàng chục và hàng đơn vị: ${a} ${c} ${b}.`;}
+  } else if(num>=37 && num<=45 || num>=71 && num===71){
+   if(num===37){a=R(2,5);b=R(2,5);c=a*b;q=`Có ${a} nhóm, mỗi nhóm ${b} đồ vật. Phép nhân nào phù hợp?`;c=`${a} × ${b} = ${c}`;w=[`${a} + ${b} = ${a+b}`,`${a} × ${b+1} = ${a*(b+1)}`,`${b} − ${a} = ${b-a}`];e=`Phép nhân biểu thị các nhóm bằng nhau: ${a} × ${b} = ${a*b}.`;}
+   else if(num===38){a=R(2,5);b=R(2,5);c=a*b;q=`Trong phép tính ${a} × ${b} = ${c}, tích là số nào?`;c=String(c);w=[String(a),String(b),String(a+b)];e=`Tích là kết quả phép nhân, ở đây bằng ${c}.`;}
+   else if(num===39||num===40){a=num===39?2:5;b=R(1,10);c=a*b;q=`Tính: ${a} × ${b} = ?`;w=[c+a,c-a,c+1];e=`Bảng nhân ${a}: ${a} × ${b} = ${c}.`;}
+   else if(num===41){a=R(2,5);b=R(2,5);c=a;q=`Có ${a*b} chiếc bánh chia đều cho ${b} bạn. Mỗi bạn được mấy chiếc?`;c=String(a);w=[String(b),String(a*b),String(a+1)];e=`${a*b} : ${b} = ${a} chiếc bánh mỗi bạn.`;}
+   else if(num===42){a=R(2,5);b=R(2,5);c=a*b;q=`Trong phép chia ${a*b} : ${a} = ${b}, số ${a*b} gọi là gì?`;c="Số bị chia";w=["Số chia","Thương","Tích"];e="Số đứng trước dấu chia là số bị chia.";}
+   else if(num===43||num===44){a=num===43?2:5;b=R(1,10);c=b;q=`Tính: ${a*b} : ${a} = ?`;w=[b+1,Math.max(0,b-1),a*b];e=`Bảng chia ${a}: ${a*b} : ${a} = ${b}.`;}
+   else {a=R(2,5);b=R(2,5);c=a*b;q=`Tính: ${a} × ${b} = ?`;w=[c+1,c-1,c+2];e=`${a} × ${b} = ${c}.`;}
+  } else if(num===15||num===17||num===18){
+   a=R(2,9);b=R(1,Math.min(8,10-a));const unit="kg";c=`${a+b} ${unit}`;q=`Một túi gạo nặng ${a} kg, túi khác nặng ${b} kg. Cả hai túi nặng bao nhiêu ki-lô-gam?`;w=[`${Math.abs(a-b)} kg`,`${a*b} kg`,`${a+b+1} kg`];e=`${a} + ${b} = ${a+b} kg.`;
+  } else if(num===16){
+   a=R(2,9);b=R(1,Math.min(8,10-a));c=`${a+b} l`;q=`Trong bình có ${a} l nước, rót thêm ${b} l. Có tất cả bao nhiêu lít nước?`;w=[`${Math.abs(a-b)} l`,`${a*b} l`,`${a+b+1} l`];e=`${a} + ${b} = ${a+b} l.`;
+  } else if(num>=19&&num<=24){
+   const isSub=num>=22;a=R(isSub?31:21,isSub?99:78);b=R(1,Math.min(29,isSub?a-1:99-a));c=isSub?a-b:a+b;q=`Tính: ${a} ${isSub?"−":"+"} ${b} = ?`;w=[c+1,Math.max(0,c-1),c+10];e=`${a} ${isSub?"−":"+"} ${b} = ${c}.`;
+  } else if(num>=59 && num<=63 || num===69 || num===70){
+   const isSub=(num===61||num===62||num===69&&i%2===1);
+   a=R(120,800);b=R(10,Math.min(99,isSub?a-1:999-a));c=isSub?a-b:a+b;
+   q=`Tính: ${a} ${isSub?"−":"+"} ${b} = ?`;w=[c+1,Math.max(0,c-1),c+10];e=`${a} ${isSub?"−":"+"} ${b} = ${c}.`;
+  } else if(num===48||num===49||num===50||num===51||num===52||num===53||num===54||num===68){
+   a=R(100,999);b=R(100,999);q=`Điền dấu thích hợp: ${a} ☐ ${b}`;c=a>b?">":a<b?"<":"=";w=[">","<","="].filter(x=>x!==c);e=`So sánh các số theo hàng trăm, hàng chục, hàng đơn vị: ${a} ${c} ${b}.`;
+  } else if(num===46||num===47||num===72){
+   const kind=i%2===0; q=kind?"Vật nào có dạng khối cầu?":"Khối trụ có những mặt cong nào?";c=kind?"Quả bóng":"Mặt cong";w=kind?["Hộp sữa hình hộp chữ nhật","Viên gạch hình hộp chữ nhật","Quyển sách"]:["Không có mặt cong","Chỉ có đỉnh","Có 4 cạnh"];e=kind?"Quả bóng có dạng khối cầu.":"Khối trụ có mặt cong và hai mặt đáy hình tròn.";
+  } else if(num===55||num===57||num===73){
+   a=R(1,9);q=`${a} m bằng bao nhiêu đề-xi-mét?`;c=a*10;w=[a*100,a*5,a+10];e=`1 m = 10 dm nên ${a} m = ${c} dm.`;
+  } else if(num===56){
+   const prices=[1000,2000,5000,10000,20000,50000];a=prices[R(0,prices.length-1)];b=prices[R(0,prices.length-1)];c=a+b;q=`Một món đồ giá ${a} đồng và món khác giá ${b} đồng. Cả hai giá bao nhiêu đồng?`;w=[Math.abs(a-b),c+1000,Math.max(a,b)];e=`${a} + ${b} = ${c} đồng.`;
+  } else if(num===64||num===65||num===67||num===74){
+   a=R(2,9);b=R(2,9);c=a+b;q=`Bảng kiểm đếm cho biết nhóm A có ${a} bạn, nhóm B có ${b} bạn. Cả hai nhóm có bao nhiêu bạn?`;w=[Math.abs(a-b),c+1,Math.max(a,b)];e=`Cộng số liệu của hai nhóm: ${a} + ${b} = ${c}.`;
+  } else if(num===66){
+   const cases=[["Mặt trời mọc ở hướng Đông","Chắc chắn"],["Gieo một xúc xắc thường và được mặt 8","Không thể"],["Ngày mai trời mưa","Có thể"]];
+   const [event,ans]=cases[i%cases.length];q=`${event}. Điều này thuộc khả năng nào?`;c=ans;w=["Chắc chắn","Có thể","Không thể"].filter(x=>x!==ans);e=`${event}: ${ans.toLowerCase()}.`;
+  } else if(num>=25&&num<=28 || num===34||num===72){
+   q="Hình tứ giác có bao nhiêu cạnh?";c="4 cạnh";w=["3 cạnh","5 cạnh","6 cạnh"];e="Hình tứ giác có 4 cạnh.";
+  } else if(num>=29&&num<=32 || num===35||num===58||num===73){
+   a=R(1,11);b=R(1,5);c=(a+b-1)%12+1;q=`Bây giờ là ${a} giờ. Sau ${b} giờ là mấy giờ?`;c=`${c} giờ`;w=[`${a} giờ`,`${Math.max(1,a-1)} giờ`,`${(a+b+1-1)%12+1} giờ`];e=`Cộng thêm ${b} giờ, ta được ${c}.`;
+  } else if(num>=7&&num<=14){
+   a=R(8,19);b=R(2,9);const sub=num===11||num===12;c=sub?a-b:a+b;q=`Tính: ${a} ${sub?"−":"+"} ${b} = ?`;w=[c+1,Math.max(0,c-1),c+2];e=`${a} ${sub?"−":"+"} ${b} = ${c}.`;
+  } else {
+   a=R(20,90);b=R(1,Math.min(30,99-a));c=a+b;q=`Tính: ${a} + ${b} = ?`;w=[c+1,c-1,c+2];e=`${a} + ${b} = ${c}.`;
+  }
+  out.push(pick(q,c,w,e));
+ }
+ return out;
+}
+
 const weeklyPlan = [
  {w:1,sem:1,title:"Khởi động năm học",focus:"Ôn kiến thức nền tảng và nề nếp học tập.",math:0,mathFocus:"Ôn số đến 100, đọc viết số, số liền trước và liền sau.",viet:0,vietFocus:"Đọc đoạn văn ngắn, tìm nhân vật và sự việc chính."},
  {w:2,sem:1,title:"Số và cách diễn đạt",focus:"Đọc kỹ yêu cầu, trình bày câu trả lời rõ ràng.",math:0,mathFocus:"So sánh số, xếp số theo thứ tự.",viet:1,vietFocus:"Nhận biết từ chỉ sự vật, hoạt động và đặc điểm."},
