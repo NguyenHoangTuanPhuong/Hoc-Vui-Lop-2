@@ -610,17 +610,70 @@ function makeDynamicMathQuestion(topicIndex){
   const shuffled=shuffleArray(vals.slice(0,4));
   return {q,a:shuffled,c:shuffled.indexOf(correct),e};
 }
+
+function createVietLessonQuestions(id,count){
+ const lessons=getBookLessons();
+ const lesson=lessons[id]||{title:"Bài Tiếng Việt"};
+ const title=lesson.title.toLowerCase();
+ const banksForLesson=[
+  [
+   {q:"Đọc đoạn văn: “Minh đến lớp đúng giờ. Em chào cô giáo, chào các bạn rồi ngồi ngay ngắn vào chỗ.” Minh làm gì khi đến lớp?",a:["Chạy ra sân chơi","Chào cô giáo và các bạn","Đi về nhà","Ngủ trong lớp"],c:1,e:"Minh chào cô giáo và các bạn khi đến lớp."},
+   {q:"Từ nào chỉ người?",a:["học sinh","đọc sách","xanh tươi","chạy nhanh"],c:0,e:"“Học sinh” là từ chỉ người."},
+   {q:"Câu nào viết đúng?",a:["em là học sinh lớp hai.","Em là học sinh lớp hai.","Em Là Học Sinh lớp hai.","em Là học sinh lớp hai."],c:1,e:"Đầu câu cần viết hoa chữ cái đầu tiên."},
+   {q:"Khi gặp thầy cô, em nên nói lời nào?",a:["Tránh ra!","Chào cô ạ!","Không nói gì cũng được","Đi đi!"],c:1,e:"Lời chào lễ phép thể hiện sự tôn trọng."},
+   {q:"Từ nào có nghĩa gần với “vui vẻ”?",a:["buồn bã","hớn hở","mệt mỏi","lo lắng"],c:1,e:"“Hớn hở” gần nghĩa với “vui vẻ”."}
+  ],
+  [
+   {q:"Đọc đoạn văn: “Buổi sáng, Hà cùng mẹ tưới cây. Những giọt nước long lanh trên lá.” Hà làm gì cùng mẹ?",a:["Tưới cây","Quét sân trường","Nấu cơm","Đọc truyện"],c:0,e:"Hà cùng mẹ tưới cây."},
+   {q:"Từ nào chỉ hoạt động?",a:["xinh xắn","tưới cây","bông hoa","màu đỏ"],c:1,e:"“Tưới cây” là hoạt động."},
+   {q:"Từ nào chỉ đặc điểm?",a:["chạy","đọc","long lanh","cái lá"],c:2,e:"“Long lanh” chỉ đặc điểm."},
+   {q:"Câu hỏi thường kết thúc bằng dấu nào?",a:["Dấu chấm hỏi (?)","Dấu phẩy (,)","Dấu chấm (.)","Dấu hai chấm (:)"],c:0,e:"Câu hỏi thường kết thúc bằng dấu chấm hỏi."},
+   {q:"Chọn câu kể đúng.",a:["Những giọt nước long lanh trên lá.","Long lanh lá trên nước.","Trên long lanh những nước lá.","Nước lá những trên long lanh."],c:0,e:"Câu kể cần sắp xếp từ ngữ rõ nghĩa."}
+  ],
+  [
+   {q:"Đọc đoạn văn: “Bình nhặt quả bóng rồi chuyền cho bạn. Hai bạn vui vẻ chơi cùng nhau.” Bình làm gì với quả bóng?",a:["Cất vào cặp","Chuyền cho bạn","Ném xuống ao","Mang về nhà"],c:1,e:"Bình nhặt quả bóng rồi chuyền cho bạn."},
+   {q:"Từ nào chỉ đồ vật?",a:["chạy","quả bóng","vui vẻ","nhảy"],c:1,e:"“Quả bóng” là từ chỉ sự vật."},
+   {q:"Từ nào chỉ hoạt động?",a:["bạn nhỏ","chuyền bóng","xinh đẹp","sân rộng"],c:1,e:"“Chuyền bóng” chỉ hoạt động."},
+   {q:"Điền dấu thích hợp: “Bạn có muốn chơi cùng mình không__”",a:["?","!",".",","],c:0,e:"Đây là câu hỏi nên dùng dấu chấm hỏi."},
+   {q:"Câu nào thể hiện lời mời lịch sự?",a:["Chơi với mình nhé!","Đi chỗ khác!","Đưa đây!","Không cho bạn chơi."],c:0,e:"Lời mời nên thân thiện và lịch sự."}
+  ],
+  [
+   {q:"Đọc đoạn văn: “Sau giờ học, An kể cho bà nghe chuyện ở lớp. Bà chăm chú lắng nghe và mỉm cười.” An làm gì sau giờ học?",a:["Kể chuyện ở lớp cho bà nghe","Đi mua sách","Tưới rau","Ngủ ngay"],c:0,e:"An kể cho bà nghe chuyện ở lớp."},
+   {q:"Từ nào chỉ người thân trong gia đình?",a:["chiếc bàn","bà","đọc","xanh"],c:1,e:"“Bà” là từ chỉ người thân."},
+   {q:"Từ nào chỉ hoạt động?",a:["chăm chú","mỉm cười","người thân","câu chuyện"],c:1,e:"“Mỉm cười” chỉ hoạt động."},
+   {q:"Chọn câu viết đúng.",a:["Bà chăm chú lắng nghe.","bà chăm chú lắng nghe.","Bà Chăm Chú lắng nghe.","bà Chăm chú Lắng nghe."],c:0,e:"Đầu câu viết hoa, các từ còn lại viết thường theo quy tắc."},
+   {q:"Khi người thân giúp đỡ, em nên nói:",a:["Mặc kệ!","Cảm ơn ạ!","Không cần!","Đi đi!"],c:1,e:"Nói lời cảm ơn thể hiện sự lễ phép."}
+  ]
+ ];
+ let group=0;
+ if(/bạn|bóng|chơi|trò chơi|chong chóng/.test(title)) group=2;
+ else if(/bà|ông|mẹ|gia đình|yêu thương|người thân|bố|cha/.test(title)) group=3;
+ else if(/cây|hoa|thiên nhiên|mùa|con vật|chim|sông|suối/.test(title)) group=1;
+ else if(/ngày hôm qua|ngày hôm nay|học sinh|lớp 2|làm việc|niềm vui|đọc/.test(title)) group=0;
+ const source=banksForLesson[group];
+ const result=[];
+ for(let i=0;i<count;i++){
+  const q=source[i%source.length];
+  result.push({q:q.q,a:[...q.a],c:q.c,e:q.e});
+ }
+ return shuffleArray(result);
+}
+
 function generateNewQuiz(){renderQuiz(true);}
 function renderQuiz(generate=false){
   submitted=false;
   const topic=banks[subject][topicIndex];
-  const bookLesson=activeBookLesson!==null&&subject==="math"?getBookLessons()[activeBookLesson]:null;
+  const bookLesson=activeBookLesson!==null?getBookLessons()[activeBookLesson]:null;
   document.getElementById("quizTitle").textContent=bookLesson?"📘 "+bookLesson.title:(subject==="math"?"🔢 Toán: ":"📖 Tiếng Việt: ")+topic.name;
   document.getElementById("quizDesc").textContent=bookLesson?"Bài tập tự biên soạn theo kiến thức của bài học này.":topic.desc;
   document.getElementById("result").style.display="none";
   const root=document.getElementById("questions");root.innerHTML="";
   const count=Number(document.getElementById("questionCount")?.value||5);
-  let pool=bookLesson?(generate?createBookLessonQuestions(activeBookLesson,count):createBookLessonQuestions(activeBookLesson,count)): (generate?shuffleArray(topic.qs):[...topic.qs]);
+  let pool=bookLesson
+    ? (subject==="math"
+        ? createBookLessonQuestions(activeBookLesson,count)
+        : createVietLessonQuestions(activeBookLesson,count))
+    : (generate?shuffleArray(topic.qs):[...topic.qs]);
   if(generate && subject==="math" && !bookLesson){
     const dynamicCount=Math.min(count, Math.max(0,count-2));
     pool=[...shuffleArray(topic.qs).slice(0,Math.max(0,count-dynamicCount)),...Array.from({length:dynamicCount},()=>makeDynamicMathQuestion(topicIndex))];
