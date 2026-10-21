@@ -83,20 +83,41 @@ h2{font-size:23px}
 #bookLessons .controls{gap:8px}
 @media(max-width:520px){.subject-tab{min-height:58px;font-size:18px!important}}
 
-/* semester exam styles */
-
-.exam-subjects{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.exam-subjects button{min-height:50px;font-size:17px}
-.exam-question{border:1px solid #dbeafe;border-radius:14px;padding:14px;margin:12px 0;background:#fff}
-.exam-question h4{margin:0 0 10px;line-height:1.5}
-.exam-options{display:grid;gap:8px}
-.exam-option{display:flex;gap:10px;align-items:flex-start;border:1px solid #e2e8f0;border-radius:10px;padding:10px;cursor:pointer}
-.exam-option input{margin-top:4px;flex-shrink:0}
-.exam-feedback{margin-top:8px;font-size:14px;padding:9px;border-radius:9px}
-.exam-feedback.good{background:#dcfce7;color:#166534}
-.exam-feedback.bad{background:#fee2e2;color:#991b1b}
-.exam-score{font-size:23px;font-weight:800;color:#1d4ed8;margin:12px 0}
-@media(max-width:520px){.exam-subjects{grid-template-columns:1fr}.exam-question{padding:11px}}
+/* Giao diện thi thử thân thiện với học sinh lớp 2 */
+#semesterExam{background:linear-gradient(180deg,#fff 0%,#f8fbff 100%);border:2px solid #dbeafe}
+#semesterExam>h2{font-size:25px;color:#1d4ed8}
+.exam-intro{display:flex;gap:12px;align-items:flex-start;background:#fff7d6;border:2px solid #fde68a;border-radius:16px;padding:14px;margin:12px 0}
+.exam-intro .mascot{font-size:36px;line-height:1.2;flex-shrink:0}
+.exam-intro p{margin:0;color:#713f12;font-size:16px}
+.exam-subjects{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.exam-subjects button{min-height:62px;font-size:19px;font-weight:800;border-radius:16px}
+#examMathBtn{background:#dbeafe;color:#1d4ed8;border:2px solid #93c5fd}
+#examVietBtn{background:#ffedd5;color:#9a3412;border:2px solid #fdba74}
+#examMathBtn.primary,#examVietBtn.primary{box-shadow:0 0 0 3px #bfdbfe;transform:translateY(-1px)}
+#examHeading{font-size:22px;line-height:1.35}
+#examInstructions{font-size:16px;line-height:1.6}
+.exam-settings{display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:#eff6ff;border-radius:14px;padding:12px;margin:12px 0}
+.exam-settings label{font-weight:800}
+.exam-settings select{font:inherit;font-size:17px;padding:10px 12px;border:2px solid #bfdbfe;border-radius:12px;background:#fff;color:#172554;min-height:48px}
+.exam-progress-wrap{background:#e2e8f0;height:12px;border-radius:999px;overflow:hidden;margin:8px 0 4px}
+.exam-progress-bar{height:100%;width:0;background:linear-gradient(90deg,#22c55e,#84cc16);border-radius:999px;transition:width .2s}
+.exam-progress-text{font-size:15px;font-weight:800;color:#334155;margin:4px 0 12px}
+.exam-question{border:2px solid #dbeafe;border-radius:18px;padding:16px;margin:14px 0;background:#fff;box-shadow:0 3px 0 #eff6ff}
+.exam-question h4{margin:0 0 12px;line-height:1.55;font-size:19px;color:#172554}
+.exam-question .q-number{display:inline-flex;align-items:center;justify-content:center;min-width:34px;height:34px;border-radius:11px;background:#dbeafe;color:#1d4ed8;font-size:16px;margin-right:6px}
+.exam-options{display:grid;gap:9px}
+.exam-option{display:flex;gap:12px;align-items:center;border:2px solid #e2e8f0;border-radius:14px;padding:13px;cursor:pointer;background:#fff;min-height:54px;font-size:18px;line-height:1.4;transition:background .12s,border-color .12s}
+.exam-option:hover{border-color:#93c5fd;background:#f8fbff}
+.exam-option:has(input:checked){border-color:#3b82f6;background:#eff6ff}
+.exam-option input{width:21px;height:21px;margin:0;flex-shrink:0;accent-color:#2563eb}
+.exam-feedback{margin-top:10px;font-size:16px;line-height:1.5;padding:12px;border-radius:12px}
+.exam-feedback.good{background:#dcfce7;color:#166534;border:1px solid #86efac}
+.exam-feedback.bad{background:#fff1f2;color:#9f1239;border:1px solid #fda4af}
+.exam-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px}
+.exam-actions button{min-height:56px;font-size:18px;font-weight:800}
+.exam-score{font-size:22px;font-weight:800;color:#1d4ed8;background:#eff6ff;border:2px solid #bfdbfe;border-radius:16px;padding:16px;margin:14px 0;line-height:1.5}
+.exam-encourage{font-size:17px;font-weight:700;color:#166534;margin-top:8px}
+@media(max-width:520px){.exam-subjects{grid-template-columns:1fr}.exam-question{padding:12px}.exam-question h4{font-size:18px}.exam-option{font-size:17px;padding:12px}.exam-actions{grid-template-columns:1fr}.exam-settings{align-items:stretch;flex-direction:column}.exam-settings select{width:100%}}
 
 </style>
 </head>
@@ -167,15 +188,16 @@ h2{font-size:23px}
 
 
 <section class="panel" id="semesterExam">
-  <h2>📝 Đề tham khảo thi học kì I</h2>
-  <p class="small">Làm thử như khi kiểm tra ở lớp. Chọn môn, bấm bắt đầu, hoàn thành câu hỏi rồi nộp bài để xem điểm và lời giải.</p>
-  <div class="controls exam-subjects">
-    <button type="button" class="primary" id="examMathBtn" onclick="startSemesterExam('math')">🔢 Đề Toán</button>
-    <button type="button" class="secondary" id="examVietBtn" onclick="startSemesterExam('viet')">📚 Đề Tiếng Việt</button>
+  <h2>🌟 Góc thử sức học kì I</h2>
+  <div class="exam-intro"><span class="mascot" aria-hidden="true">🦉</span><p><strong>Em làm bài thật bình tĩnh nhé!</strong><br>Đọc câu hỏi, chọn một đáp án. Làm xong, bấm nút xanh để xem kết quả và lời giải.</p></div>
+  <div class="controls exam-subjects" role="group" aria-label="Chọn môn thi thử">
+    <button type="button" class="primary" id="examMathBtn" onclick="startSemesterExam('math')">🔢 Toán vui</button>
+    <button type="button" class="secondary" id="examVietBtn" onclick="startSemesterExam('viet')">📚 Tiếng Việt</button>
   </div>
+  <div class="exam-settings"><label for="examQuestionCount">Em muốn làm bao nhiêu câu?</label><select id="examQuestionCount"><option value="5">5 câu · Làm quen</option><option value="10" selected>10 câu · Thử sức</option></select></div>
   <div class="week-card">
-    <h3 id="examHeading">Chọn một môn để bắt đầu</h3>
-    <p id="examInstructions">Đề mẫu tự biên soạn theo các nội dung học kì I trong mục lục bạn cung cấp. Đây là đề tham khảo, không phải đề thi chính thức của trường.</p>
+    <h3 id="examHeading">Chọn môn em thích để bắt đầu nhé!</h3>
+    <p id="examInstructions">Đây là đề tham khảo do website tự biên soạn, không phải đề thi chính thức của trường.</p>
     <div id="examWorkArea"></div>
   </div>
 </section>
@@ -870,10 +892,10 @@ const semesterExamBanks = {
  vietMore.forEach(x=>add(viet,x[0],x[1],x[2],x[3]));
 })();
 function rndExam(min,max){return Math.floor(Math.random()*(max-min+1))+min;}
-function pickSemesterExam(which){
+function pickSemesterExam(which,count=10){
  const pool=[...semesterExamBanks[which]];
  for(let i=pool.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[pool[i],pool[j]]=[pool[j],pool[i]];}
- return pool.slice(0,10).map(item=>{
+ return pool.slice(0,Math.min(count,pool.length)).map(item=>{
   const correct=item.a[item.c];const answers=[...item.a];
   for(let i=answers.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[answers[i],answers[j]]=[answers[j],answers[i]];}
   return {...item,a:answers,c:answers.indexOf(correct)};
@@ -888,29 +910,39 @@ function startSemesterExam(which){
  document.getElementById("examVietBtn").className=isMath?"secondary":"primary";
  document.getElementById("examHeading").textContent=isMath?"Đề tham khảo Toán – Học kì I":"Đề tham khảo Tiếng Việt – Học kì I";
  document.getElementById("examInstructions").textContent=isMath
-  ?"Gợi ý thời gian: 35 phút · 10 câu trắc nghiệm · Mỗi câu 1 điểm. Mỗi lượt chọn ngẫu nhiên 10 câu từ ngân hàng Toán, đồng thời đảo thứ tự đáp án."
-  :"Gợi ý thời gian: 35 phút · 10 câu trắc nghiệm · Mỗi câu 1 điểm. Mỗi lượt chọn ngẫu nhiên 10 câu từ ngân hàng Tiếng Việt, đồng thời đảo thứ tự đáp án.";
+  ?"Đề Toán có câu hỏi về số, phép tính và bài toán ngắn. Em đọc kỹ rồi chọn một đáp án nhé!"
+  :"Đề Tiếng Việt có câu hỏi về đọc hiểu, từ ngữ và câu. Em đọc kỹ rồi chọn một đáp án nhé!";
  const root=document.getElementById("examWorkArea");
  root.innerHTML="";
- const examQuestions=pickSemesterExam(which);
+ const requestedCount=Number(document.getElementById("examQuestionCount").value)||10;
+ const examQuestions=pickSemesterExam(which,requestedCount);
  const form=document.createElement("form");form.id="semesterExamForm";
+ const progressText=document.createElement("div");progressText.className="exam-progress-text";progressText.id="examProgressText";progressText.textContent=`Em đã chọn 0/${examQuestions.length} câu`;
+ const progressWrap=document.createElement("div");progressWrap.className="exam-progress-wrap";progressWrap.setAttribute("role","progressbar");progressWrap.setAttribute("aria-valuemin","0");progressWrap.setAttribute("aria-valuemax",String(examQuestions.length));progressWrap.setAttribute("aria-valuenow","0");
+ const progressBar=document.createElement("div");progressBar.className="exam-progress-bar";progressWrap.appendChild(progressBar);form.append(progressText,progressWrap);
  examQuestions.forEach((item,i)=>{
   const card=document.createElement("div");card.className="exam-question";
-  const title=document.createElement("h4");title.textContent=`Câu ${i+1}. ${item.q}`;card.appendChild(title);
+  const title=document.createElement("h4");const number=document.createElement("span");number.className="q-number";number.textContent=String(i+1);title.append(number,document.createTextNode(item.q));card.appendChild(title);
   const opts=document.createElement("div");opts.className="exam-options";
   item.a.forEach((answer,j)=>{
    const label=document.createElement("label");label.className="exam-option";
    const radio=document.createElement("input");radio.type="radio";radio.name="examq"+i;radio.value=String(j);
    const span=document.createElement("span");span.textContent=answer;
    label.append(radio,span);opts.appendChild(label);
+   radio.addEventListener("change",()=>{
+    const answeredNow=examQuestions.reduce((n,_,k)=>n+(form.querySelector(`input[name="examq${k}"]:checked`)?1:0),0);
+    progressText.textContent=`Em đã chọn ${answeredNow}/${examQuestions.length} câu`;
+    progressBar.style.width=`${answeredNow/examQuestions.length*100}%`;
+    progressWrap.setAttribute("aria-valuenow",String(answeredNow));
+   });
   });
   card.appendChild(opts);
   const fb=document.createElement("div");fb.className="exam-feedback";fb.id="examfb"+i;fb.style.display="none";card.appendChild(fb);
   form.appendChild(card);
  });
- const actions=document.createElement("div");actions.className="controls";
- const submit=document.createElement("button");submit.type="submit";submit.className="primary";submit.textContent="Nộp bài và xem điểm ✓";
- const reset=document.createElement("button");reset.type="button";reset.className="secondary";reset.textContent="Đề ngẫu nhiên khác ↻";reset.onclick=()=>startSemesterExam(which);
+ const actions=document.createElement("div");actions.className="exam-actions";
+ const submit=document.createElement("button");submit.type="submit";submit.className="primary";submit.textContent="🌟 Xem kết quả";
+ const reset=document.createElement("button");reset.type="button";reset.className="secondary";reset.textContent="🔄 Làm đề khác";reset.onclick=()=>startSemesterExam(which);
  actions.append(submit,reset);form.appendChild(actions);
  const score=document.createElement("div");score.className="exam-score";score.id="examScore";score.style.display="none";
  form.addEventListener("submit",function(ev){
@@ -923,10 +955,15 @@ function startSemesterExam(which){
    if(chosen&&Number(chosen.value)===item.c){scoreValue++;fb.className="exam-feedback good";fb.textContent="Đúng! "+item.e;}
    else{fb.className="exam-feedback bad";fb.textContent=(chosen?"Chưa đúng. ":"Chưa chọn đáp án. ")+"Đáp án: "+item.a[item.c]+". "+item.e;}
   });
-  score.textContent=`Kết quả: ${scoreValue}/10 điểm · Đã trả lời ${answered}/10 câu`;
+  const total=examQuestions.length;
+  const cheer=scoreValue===total?"Tuyệt vời! Em làm đúng tất cả các câu! 🌈":scoreValue>=Math.ceil(total*.7)?"Giỏi lắm! Em đã cố gắng rất tốt. ⭐":"Cố gắng thêm nhé! Xem lời giải rồi thử một đề mới nào. 💪";
+  score.innerHTML=`<div>🌟 Em được ${scoreValue}/${total} điểm</div><div class="exam-encourage">${cheer}</div><div style="font-size:15px;font-weight:500;margin-top:6px">Em đã trả lời ${answered}/${total} câu.</div>`;
   score.style.display="block";examSubmitted=true;
   form.querySelectorAll("input").forEach(input=>input.disabled=true);
   submit.disabled=true;
+  progressText.textContent=`Hoàn thành ${answered}/${total} câu`;
+  progressBar.style.width=`${answered/total*100}%`;
+  progressWrap.setAttribute("aria-valuenow",String(answered));
  });
  root.appendChild(score);root.appendChild(form);
  root.scrollIntoView({behavior:"smooth",block:"start"});
