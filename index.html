@@ -180,6 +180,24 @@ main>section:not(#homeMenu){display:none}
   .site-header .school-line{border-radius:14px;line-height:1.4}
   .site-header .title-break{display:block}
 }
+
+/* Hiệu ứng nộp bài và điểm số vui nhộn */
+#result{position:relative;overflow:hidden;animation:resultPop .55s cubic-bezier(.2,.9,.3,1.25)}
+#score.score-pop{animation:scoreBounce .7s ease;color:#15803d}
+#result.perfect{background:linear-gradient(135deg,#fef9c3,#dcfce7,#dbeafe);border:2px solid #86efac}
+#result.good{background:linear-gradient(135deg,#eff6ff,#f0fdf4);border:2px solid #bfdbfe}
+#result.try-again{background:linear-gradient(135deg,#fff7ed,#fefce8);border:2px solid #fed7aa}
+#result .reward{font-size:46px;line-height:1.25;animation:rewardWiggle 1s ease-in-out infinite alternate}
+#result .score-stars{font-size:26px;letter-spacing:4px;margin:4px 0 8px;animation:starGlow 1.2s ease-in-out infinite alternate}
+#result .score-message{font-size:18px;font-weight:800;margin:6px 0;color:#1e3a8a}
+.confetti-piece{position:fixed;top:-18px;width:10px;height:14px;z-index:9999;pointer-events:none;animation:confettiFall 1.8s ease-in forwards;border-radius:3px}
+@keyframes resultPop{0%{opacity:.25;transform:translateY(18px) scale(.96)}70%{transform:translateY(-3px) scale(1.01)}100%{opacity:1;transform:none}}
+@keyframes scoreBounce{0%{transform:scale(.55)}65%{transform:scale(1.18)}100%{transform:scale(1)}}
+@keyframes rewardWiggle{from{transform:rotate(-7deg) scale(.96)}to{transform:rotate(7deg) scale(1.06)}}
+@keyframes starGlow{from{opacity:.7;transform:scale(.98)}to{opacity:1;transform:scale(1.04)}}
+@keyframes confettiFall{to{transform:translate(var(--drift),105vh) rotate(720deg);opacity:.1}}
+@media(prefers-reduced-motion:reduce){#result,#score.score-pop,#result .reward,#result .score-stars,.confetti-piece{animation:none!important}}
+
 </style>
 </head>
 <body>
@@ -1212,6 +1230,16 @@ function renderHistory(){
   history.slice(0,10).forEach(item=>{const row=document.createElement("div");row.className="history-item";const left=document.createElement("div");const title=document.createElement("strong");title.textContent=`${item.subjectName} · ${item.topic}`;const date=document.createElement("div");date.className="small";date.textContent=item.date;left.append(title,date);const right=document.createElement("strong");right.textContent=`${item.score}/${item.total}`;row.append(left,right);list.appendChild(row);});
 }
 function clearProgress(){if(confirm("Xóa toàn bộ nhật ký luyện tập đã lưu trên trình duyệt này?")){localStorage.removeItem(HISTORY_KEY);renderHistory();}}
+function launchConfetti(count=24){
+  const colors=["#f97316","#22c55e","#3b82f6","#e879f9","#facc15","#fb7185"];
+  for(let i=0;i<count;i++){
+    const piece=document.createElement("span");piece.className="confetti-piece";
+    piece.style.left=(Math.random()*100)+"vw";piece.style.background=colors[i%colors.length];
+    piece.style.setProperty("--drift",((Math.random()-.5)*220)+"px");
+    piece.style.animationDelay=(Math.random()*.45)+"s";piece.style.animationDuration=(1.3+Math.random()*.9)+"s";
+    document.body.appendChild(piece);setTimeout(()=>piece.remove(),2600);
+  }
+}
 document.getElementById("quizForm").addEventListener("submit",e=>{
   e.preventDefault();if(submitted)return;
   const qs=currentQuestions;let score=0,missing=false;
@@ -1223,8 +1251,25 @@ document.getElementById("quizForm").addEventListener("submit",e=>{
   });
   if(missing){document.getElementById("resultText").textContent="Em hãy xem lại những câu chưa chọn đáp án nhé.";}
   else{document.getElementById("resultText").textContent=score===qs.length?"Tuyệt vời! Em đã trả lời đúng tất cả.":score>=Math.ceil(qs.length*.6)?"Khá lắm! Xem lời giải các câu sai rồi thử lại nhé.":"Không sao cả, mình cùng xem lời giải và luyện tập thêm nhé.";}
-  document.getElementById("score").textContent=score+"/"+qs.length+" điểm";
-  document.getElementById("result").style.display="block";submitted=true;
+  const resultPanel=document.getElementById("result");
+  const scoreEl=document.getElementById("score");
+  const percent=Math.round(score/qs.length*100);
+  let reward="💪", stars="⭐", message="Mình cùng xem lại câu sai và thử thêm lần nữa nhé!", mood="try-again";
+  if(percent===100){reward="🏆🎉";stars="🌟 🌟 🌟";message="Xuất sắc! Con đã chinh phục tất cả câu hỏi!";mood="perfect";}
+  else if(percent>=80){reward="🥇😄";stars="🌟 🌟 ⭐";message="Giỏi lắm! Con đang tiến bộ từng ngày!";mood="perfect";}
+  else if(percent>=60){reward="🎉😊";stars="🌟 ⭐ ⭐";message="Khá lắm! Cố gắng thêm một chút nữa nhé!";mood="good";}
+  else if(percent>=40){reward="🌈🙂";stars="⭐ ⭐";message="Con đã cố gắng rồi! Xem lời giải để hiểu hơn nhé.";mood="good";}
+  resultPanel.classList.remove("perfect","good","try-again");resultPanel.classList.add(mood);
+  resultPanel.querySelector(".reward")?.remove();resultPanel.querySelector(".score-stars")?.remove();resultPanel.querySelector(".score-message")?.remove();
+  const rewardEl=document.createElement("div");rewardEl.className="reward";rewardEl.textContent=reward;
+  const starsEl=document.createElement("div");starsEl.className="score-stars";starsEl.textContent=stars;
+  const messageEl=document.createElement("div");messageEl.className="score-message";messageEl.textContent=message;
+  resultPanel.insertBefore(rewardEl,resultPanel.querySelector("h2"));
+  resultPanel.insertBefore(starsEl,scoreEl);resultPanel.insertBefore(messageEl,document.getElementById("resultText"));
+  scoreEl.textContent=score+"/"+qs.length+" điểm · "+percent+"%";
+  scoreEl.classList.remove("score-pop");void scoreEl.offsetWidth;scoreEl.classList.add("score-pop");
+  resultPanel.style.display="block";submitted=true;
+  if(percent>=60) launchConfetti(percent===100?42:22);
   document.querySelectorAll("#questions input").forEach(x=>x.disabled=true);
   document.querySelector("#quizForm button[type=submit]").disabled=true;
   if(!missing){const historyTopic=(typeof activeBookLesson!=="undefined"&&activeBookLesson!==null?getBookLessons()[activeBookLesson].title:typeof activeWeek!=="undefined"&&activeWeek?`Tuần ${activeWeek} · ${banks[subject][topicIndex].name}`:banks[subject][topicIndex].name);saveHistory({subjectName:subject==="math"?"Toán":"Tiếng Việt",topic:historyTopic,score,total:qs.length,date:new Date().toLocaleString("vi-VN")});}
