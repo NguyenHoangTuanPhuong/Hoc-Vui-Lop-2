@@ -1647,9 +1647,11 @@ const semesterExamBanks = {
 function rndExam(min,max){return Math.floor(Math.random()*(max-min+1))+min;}
 function pickSemesterExam(which,count=10){
  // Đề thi thử lấy câu từ ngân hàng theo chủ đề, cộng câu biến thể mới; không chỉ đảo thứ tự 10 câu cố định.
- const pool=[...semesterExamBanks[which],...banks[which].flatMap(topic=>topic.qs)];
+ let pool=[...semesterExamBanks[which],...banks[which].flatMap(topic=>topic.qs)];
  if(which==='math'){
    for(let i=0;i<24;i++)pool.push(makeDynamicMathQuestion(rnd(0,banks.math.length-1)));
+   // Học kì I hiện chưa học phép nhân/chia: loại các câu này khỏi đề tham khảo.
+   pool=pool.filter(item=>!/[×÷]/.test(String(item?.q||""))&&!/(phép nhân|phép chia|nhân với|chia cho|bảng nhân|bảng chia)/i.test(String(item?.q||"")));
  }else{
    const lessonCount=Math.min(8,getBookLessons().length);
    for(let id=0;id<lessonCount;id++)pool.push(...createVietLessonQuestions(id,8));
