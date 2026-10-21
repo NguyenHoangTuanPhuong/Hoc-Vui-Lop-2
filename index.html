@@ -193,7 +193,8 @@ main>section:not(#homeMenu){display:none}
   <section class="panel" id="homeMenu">
     <h2>👋 Trúc Giang muốn học gì hôm nay?</h2>
     <p class="small menu-intro">Con chọn một mục bên dưới để bắt đầu nhé!</p>
-    <button class="menu-card" onclick="openMainSection('bookLessons')"><span class="menu-icon">📘</span><strong>Học theo bài</strong><small>Chọn Toán hoặc Tiếng Việt</small></button>
+    <button class="menu-card" onclick="openBookSubject('math')"><span class="menu-icon">🔢</span><strong>Toán</strong><small>Chọn học kì và bài Toán cần luyện</small></button>
+    <button class="menu-card" onclick="openBookSubject('viet')"><span class="menu-icon">📚</span><strong>Tiếng Việt</strong><small>Chọn học kì và bài Tiếng Việt cần luyện</small></button>
     <button class="menu-card" onclick="openMainSection('semesterExam')"><span class="menu-icon">🌟</span><strong>Đề thi học kì tham khảo</strong><small>Làm đề và xem điểm</small></button>
     <button class="menu-card" onclick="openMainSection('progressPanel')"><span class="menu-icon">🏆</span><strong>Kết quả của con</strong><small>Xem những lần đã làm</small></button>
     <button class="menu-card" onclick="openMainSection('tipsPanel')"><span class="menu-icon">💡</span><strong>Mẹo học tốt</strong><small>Mẹo nhỏ cho con</small></button>
@@ -201,11 +202,7 @@ main>section:not(#homeMenu){display:none}
   <section class="panel" id="bookLessons">
     <button class="back-home" type="button" onclick="openMainSection('homeMenu')">🏠 Về trang chủ</button>
   <h2 id="lessonPickerTitle">📘 Chọn bài em muốn luyện</h2>
-    <p class="small">① Chọn môn học · ② Chọn bài · ③ Bấm nút xanh để bắt đầu nhé!</p>
-    <div class="controls subject-toggle" role="group" aria-label="Chọn môn học">
-      <button type="button" class="primary subject-tab active" id="mathTab" onclick="switchBookSubject('math')">🔢 Toán</button>
-      <button type="button" class="secondary subject-tab" id="vietTab" onclick="switchBookSubject('viet')">📚 Tiếng Việt</button>
-    </div>
+    <p class="small">① Chọn học kì · ② Chọn chủ điểm và bài · ③ Bấm nút xanh để bắt đầu nhé!</p>
     <div class="controls">
       <label for="bookSemester">① Chọn học kì</label>
       <select id="bookSemester" class="chip" onchange="switchBookSemester(this.value)"><option value="1">Học kì 1</option><option value="2">Học kì 2</option></select>
@@ -532,6 +529,7 @@ let bookSubject = "math";
 let bookSemester = 1;
 function switchBookSemester(value){ bookSemester=Number(value)||1; activeBookLesson=null; initBookLessons(); }
 function currentBookChapters(){ return bookSubject === "math" ? (bookSemester===1?bookOneChapters:bookTwoChapters) : (bookSemester===1?vietOneChapters:vietTwoChapters); }
+function openBookSubject(which){ openMainSection("bookLessons"); switchBookSubject(which); }
 function switchBookSubject(which){
  bookSubject = which;
  const math = which === "math";
