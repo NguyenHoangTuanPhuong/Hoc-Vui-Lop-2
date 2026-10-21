@@ -595,23 +595,81 @@ function mcq(q,correct,others,e){
  return {q,a:shuffled,c:shuffled.indexOf(correctText),e};
 }
 function createBookLessonQuestions(id,count){
- const qs=[]; const rndInt=(a,b)=>Math.floor(Math.random()*(b-a+1))+a;
+ // Bộ câu hỏi Toán được chia theo đúng mạch kiến thức của từng bài trong danh sách học kì I.
+ // id là chỉ số bài 0-based trong getBookLessons().
+ const qs=[];
+ const R=(a,b)=>Math.floor(Math.random()*(b-a+1))+a;
+ const push=(q,c,wrong,e)=>qs.push(mcq(q,c,wrong,e));
  for(let i=0;i<count;i++){
-  let q="",c=0,wrong=[],e="",a,b,n,m,ans;
-  if(id<=1){n=rndInt(10,98);if(id===0){q=`Số ${n} gồm mấy chục và mấy đơn vị?`;c=`${Math.floor(n/10)} chục, ${n%10} đơn vị`;wrong=[`${n%10} chục, ${Math.floor(n/10)} đơn vị`,`${Math.floor(n/10)} chục, 0 đơn vị`,` ${n} chục`];e=`${n} = ${Math.floor(n/10)} chục và ${n%10} đơn vị.`;}else{q=`Số liền ${i%2?"trước":"sau"} của ${n} là số nào?`;c=i%2?n-1:n+1;wrong=[c+2,c-2,n];e=`Số liền ${i%2?"trước":"sau"} của ${n} là ${c}.`;}}
-  else if(id===2){a=rndInt(12,80);b=rndInt(2,19);const add=i%2===0;ans=add?a+b:a-b;q=add?`Trong phép tính ${a} + ${b} = ${ans}, số ${a} gọi là gì?`:`Trong phép tính ${a} − ${b} = ${a-b}, số ${a} gọi là gì?`;c=add?"Số hạng":"Số bị trừ";wrong=["Tổng","Hiệu","Số trừ"];e=add?"Các số được cộng gọi là số hạng.":"Số đứng trước dấu trừ là số bị trừ.";}
-  else if(id===3 || id===8 || id===12){a=rndInt(3,30);b=rndInt(2,20);if(id===3){q=`Mai có ${a+b} nhãn vở, An có ${a} nhãn vở. Mai nhiều hơn An bao nhiêu nhãn vở?`;c=b; e=`${a+b} − ${a} = ${b} nhãn vở.`;}else if(id===8){q=`Có ${a} quả bóng, được thêm ${b} quả. Có tất cả bao nhiêu quả?`;c=a+b;e=`${a} + ${b} = ${c}.`;}else{q=`Lan có ${a+b} chiếc kẹo, cho bạn ${b} chiếc. Lan còn bao nhiêu chiếc?`;c=a;e=`${a+b} − ${b} = ${a}.`;}wrong=[Number(c)+1,Math.max(0,Number(c)-1),Number(c)+3];}
-  else if(id>=4 && id<=23){
-   a=rndInt(id<14?2:12,id<14?19:69);b=rndInt(id<14?1:2,id<14?9:29);const add=[6,7,8,9,10,18,19,20].includes(id)||id===4||id===5||id===9||id===13||id===20||id===21;
-   if(id===10||id===11||id===12||id===22||id===23){ans=a-b;if(ans<0){a=Math.max(a,b+1);ans=a-b;}q=`Tính: ${a} − ${b} = ?`;c=ans;e=`${a} − ${b} = ${ans}.`;}
-   else {ans=a+b;q=`Tính: ${a} + ${b} = ?`;c=ans;e=`${a} + ${b} = ${ans}.`;}
-   wrong=[Number(c)+1,Math.max(0,Number(c)-1),Number(c)+10];
+  let a,b,n,c,q,e,wrong;
+  // Bài 1-2: số đến 100, số liền trước/sau
+  if(id===0){
+   n=R(10,99);
+   const t=Math.floor(n/10),u=n%10;
+   q=`Số ${n} gồm mấy chục và mấy đơn vị?`; c=`${t} chục, ${u} đơn vị`;
+   wrong=[`${u} chục, ${t} đơn vị`,`${t} chục, 0 đơn vị`,`${n} chục`];
+   if(u===0) wrong=[`${t-1} chục, 0 đơn vị`,`${t} chục, 1 đơn vị`,`${u} chục, ${t} đơn vị`];
+   e=`${n} gồm ${t} chục và ${u} đơn vị.`;
+  } else if(id===1){
+   n=R(10,99); const before=i%2===0; c=before?n-1:n+1;
+   q=`Số liền ${before?"trước":"sau"} của ${n} là số nào?`;
+   wrong=[String(c+2),String(c-2),String(n)];
+   e=`Số liền ${before?"trước":"sau"} của ${n} là ${c}.`;
+  } else if(id===2){
+   a=R(10,80);b=R(1,19);
+   const isAdd=i%2===0;
+   q=isAdd?`Trong phép tính ${a} + ${b} = ${a+b}, số ${a} gọi là gì?`:`Trong phép tính ${a+b} − ${b} = ${a}, số ${a+b} gọi là gì?`;
+   c=isAdd?"Số hạng":"Số bị trừ";wrong=isAdd?["Tổng","Hiệu","Số trừ"]:["Số trừ","Hiệu","Số hạng"];
+   e=isAdd?"Các số được cộng gọi là số hạng.":"Trong phép trừ, số đứng trước dấu trừ là số bị trừ.";
+  } else if(id===3){
+   a=R(10,80);b=R(1,20);
+   q=`Mai có ${a+b} nhãn vở, An có ${a} nhãn vở. Mai nhiều hơn An bao nhiêu nhãn vở?`;
+   c=b;wrong=[b+1,Math.max(0,b-1),a+b];e=`${a+b} − ${a} = ${b} nhãn vở.`;
+  } else if(id===4 || id===5){
+   a=R(12,79);b=R(1,Math.min(20,99-a)); const add=id===4;
+   c=add?a+b:a-b;q=`Tính: ${a} ${add?"+":"−"} ${b} = ?`;
+   wrong=[c+1,Math.max(0,c-1),c+10];e=`${a} ${add?"+":"−"} ${b} = ${c}.`;
+  } else if(id===6 || id===7){
+   a=R(8,19);b=R(2,10); const add=id===6;
+   if(add){a=R(8,19);b=R(2,9);c=a+b;q=`Tính: ${a} + ${b} = ?`;e=`${a} + ${b} = ${c}.`;}
+   else {a=R(11,19);b=R(2,Math.min(9,a-1));c=a-b;q=`Tính: ${a} − ${b} = ?`;e=`${a} − ${b} = ${c}.`;}
+   wrong=[c+1,Math.max(0,c-1),c+2];
+  } else if(id===8 || id===9 || id===12 || id===13){
+   const more=id===8||id===9;
+   a=R(5,30);b=R(1,15);
+   if(more){q=`Lan có ${a} nhãn vở, mẹ mua thêm ${b} nhãn vở. Lan có tất cả bao nhiêu nhãn vở?`;c=a+b;e=`${a} + ${b} = ${c} nhãn vở.`;}
+   else {q=`Mai có ${a+b} bông hoa, tặng bạn ${b} bông. Mai còn bao nhiêu bông hoa?`;c=a;e=`${a+b} − ${b} = ${a} bông hoa.`;}
+   wrong=[c+1,Math.max(0,c-1),c+3];
+  } else if(id===10 || id===11){
+   a=R(11,19);b=R(2,Math.min(9,a-1));c=a-b;q=`Tính: ${a} − ${b} = ?`;wrong=[c+1,Math.max(0,c-1),c+2];e=`${a} − ${b} = ${c}.`;
+  } else if(id===14 || id===15 || id===16 || id===17){
+   if(id===14){a=R(2,9);b=R(1,8);c=a+b;q=`Một túi gạo nặng ${a} kg, túi khác nặng ${b} kg. Cả hai túi nặng bao nhiêu ki-lô-gam?`;wrong=[`${Math.abs(a-b)} kg`,`${a*b} kg`,`${c+1} kg`];c=`${c} kg`;e=`${a} + ${b} = ${parseInt(c)} kg.`;}
+   else if(id===15){a=R(2,9);b=R(1,Math.min(8,10-a));c=a+b;q=`Trong bình có ${a} l nước, rót thêm ${b} l. Có tất cả bao nhiêu lít nước?`;wrong=[`${Math.max(0,a-b)} l`,`${a*b} l`,`${c+1} l`];c=`${c} l`;e=`${a} + ${b} = ${parseInt(c)} l.`;}
+   else {const isKg=id===16; a=R(2,8);b=R(1,Math.min(a,5));const unit=isKg?"kg":"l";c=a-b;q=isKg?`Bao gạo nặng ${a} kg, lấy ra ${b} kg. Còn lại bao nhiêu ki-lô-gam?`:`Can có ${a} l nước, đã rót ra ${b} l. Còn lại bao nhiêu lít?`;wrong=[`${a+b} ${unit}`,`${a+b+1} ${unit}`,`${b} ${unit}`];c=`${c} ${unit}`;e=`${a} − ${b} = ${parseInt(c)} ${unit}.`;}
+  } else if(id>=18 && id<=20){
+   a=R(21,68);b=R(11,Math.min(29,99-a));c=a+b;q=`Tính: ${a} + ${b} = ?`;wrong=[c+1,c-1,c+10];e=`${a} + ${b} = ${c}.`;
+  } else if(id>=21 && id<=23){
+   a=R(31,99);b=R(11,Math.min(29,a-1));c=a-b;q=`Tính: ${a} − ${b} = ?`;wrong=[c+1,Math.max(0,c-1),c+10];e=`${a} − ${b} = ${c}.`;
+  } else if(id>=24 && id<=27){
+   const kind=R(0,2);
+   if(kind===0){q="Hình tứ giác có bao nhiêu cạnh?";c="4 cạnh";wrong=["3 cạnh","5 cạnh","6 cạnh"];e="Hình tứ giác có 4 cạnh.";}
+   else if(kind===1){a=R(2,9);b=R(2,9);c=a+b;q=`Đường gấp khúc gồm hai đoạn thẳng dài ${a} cm và ${b} cm. Đường gấp khúc dài bao nhiêu xăng-ti-mét?`;wrong=[`${Math.abs(a-b)} cm`,`${c+1} cm`,`${a*b} cm`];c=`${c} cm`;e=`${a} + ${b} = ${parseInt(c)} cm.`;}
+   else {q="Đoạn thẳng được kí hiệu bằng gì trong hình vẽ?";c="Hai đầu mút";wrong=["Một đầu mút","Ba đầu mút","Không có đầu mút"];e="Đoạn thẳng có hai đầu mút.";}
+  } else if(id>=28 && id<=31){
+   if(id===29 || id===30){
+    const day=R(2,27);q=`Hôm nay là ngày ${day} tháng 5. Ngày mai là ngày nào?`;c=`Ngày ${day+1} tháng 5`;wrong=[`Ngày ${day-1} tháng 5`,`Ngày ${day} tháng 6`,`Ngày ${day+2} tháng 5`];e=`Ngày mai là ngày tiếp theo: ngày ${day+1} tháng 5.`;
+   }else{
+    const h=R(1,10),add=R(1,3);c=`${(h+add-1)%12+1} giờ`;q=`Bây giờ là ${h} giờ. Sau ${add} giờ là mấy giờ?`;wrong=[`${h} giờ`,`${Math.max(1,h-1)} giờ`,`${(h+add+1-1)%12+1} giờ`];e=`Sau ${add} giờ kể từ ${h} giờ là ${c}.`;
+   }
+  } else {
+   // Ôn tập học kì I: chỉ dùng mạch đã học trong tập 1.
+   const kind=R(0,3);
+   if(kind===0){a=R(20,70);b=R(1,Math.min(20,99-a));c=a+b;q=`Tính: ${a} + ${b} = ?`;wrong=[c+1,c-1,c+2];e=`${a} + ${b} = ${c}.`;}
+   else if(kind===1){a=R(30,99);b=R(1,a-1);c=a-b;q=`Tính: ${a} − ${b} = ?`;wrong=[c+1,Math.max(0,c-1),c+2];e=`${a} − ${b} = ${c}.`;}
+   else if(kind===2){q="Hình tứ giác có bao nhiêu cạnh?";c="4 cạnh";wrong=["3 cạnh","5 cạnh","6 cạnh"];e="Hình tứ giác có 4 cạnh.";}
+   else {a=R(2,9);b=R(1,Math.min(8,10-a));c=a+b;q=`Trong bình có ${a} l nước, rót thêm ${b} l. Có tất cả bao nhiêu lít nước?`;wrong=[`${a} l`,`${c+1} l`,`${Math.abs(a-b)} l`];c=`${c} l`;e=`${a} + ${b} = ${parseInt(c)} l.`;}
   }
-  else if(id===14||id===15||id===16){const val=rndInt(2,9);q=id===15?`Bình có ${val} lít nước, mẹ rót thêm 2 lít. Có bao nhiêu lít nước?`:id===14?`Túi gạo nặng ${val} kg, túi khác nặng 2 kg. Cả hai nặng bao nhiêu ki-lô-gam?`:`Một bình có ${val+2} lít nước, đã dùng ${val} lít. Còn bao nhiêu lít?`;c=id===16?2:val+2;wrong=[Number(c)+1,Math.max(0,Number(c)-1),Number(c)+3];e=`Tính theo dữ kiện trong đề: ${c}.`;}
-  else if(id>=24&&id<=27 || id===33){const shapes=["hình tam giác","hình vuông","hình chữ nhật","hình tứ giác"];const s=shapes[rndInt(0,3)];q=`Hình nào có 4 cạnh?`;c="Hình tứ giác";wrong=["Hình tam giác","Hình tròn","Đoạn thẳng"];e="Hình tứ giác có 4 cạnh.";}
-  else if(id>=28&&id<=31 || id===35){const h=rndInt(1,10),add=rndInt(1,3);if(id===29||id===30){q=`Hôm nay là ngày 12 tháng 5. Ngày mai là ngày nào?`;c="Ngày 13 tháng 5";wrong=["Ngày 11 tháng 5","Ngày 12 tháng 6","Ngày 14 tháng 5"];e="Ngày mai là ngày tiếp theo: ngày 13 tháng 5.";}else{q=`Bây giờ là ${h} giờ. Sau ${add} giờ là mấy giờ?`;c=`${(h+add-1)%12+1} giờ`;wrong=[`${h} giờ`,`${Math.max(1,h-1)} giờ`,`${h+add+1} giờ`];e=`Cộng thêm ${add} giờ vào ${h} giờ.`;}}
-  else {a=rndInt(12,55);b=rndInt(2,20);q=`Thư viện có ${a} quyển truyện, được tặng thêm ${b} quyển. Có tất cả bao nhiêu quyển?`;c=a+b;wrong=[c+1,c-1,c+10];e=`${a} + ${b} = ${c} quyển truyện.`;}
-  qs.push(mcq(q,c,wrong,e));
+  push(q,c,wrong,e);
  }
  return qs;
 }
