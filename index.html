@@ -189,6 +189,73 @@ main>section:not(#homeMenu){display:none}
 .english-word-card button{padding:7px 9px}
 .english-note{font-size:.9rem;opacity:.88}
 
+
+/* Giao dien de doc hon tren may tinh va dien thoai */
+:root{--blue:#2457d6;--ink:#18264b;--muted:#52627a;--bg:#f2f6fc;--card:#fff}
+body{font-size:17px;line-height:1.6;background:linear-gradient(180deg,#eef4ff 0,#f8fafc 420px,#f8fafc 100%);color:var(--ink)}
+.site-header,header{padding:34px 24px 48px;text-align:center;background:linear-gradient(120deg,#2457d6 0%,#6545df 55%,#7c3aed 100%)}
+header .logo{font-size:42px;margin-bottom:8px}
+header h1{max-width:900px;margin:0 auto 12px;font-size:clamp(30px,3.6vw,48px);line-height:1.15;letter-spacing:-.025em}
+header p{max-width:760px}
+.school-line{display:inline-block;padding:8px 18px;border:1px solid #ffffff65;border-radius:999px;background:#ffffff12;font-weight:700}
+.motto{font-size:18px}
+main{width:min(1120px,calc(100% - 40px));margin:-22px auto 48px}
+.panel{padding:28px;border:1px solid #e0e9f8;border-radius:24px;box-shadow:0 12px 32px #1e3a8a0c;margin-bottom:22px}
+h2{font-size:clamp(23px,2vw,29px);line-height:1.3;letter-spacing:-.015em}
+.small{color:#53627a;font-size:15px}
+#homeMenu{padding:30px}
+#homeMenu h2{margin-bottom:8px}
+#homeMenu .menu-intro{margin-bottom:20px;font-size:16px}
+.home-subjects{grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;margin-top:18px}
+.home-subjects .subject{min-height:176px;display:flex;flex-direction:column;align-items:flex-start;justify-content:flex-start;gap:12px;padding:22px 20px;border-radius:20px;border-width:2px;box-shadow:0 4px 0 #17255408;text-align:left}
+.home-subjects .subject .emoji{font-size:38px;line-height:1.1}
+.home-subjects .subject strong{display:block;font-size:21px;line-height:1.35;margin-bottom:5px}
+.home-subjects .subject .small{font-size:15px;line-height:1.5}
+.home-subjects .subject:hover{transform:translateY(-3px);box-shadow:0 9px 22px #1e3a8a14}
+.home-subjects .subject:focus-visible,button:focus-visible,select:focus-visible,a:focus-visible{outline:3px solid #f59e0b;outline-offset:3px}
+button,select,input{touch-action:manipulation}
+button{transition:background-color .15s ease,border-color .15s ease,transform .15s ease}
+.controls{gap:10px}
+.chip,button{min-height:44px}
+.question h3{font-size:20px;line-height:1.5}
+.answer{line-height:1.5}
+#semesterExam{padding:26px}
+#semesterExam>h2{font-size:clamp(24px,2.1vw,30px)}
+.exam-intro{padding:18px;gap:16px}
+.exam-intro p{font-size:17px;line-height:1.6}
+.exam-subjects{gap:16px}
+.exam-subjects button{min-height:68px}
+.exam-question{padding:20px;margin:16px 0}
+.exam-question h4{font-size:20px}
+footer{padding:16px 20px 34px}
+@media(min-width:1200px){main{width:min(1120px,calc(100% - 64px))}.panel{padding:30px}}
+@media(max-width:900px){main{width:calc(100% - 28px)}.home-subjects{grid-template-columns:repeat(2,minmax(0,1fr))}.home-subjects .subject{min-height:150px}}
+@media(max-width:560px){
+ body{font-size:16px}
+ header,.site-header{padding:25px 16px 40px}
+ header .logo{font-size:34px}
+ header h1{font-size:clamp(27px,7vw,34px);line-height:1.18}
+ .school-line{border-radius:16px;padding:7px 12px;font-size:14px}
+ .motto{font-size:16px}
+ main{width:calc(100% - 20px);margin:-16px auto 28px}
+ .panel,#homeMenu,#semesterExam{padding:17px;border-radius:20px}
+ #homeMenu .menu-intro{margin-bottom:14px}
+ .home-subjects{grid-template-columns:1fr 1fr;gap:10px}
+ .home-subjects .subject{min-height:148px;padding:15px 13px;gap:9px;border-radius:16px}
+ .home-subjects .subject .emoji{font-size:31px}
+ .home-subjects .subject strong{font-size:18px}
+ .home-subjects .subject .small{font-size:13px;line-height:1.4}
+ h2{font-size:22px}
+ .exam-intro{padding:12px;gap:10px}
+ .exam-intro .mascot{font-size:30px}
+ .exam-intro p{font-size:15px}
+ .exam-subjects{grid-template-columns:1fr;gap:10px}
+ .exam-subjects button{min-height:56px}
+ .exam-question{padding:14px}
+ .exam-question h4{font-size:18px}
+}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition:none!important;animation:none!important}}
+
 </style>
 </head>
 <body>
