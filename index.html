@@ -1294,7 +1294,7 @@ function createBookLessonQuestions(id,count){
    if(num===1){
      const type=R(0,4);
      if(type===0){a=R(0,100);q=`Số ${a} có bao nhiêu chục và bao nhiêu đơn vị?`;c=`${Math.floor(a/10)} chục, ${a%10} đơn vị`;w=[`${a%10} chục, ${Math.floor(a/10)} đơn vị`,`${Math.floor(a/10)} chục, 0 đơn vị`,`${a} chục`];e=`${a} = ${Math.floor(a/10)} chục và ${a%10} đơn vị.`;}
-     else if(type===1){a=R(0,99);q=`Số liền sau của ${a} là số nào?`;c=a+1;w=[a+2,Math.max(0,a-1),a];e=`Số liền sau của ${a} là ${a+1}.`;}
+     else if(type===1){a=R(0,99);q=`Số liền sau của ${a} là số nào?`;c=a+1;w=[a+2,Math.max(0,a-1),a];e=`Số liền sau của ${a} là ${c}.`;}
      else if(type===2){a=R(1,100);q=`Số liền trước của ${a} là số nào?`;c=a-1;w=[a+1,Math.min(100,a+2),a];e=`Số liền trước của ${a} là ${a-1}.`;}
      else if(type===3){a=R(0,10);b=R(0,10);const x=a*10+b;q=`Số ${x} được đọc là gì?`;c=(x<10?["không","một","hai","ba","bốn","năm","sáu","bảy","tám","chín"][x] : null); 
        const words={0:"không",1:"một",2:"hai",3:"ba",4:"bốn",5:"năm",6:"sáu",7:"bảy",8:"tám",9:"chín",10:"mười",11:"mười một",12:"mười hai",13:"mười ba",14:"mười bốn",15:"mười lăm",16:"mười sáu",17:"mười bảy",18:"mười tám",19:"mười chín",20:"hai mươi",30:"ba mươi",40:"bốn mươi",50:"năm mươi",60:"sáu mươi",70:"bảy mươi",80:"tám mươi",90:"chín mươi",100:"một trăm"};
@@ -1318,8 +1318,8 @@ function createBookLessonQuestions(id,count){
      if(type===0){a=R(low,max-20);b=R(1,Math.min(20,max-a));c=a+b;q=`Tính: ${a} + ${b} = ?`;e=`${a} + ${b} = ${c}.`;}
      else if(type===1){a=R(low+10,max);b=R(1,Math.min(20,a-low));c=a-b;q=`Tính: ${a} − ${b} = ?`;e=`${a} − ${b} = ${c}.`;}
      else if(type===2){a=R(low,max-1);b=R(low,max-1);q=`Điền dấu >, < hoặc =: ${a} ☐ ${b}`;c=a>b?">":a<b?"<":"=";e=`So sánh hai số: ${a} ${c} ${b}.`;}
-     else {a=R(0,max);q=`Số liền sau của ${a} là số nào?`;c=Math.min(max,a+1);e=`Số liền sau của ${a} là ${c}.`;}
-     w=type===2?[">","<","="].filter(v=>v!==c):[Number(c)+1,Math.max(0,Number(c)-1),Number(c)+2];
+     else {a=R(0,max);q=`Số liền sau của ${a} là số nào?`;c=a+1;e=`Số liền sau của ${a} là ${c}.`;}
+     w=type===2?[">","<","="].filter(v=>v!==c):[Number(c)+1,Math.max(0,Number(c)-1),a];
    } else if(num===7||num===8||num===11||num===12){
      const sub=num===11||num===12;
      if(sub){a=R(11,19);b=R(Math.max(2,a-10),Math.min(9,a));c=a-b;q=`Tính: ${a} − ${b} = ?`;e=`${a} − ${b} = ${c}.`;}
