@@ -1112,8 +1112,178 @@ function createBookLessonQuestions(id,count){
    if(seen.has(q)) return false;
    seen.add(q); out.push(mcq(q,String(c),w.map(String),e)); return true;
  };
+
+ const makeSpecific=()=>{
+   let a,b,c,q,e,w=[];
+   const pick=(arr)=>arr[R(0,arr.length-1)];
+
+   if(num===49){
+     const values=[100,200,300,400,500,600,700,800,900];
+     const target=pick(values), nonRound=target+R(1,9);
+     q=`Số nào là số tròn trăm?`;
+     c=String(target); w=[String(nonRound),String(Math.max(0,target-10)),String(target+1)];
+     e=`Số tròn trăm có chữ số hàng chục và hàng đơn vị bằng 0. ${target} là số tròn trăm.`;
+   } else if(num===50){
+     a=R(1,9)*100; b=R(1,9)*100;
+     q=`Điền dấu thích hợp: ${a} ☐ ${b}`; c=a>b?">":a<b?"<":"=";
+     w=[">","<","="].filter(x=>x!==c); e=`So sánh hàng trăm: ${a} ${c} ${b}.`;
+   } else if(num===51){
+     a=R(1,9)*100+R(0,9)*10+R(0,9);
+     const h=Math.floor(a/100), t=Math.floor(a/10)%10, u=a%10;
+     q=`Số ${a} có chữ số hàng trăm là bao nhiêu?`; c=String(h);
+     w=[String(t),String(u),String(Math.min(9,h+1))];
+     e=`Trong số ${a}, chữ số hàng trăm là ${h}.`;
+   } else if(num===52){
+     const h=R(1,9), t=R(0,9), u=R(0,9); c=h*100+t*10+u;
+     q=`Viết ${h} trăm, ${t} chục và ${u} đơn vị thành số.`; w=[h*100+t+u,h*100+u*10+t,h*10+t*10+u];
+     e=`${h} trăm + ${t} chục + ${u} đơn vị = ${c}.`;
+   } else if(num===53){
+     a=R(100,999); b=R(100,999); q=`Điền dấu >, < hoặc =: ${a} ☐ ${b}`;
+     c=a>b?">":a<b?"<":"="; w=[">","<","="].filter(x=>x!==c); e=`So sánh từ hàng trăm, rồi hàng chục và hàng đơn vị: ${a} ${c} ${b}.`;
+   } else if(num===54||num===58||num===63||num===75){
+     const skill=R(0,3);
+     if(skill===0){a=R(num>=63?100:10,num>=63?800:89);b=R(1,Math.min(num>=63?99:10,999-a));c=a+b;q=`Tính: ${a} + ${b} = ?`;w=[c+1,c-1,Math.max(0,c-10)];e=`${a} + ${b} = ${c}.`;}
+     else if(skill===1){a=R(num>=63?200:20,999);b=R(1,Math.min(num>=63?99:20,a));c=a-b;q=`Tính: ${a} − ${b} = ?`;w=[c+1,Math.max(0,c-1),c+10];e=`${a} − ${b} = ${c}.`;}
+     else if(skill===2){a=R(2,9);b=R(2,5);c=a*b;q=`Có ${a} nhóm, mỗi nhóm ${b} đồ vật. Có tất cả bao nhiêu đồ vật?`;w=[c+1,c-1,c+2];e=`${a} × ${b} = ${c}.`;}
+     else {q="Hình tứ giác có bao nhiêu cạnh?";c="4 cạnh";w=["3 cạnh","5 cạnh","6 cạnh"];e="Hình tứ giác có 4 cạnh.";}
+   } else if(num===55||num===57){
+     const kind=R(0,2);
+     if(kind===0){a=R(2,9);q=`${a} m bằng bao nhiêu đề-xi-mét?`;c=`${a*10} dm`;w=[`${a} dm`,`${a*100} dm`,`${a+10} dm`];e=`1 m = 10 dm, nên ${a} m = ${a*10} dm.`;}
+     else if(kind===1){a=R(1,5);q=`${a} km bằng bao nhiêu mét?`;c=`${a*1000} m`;w=[`${a*100} m`,`${a*10} m`,`${a*10000} m`];e=`1 km = 1 000 m, nên ${a} km = ${a*1000} m.`;}
+     else {a=R(2,9);b=R(2,9);c=a+b;q=`Một đoạn dây dài ${a} m, đoạn khác dài ${b} m. Tổng độ dài là bao nhiêu?`;c=`${c} m`;w=[`${Math.abs(a-b)} m`,`${a*b} m`,`${a+b+1} m`];e=`${a} + ${b} = ${a+b} m.`;}
+   } else if(num===56){
+     const values=[1000,2000,5000,10000,20000,50000], p=pick(values), r=pick(values), kind=R(0,1);
+     if(kind===0){c=p+r;q=`Có tờ ${p.toLocaleString("vi-VN")} đồng và tờ ${r.toLocaleString("vi-VN")} đồng. Có tất cả bao nhiêu tiền?`;w=[Math.abs(p-r),Math.max(p,r),c+1000].map(x=>x.toLocaleString("vi-VN")+" đồng");c=c.toLocaleString("vi-VN")+" đồng";e=`Cộng hai số tiền: ${p.toLocaleString("vi-VN")} + ${r.toLocaleString("vi-VN")} = ${c}.`;}
+     else {const price=Math.min(p,r), paid=Math.max(p,r);c=paid-price;q=`Một món đồ giá ${price.toLocaleString("vi-VN")} đồng. Trả bằng ${paid.toLocaleString("vi-VN")} đồng. Người mua được trả lại bao nhiêu tiền?`;w=[c+1000,Math.max(0,c-1000),paid+price].map(x=>x.toLocaleString("vi-VN")+" đồng");c=c.toLocaleString("vi-VN")+" đồng";e=`Tiền thừa = tiền trả − giá món đồ = ${paid.toLocaleString("vi-VN")} − ${price.toLocaleString("vi-VN")} = ${c}.`;}
+   } else if(num===58){
+     const kind=R(0,2);
+     if(kind===0){a=R(1,9);q=`${a} m bằng bao nhiêu đề-xi-mét?`;c=`${a*10} dm`;w=[`${a} dm`,`${a*100} dm`,`${a+10} dm`];e=`1 m = 10 dm, nên ${a} m = ${a*10} dm.`;}
+     else if(kind===1){a=R(1,5);q=`${a} km bằng bao nhiêu mét?`;c=`${a*1000} m`;w=[`${a*100} m`,`${a*10} m`,`${a*10000} m`];e=`1 km = 1 000 m, nên ${a} km = ${a*1000} m.`;}
+     else {a=R(2,9);b=R(2,9);c=a+b;q=`Một đoạn dài ${a} m, đoạn khác dài ${b} m. Tổng độ dài là bao nhiêu?`;c=`${c} m`;w=[`${Math.abs(a-b)} m`,`${a*b} m`,`${a+b+1} m`];e=`${a} + ${b} = ${a+b} m.`;}
+   } else if(num===68){
+     const h=R(1,9), t=R(0,9), u=R(0,9); c=h*100+t*10+u;
+     q=`Số ${c} gồm bao nhiêu trăm, chục và đơn vị?`;w=[`${u} trăm, ${t} chục, ${h} đơn vị`,`${h} trăm, ${u} chục, ${t} đơn vị`,`${h} chục, ${t} đơn vị`];
+     c=`${h} trăm, ${t} chục, ${u} đơn vị`;e=`${h} trăm + ${t} chục + ${u} đơn vị = ${h*100+t*10+u}.`;
+   } else if(num===69){
+     a=R(20,89);b=R(1,Math.min(20,99-a));const sub=R(0,1)===1;
+     c=sub?a-b:a+b;q=`Ôn tập trong phạm vi 100: ${a} ${sub?"−":"+"} ${b} = ?`;w=[c+1,Math.max(0,c-1),c+2];e=`${a} ${sub?"−":"+"} ${b} = ${c}.`;
+   } else if(num===70){
+     a=R(100,799);b=R(10,Math.min(99,999-a));const sub=R(0,1)===1;
+     if(sub){a=R(200,999);b=R(10,Math.min(99,a));c=a-b;}else c=a+b;
+     q=`Ôn tập trong phạm vi 1 000: ${a} ${sub?"−":"+"} ${b} = ?`;w=[c+1,Math.max(0,c-1),c+10];e=`${a} ${sub?"−":"+"} ${b} = ${c}.`;
+   } else if(num===71){
+     const factor=pick([2,5]), n=R(1,10), div=R(0,1)===1;
+     if(div){c=n;q=`Tính: ${factor*n} : ${factor} = ?`;w=[n+1,Math.max(0,n-1),factor*n];e=`${factor*n} : ${factor} = ${n}.`;}
+     else {c=factor*n;q=`Tính: ${factor} × ${n} = ?`;w=[c+1,c-1,c+2];e=`${factor} × ${n} = ${c}.`;}
+   } else if(num===72){
+     const kind=R(0,2);
+     if(kind===0){q="Hình tứ giác có bao nhiêu cạnh?";c="4 cạnh";w=["3 cạnh","5 cạnh","6 cạnh"];e="Hình tứ giác có bốn cạnh.";}
+     else if(kind===1){q="Vật nào có dạng khối cầu?";c="Quả bóng";w=["Lon nước","Hộp chữ nhật","Quyển sách"];e="Quả bóng thường có dạng khối cầu.";}
+     else {q="Vật nào thường có dạng khối trụ?";c="Lon nước";w=["Quả bóng","Viên bi","Đĩa phẳng"];e="Lon nước thường có dạng khối trụ.";}
+   } else if(num===73){
+     const kind=R(0,2);
+     if(kind===0){a=R(1,9);q=`${a} m bằng bao nhiêu dm?`;c=`${a*10} dm`;w=[`${a} dm`,`${a*100} dm`,`${a+10} dm`];e=`1 m = 10 dm, nên ${a} m = ${a*10} dm.`;}
+     else if(kind===1){a=R(1,5);q=`${a} km bằng bao nhiêu m?`;c=`${a*1000} m`;w=[`${a*100} m`,`${a*10} m`,`${a*10000} m`];e=`1 km = 1 000 m, nên ${a} km = ${a*1000} m.`;}
+     else {a=R(1,10);q=`${a} tuần có bao nhiêu ngày?`;c=`${a*7} ngày`;w=[`${a*5} ngày`,`${a*6} ngày`,`${a*8} ngày`];e=`1 tuần có 7 ngày, nên ${a} × 7 = ${a*7} ngày.`;}
+   } else if(num===74){
+     const cases=[["Một tuần có 7 ngày","Chắc chắn"],["Gieo xúc xắc sáu mặt và ra mặt số 8","Không thể"],["Ngày mai trời mưa","Có thể"]];
+     const item=pick(cases);q=`${item[0]}. Đây là khả năng nào?`;c=item[1];w=["Chắc chắn","Có thể","Không thể"].filter(x=>x!==c);e=`Đáp án: ${c.toLowerCase()}.`;
+   } else if(num===75){
+     const type=R(0,3);
+     if(type===0){a=R(100,800);b=R(10,Math.min(99,999-a));c=a+b;q=`Tính: ${a} + ${b} = ?`;w=[c+1,c-1,c+10];e=`${a} + ${b} = ${c}.`;}
+     else if(type===1){a=R(200,999);b=R(10,Math.min(99,a));c=a-b;q=`Tính: ${a} − ${b} = ?`;w=[c+1,c-1,c+10];e=`${a} − ${b} = ${c}.`;}
+     else if(type===2){a=R(1,10);b=pick([2,5]);c=a*b;q=`Tính: ${b} × ${a} = ?`;w=[c+1,c-1,c+2];e=`${b} × ${a} = ${c}.`;}
+     else {q="Hình tứ giác có bao nhiêu cạnh?";c="4 cạnh";w=["3 cạnh","5 cạnh","6 cạnh"];e="Hình tứ giác có bốn cạnh.";}
+
+   } else if(num===19){
+     const tens=R(2,8), ones=R(3,9), add=R(10-ones,9), x=tens*10+ones;
+     c=x+add; q=`Tính: ${x} + ${add} = ?`; w=[c+1,c-1,c+10];
+     e=`Cộng hàng đơn vị: ${ones} + ${add} = ${ones+add}, viết ${ones+add-10}, nhớ 1 chục. ${x} + ${add} = ${c}.`;
+   } else if(num===20){
+     const t1=R(2,6), u1=R(1,9), t2=R(1,Math.min(3,8-t1)), u2=R(10-u1,9);
+     a=t1*10+u1; b=t2*10+u2; c=a+b;
+     q=`Tính: ${a} + ${b} = ?`; w=[c+1,c-1,Math.max(0,c-10)];
+     e=`Cộng các hàng theo thứ tự, có nhớ ở hàng đơn vị: ${a} + ${b} = ${c}.`;
+   } else if(num===22){
+     const ones=R(0,7), sub=R(ones+1,9), tens=R(2,9);
+     a=tens*10+ones; c=a-sub; q=`Tính: ${a} − ${sub} = ?`; w=[c+1,c-1,a+sub];
+     e=`Hàng đơn vị không đủ trừ ${sub}, ta đổi 1 chục thành 10 đơn vị. ${a} − ${sub} = ${c}.`;
+   } else if(num===23){
+     const tens=R(3,9), ones=R(0,7), subTens=R(1,tens-1), subOnes=R(ones+1,9);
+     a=tens*10+ones; b=subTens*10+subOnes; c=a-b;
+     q=`Tính: ${a} − ${b} = ?`; w=[c+1,Math.max(0,c-1),a+b];
+     e=`Hàng đơn vị cần mượn 1 chục để trừ. ${a} − ${b} = ${c}.`;
+   } else if(num===59){
+     const h1=R(1,5), t1=R(0,4), u1=R(0,4), h2=R(0,Math.min(3,8-h1)), t2=R(0,Math.min(4,9-t1)), u2=R(0,9-u1);
+     a=h1*100+t1*10+u1; b=h2*100+t2*10+u2; c=a+b;
+     q=`Cộng không nhớ: ${a} + ${b} = ?`; w=[c+1,c-1,Math.max(0,c-10)];
+     e=`Cộng từng hàng, không có hàng nào cần nhớ: ${a} + ${b} = ${c}.`;
+   } else if(num===60){
+     const h=R(1,6), t=R(0,8), u=R(5,9), h2=R(0,Math.min(2,8-h)), t2=R(1,Math.min(8,9-t)), u2=R(10-u,9);
+     a=h*100+t*10+u; b=h2*100+t2*10+u2; c=a+b;
+     if(c>999){b=Math.max(1,999-a);c=a+b;}
+     q=`Cộng có nhớ trong phạm vi 1 000: ${a} + ${b} = ?`; w=[c+1,c-1,Math.max(0,c-10)];
+     e=`Cộng từ hàng đơn vị sang hàng chục, hàng trăm và nhớ khi cần: ${a} + ${b} = ${c}.`;
+   } else if(num===61){
+     const h1=R(2,9), t1=R(2,9), u1=R(2,9), h2=R(0,h1), t2=R(0,t1), u2=R(0,u1);
+     a=h1*100+t1*10+u1; b=h2*100+t2*10+u2; c=a-b;
+     q=`Trừ không nhớ: ${a} − ${b} = ?`; w=[c+1,Math.max(0,c-1),a+b];
+     e=`Trừ từng hàng, mỗi chữ số hàng trên đều lớn hơn hoặc bằng hàng dưới: ${a} − ${b} = ${c}.`;
+   } else if(num===62){
+     const h=R(2,9), t=R(0,7), u=R(0,8), borrowOnes=R(1,9-u);
+     a=h*100+t*10+u; b=R(0,h-1)*100+R(t+1,9)*10+(u+borrowOnes);
+     if(b>=a){b=(h-1)*100+Math.min(9,t+1)*10+Math.min(9,u+1);}
+     c=a-b; q=`Trừ có nhớ trong phạm vi 1 000: ${a} − ${b} = ?`; w=[c+1,Math.max(0,c-1),a+b];
+     e=`Thực hiện trừ từ hàng đơn vị; khi cần, mượn 1 chục hoặc 1 trăm ở hàng bên trái. ${a} − ${b} = ${c}.`;
+   } else if(num===55||num===57||num===73){
+     const type=R(0,3);
+     if(type===0){a=R(2,9);q=`${a} m bằng bao nhiêu đề-xi-mét?`;c=`${a*10} dm`;w=[`${a} dm`,`${a*100} dm`,`${a+10} dm`];e=`1 m = 10 dm nên ${a} m = ${a*10} dm.`;}
+     else if(type===1){a=R(2,8);q=`${a} km bằng bao nhiêu mét?`;c=`${a*1000} m`;w=[`${a*100} m`,`${a*10} m`,`${a*10000} m`];e=`1 km = 1 000 m nên ${a} km = ${a*1000} m.`;}
+     else if(type===2){a=R(2,9);b=R(1,9);q=`Một đoạn đường dài ${a} m, đoạn khác dài ${b} m. Tổng độ dài là bao nhiêu?`;c=`${a+b} m`;w=[`${Math.abs(a-b)} m`,`${a*b} m`,`${a+b+1} m`];e=`${a} + ${b} = ${a+b} m.`;}
+     else {a=R(10,90);b=R(10,Math.min(90,100-a));q=`Một sợi dây dài ${a+b} m, cắt đi ${b} m. Còn lại bao nhiêu mét?`;c=`${a} m`;w=[`${a+b+b} m`,`${b} m`,`${a+b} m`];e=`${a+b} − ${b} = ${a} m.`;}
+   } else if(num===56){
+     const notes=[1000,2000,5000,10000,20000,50000];
+     a=pick(notes); b=pick(notes); const type=R(0,2);
+     if(type===0){c=a+b;q=`Có tờ ${a.toLocaleString("vi-VN")} đồng và tờ ${b.toLocaleString("vi-VN")} đồng. Có tất cả bao nhiêu tiền?`;w=[Math.abs(a-b),Math.max(a,b),c+1000].map(v=>v.toLocaleString("vi-VN")+" đồng");c=c.toLocaleString("vi-VN")+" đồng";e=`${a.toLocaleString("vi-VN")} + ${b.toLocaleString("vi-VN")} = ${c}.`;}
+     else if(type===1){const total=Math.max(a,b), paid=Math.min(a,b); c=total-paid;q=`Món đồ giá ${total.toLocaleString("vi-VN")} đồng. Trả bằng tờ ${total.toLocaleString("vi-VN")} đồng thì được trả lại bao nhiêu?`;w=[paid+1000,paid+2000,Math.max(0,paid-1000)].map(v=>v.toLocaleString("vi-VN")+" đồng");c="0 đồng";w=[`${total.toLocaleString("vi-VN")} đồng`,`${paid.toLocaleString("vi-VN")} đồng`,`1 000 đồng`];e=`Trả đúng số tiền nên không được trả lại tiền thừa: 0 đồng.`;}
+     else {a=pick([1000,2000,5000,10000]);b=pick([1000,2000,5000,10000]);c=a*2+b;q=`Mua hai món giá ${a.toLocaleString("vi-VN")} đồng mỗi món và một món giá ${b.toLocaleString("vi-VN")} đồng. Tổng tiền là bao nhiêu?`;w=[a+b,a*2,a*2+b+1000].map(v=>v.toLocaleString("vi-VN")+" đồng");c=c.toLocaleString("vi-VN")+" đồng";e=`${a.toLocaleString("vi-VN")} × 2 + ${b.toLocaleString("vi-VN")} = ${c}.`;}
+   } else if(num===64||num===67){
+     const vals=[R(2,8),R(2,8),R(2,8),R(2,8)], names=["bút chì","quyển vở","cục tẩy","thước kẻ"];
+     const k=R(0,3), type=R(0,2);
+     if(type===0){q=`Bảng kiểm đếm: ${names[0]} ${vals[0]}, ${names[1]} ${vals[1]}, ${names[2]} ${vals[2]}, ${names[3]} ${vals[3]}. Có bao nhiêu ${names[k]}?`;c=String(vals[k]);w=vals.map(String).filter(v=>v!==c).slice(0,3);e=`Đọc đúng dòng ${names[k]} trong bảng: có ${vals[k]}.`;}
+     else if(type===1){q=`Trong bảng kiểm đếm, nhóm nào có số lượng nhiều nhất: ${names.map((n,i)=>`${n} ${vals[i]}`).join("; ")}?`;const max=Math.max(...vals);const ix=vals.indexOf(max);c=names[ix];w=names.filter((n,i)=>i!==ix).slice(0,3);e=`${names[ix]} có ${max} chiếc, nhiều nhất trong bảng.`;}
+     else {const total=vals.reduce((s,v)=>s+v,0);q=`Bốn nhóm có lần lượt ${vals.join(", ")} đồ vật. Có tất cả bao nhiêu đồ vật?`;c=String(total);w=[total+1,total-1,total+2].map(String);e=`Cộng số lượng các nhóm: ${vals.join(" + ")} = ${total}.`;}
+   } else if(num===65){
+     a=R(2,8); b=R(2,8); const unit=pick(["mỗi hình ngôi sao","mỗi hình tròn","mỗi hình vuông"]), per=R(2,5);
+     const x=a*per,y=b*per; const type=R(0,2);
+     if(type===0){q=`Biểu đồ tranh: Nhóm A có ${a} hình, nhóm B có ${b} hình; ${unit} biểu thị ${per} bạn. Nhóm A có bao nhiêu bạn?`;c=String(x);w=[String(a),String(x+per),String(y)];e=`Mỗi hình biểu thị ${per} bạn, nên nhóm A có ${a} × ${per} = ${x} bạn.`;}
+     else if(type===1){q=`Biểu đồ tranh: Nhóm A có ${a} hình, nhóm B có ${b} hình; mỗi hình biểu thị ${per} bạn. Nhóm nào nhiều hơn?`;c=a===b?"Hai nhóm bằng nhau":a>b?"Nhóm A":"Nhóm B";w=["Nhóm A","Nhóm B","Hai nhóm bằng nhau"].filter(v=>v!==c);e=`So sánh số hình: nhóm A ${a} hình, nhóm B ${b} hình.`;}
+     else {q=`Biểu đồ tranh có ${a} hình, mỗi hình biểu thị ${per} bạn. Có bao nhiêu bạn?`;c=String(x);w=[String(x+1),String(Math.max(0,x-per)),String(a+per)];e=`${a} × ${per} = ${x} bạn.`;}
+   } else if(num===66){
+     const cases=[
+       ["Mặt trời mọc ở hướng đông","Chắc chắn"],
+       ["Gieo một xúc xắc sáu mặt thông thường được mặt số 8","Không thể"],
+       ["Ngày mai trời mưa","Có thể"],
+       ["Một tuần có 7 ngày","Chắc chắn"],
+       ["Rút một viên bi đỏ từ túi chỉ có bi xanh","Không thể"],
+       ["Rút được bi đỏ từ túi có cả bi đỏ và bi xanh","Có thể"]
+     ];
+     const item=pick(cases);q=`${item[0]}. Khả năng xảy ra là gì?`;c=item[1];w=["Chắc chắn","Có thể","Không thể"].filter(v=>v!==c);e=`Đáp án là “${c}”: ${item[0].toLowerCase()}.`;
+   } else if(num===74){
+     const type=R(0,2);
+     if(type===0){const red=R(2,8),blue=R(2,8);q=`Biểu đồ tranh cho biết có ${red} hình biểu thị bi đỏ và ${blue} hình biểu thị bi xanh, mỗi hình là 2 viên. Có bao nhiêu viên bi tất cả?`;c=String((red+blue)*2);w=[String(red+blue),String((red+blue)*2+2),String(Math.abs(red-blue)*2)];e=`(${red} + ${blue}) × 2 = ${(red+blue)*2} viên bi.`;}
+     else if(type===1){q="Trong hộp chỉ có các viên bi màu xanh. Lấy ngẫu nhiên một viên bi đỏ là khả năng nào?";c="Không thể";w=["Chắc chắn","Có thể","Luôn xảy ra"];e="Hộp không có bi đỏ nên không thể lấy được bi đỏ.";}
+     else {a=R(2,9);b=R(2,9);q=`Nhóm A có ${a} bạn, nhóm B có ${b} bạn. Tổng số bạn là bao nhiêu?`;c=String(a+b);w=[String(Math.abs(a-b)),String(a+b+1),String(Math.max(a,b))];e=`${a} + ${b} = ${a+b} bạn.`;}
+   } else {
+     return null;
+   }
+   return {q,c,w,e};
+ };
  const make=()=>{
    let a,b,c,q,e,w=[],unit;
+   const specific=makeSpecific();
+   if(specific){ return add(specific.q,specific.c,specific.w,specific.e); }
+
    // Tập 1: ôn tập số đến 100, tuyệt đối không phát sinh số 3 chữ số.
    if(num===1){
      const type=R(0,4);
