@@ -12,7 +12,7 @@ header{background:linear-gradient(120deg,#2563eb,#7c3aed);color:white;padding:26
 header .logo{font-size:42px}h1{margin:4px 0;font-size:clamp(28px,5vw,42px)}header p{margin:6px auto;max-width:640px}
 main{width:min(960px,100% - 24px);margin:-16px auto 40px}.panel{background:var(--card);border-radius:20px;padding:20px;box-shadow:0 8px 28px #1e3a8a12;margin-bottom:16px}
 h2{margin:0 0 10px;font-size:22px}.small{color:var(--muted);font-size:14px}
-.subjects{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.subjects{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.home-subjects{margin:12px 0}.home-subjects .subject{min-height:94px}.home-subjects .emoji{font-size:30px}
 .subject{border:2px solid #dbeafe;background:#eff6ff;border-radius:16px;padding:18px 12px;text-align:left;cursor:pointer;color:var(--ink);font:inherit;transition:.15s}
 .subject:nth-child(2){background:#fff7ed;border-color:#fed7aa}.subject .emoji{font-size:34px;display:block}.subject strong{font-size:19px}.subject.active{border-color:var(--blue);box-shadow:0 0 0 3px #2563eb18}
 .controls{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}.chip,button{font:inherit;cursor:pointer;border:0;border-radius:12px;padding:11px 15px}
@@ -55,7 +55,7 @@ h2{font-size:23px}
 #bookLessons .primary{width:100%;min-height:56px;font-size:19px;border-radius:15px}
 #bookLessons .small{font-size:13px}
 #bookLessons .small:last-child{margin-bottom:0}
-#subjectPicker,#weeklyLearning,#roadmapPanel{display:none}
+#subjectPicker,#weeklyLearning,#roadmapPanel{display:none!important}
 #quizTitle{font-size:23px}
 #quizDesc{font-size:16px}
 #questionCount{min-height:46px}
@@ -193,16 +193,24 @@ main>section:not(#homeMenu){display:none}
   <section class="panel" id="homeMenu">
     <h2>👋 Trúc Giang muốn học gì hôm nay?</h2>
     <p class="small menu-intro">Con chọn một mục bên dưới để bắt đầu nhé!</p>
-    <button class="menu-card" onclick="openMainSection('bookLessons')"><span class="menu-icon">📘</span><strong>Học theo bài</strong><small>Chọn Toán hoặc Tiếng Việt</small></button>
-    <button class="menu-card" onclick="openMainSection('semesterExam')"><span class="menu-icon">🌟</span><strong>Thi thử học kì I</strong><small>Làm đề và xem điểm</small></button>
-    <button class="menu-card" onclick="openMainSection('weeklyLearning')"><span class="menu-icon">🗓️</span><strong>Ôn tập theo chủ đề</strong><small>Luyện tập theo từng chủ đề</small></button>
+    <div class="subjects home-subjects">
+      <button class="subject" onclick="openSubject('math')"><span class="emoji">🔢</span><span><strong>Toán</strong><br><span class="small">Bài học, ôn tập và đề thi</span></span></button>
+      <button class="subject" onclick="openSubject('viet')"><span class="emoji">📚</span><span><strong>Tiếng Việt</strong><br><span class="small">Đọc hiểu, từ câu và chính tả</span></span></button>
+    </div>
+    <button class="menu-card" onclick="openMainSection('semesterExam')"><span class="menu-icon">🌟</span><strong>Câu hỏi tổng hợp & đề thi học kì</strong><small>Đề tham khảo Toán và Tiếng Việt</small></button>
     <button class="menu-card" onclick="openMainSection('progressPanel')"><span class="menu-icon">🏆</span><strong>Kết quả của con</strong><small>Xem những lần đã làm</small></button>
     <button class="menu-card" onclick="openMainSection('tipsPanel')"><span class="menu-icon">💡</span><strong>Mẹo học tốt</strong><small>Mẹo nhỏ cho con</small></button>
   </section>
   <section class="panel" id="bookLessons">
     <button class="back-home" type="button" onclick="openMainSection('homeMenu')">🏠 Về trang chủ</button>
   <h2 id="lessonPickerTitle">📘 Chọn bài em muốn luyện</h2>
-    <p class="small">① Chọn môn học · ② Chọn bài · ③ Bấm nút xanh để bắt đầu nhé!</p>
+    <p class="small">① Chọn học kì · ② Chọn chủ điểm và bài · ③ Bắt đầu luyện tập nhé!</p>
+    <div class="controls" style="margin-bottom:12px">
+      <label for="bookSemester">Học kì:</label>
+      <select id="bookSemester" class="chip" onchange="changeBookSemester(this.value)" aria-label="Chọn học kì">
+        <option value="1">Học kì 1</option><option value="2">Học kì 2</option>
+      </select>
+    </div>
     <div class="controls subject-toggle" role="group" aria-label="Chọn môn học">
       <button type="button" class="primary subject-tab active" id="mathTab" onclick="switchBookSubject('math')">🔢 Toán</button>
       <button type="button" class="secondary subject-tab" id="vietTab" onclick="switchBookSubject('viet')">📚 Tiếng Việt</button>
@@ -262,7 +270,7 @@ main>section:not(#homeMenu){display:none}
 
 <section class="panel" id="semesterExam">
   <button class="back-home" type="button" onclick="openMainSection('homeMenu')">🏠 Về trang chủ</button>
-  <h2>🌟 Góc thử sức học kì I</h2>
+  <h2>🌟 Câu hỏi tổng hợp & đề thi học kì</h2>
   <div class="exam-intro"><span class="mascot" aria-hidden="true">🦉</span><p><strong>Em làm bài thật bình tĩnh nhé!</strong><br>Đọc câu hỏi, chọn một đáp án. Làm xong, bấm nút xanh để xem kết quả và lời giải.</p></div>
   <div class="controls exam-subjects" role="group" aria-label="Chọn môn thi thử">
     <button type="button" class="primary" id="examMathBtn" onclick="startSemesterExam('math')">🔢 Toán vui</button>
@@ -271,7 +279,7 @@ main>section:not(#homeMenu){display:none}
   <div class="exam-settings"><label for="examQuestionCount">Em muốn làm bao nhiêu câu?</label><select id="examQuestionCount"><option value="5">5 câu · Làm quen</option><option value="10" selected>10 câu · Thử sức</option></select></div>
   <div class="week-card">
     <h3 id="examHeading">Chọn môn em thích để bắt đầu nhé!</h3>
-    <p id="examInstructions">Đây là đề tham khảo do website tự biên soạn, không phải đề thi chính thức của trường.</p>
+    <p id="examInstructions">Chọn Toán hoặc Tiếng Việt để làm đề tham khảo học kì I. Đề học kì II sẽ được bổ sung sau khi hoàn thiện ngân hàng bài học.</p>
     <div id="examWorkArea"></div>
   </div>
 </section>
@@ -341,18 +349,17 @@ main>section:not(#homeMenu){display:none}
 <footer>🌈 Góc học tập của Nguyễn Vũ Trúc Giang · Bố làm tặng con yêu · Không yêu cầu đăng nhập<br><strong>Người sáng tạo: Nguyễn Hoàng Tuấn Phương</strong></footer>
 <script>
 function openMainSection(id){
- const ids=['homeMenu','bookLessons','subjectPicker','quizPanel','result','semesterExam','weeklyLearning','roadmapPanel','progressPanel','tipsPanel'];
+ const ids=['homeMenu','bookLessons','subjectPicker','quizPanel','result','semesterExam','roadmapPanel','progressPanel','tipsPanel'];
  ids.forEach(x=>{const el=document.getElementById(x);if(el)el.style.display=(x===id)?'block':'none';});
  if(id==='homeMenu') document.getElementById('homeMenu').style.display='grid';
  if(id==='bookLessons') document.getElementById('bookLessons').style.display='block';
  if(id==='semesterExam') document.getElementById('semesterExam').style.display='block';
- if(id==='weeklyLearning') document.getElementById('weeklyLearning').style.display='block';
  if(id==='progressPanel') document.getElementById('progressPanel').style.display='block';
  if(id==='tipsPanel') document.getElementById('tipsPanel').style.display='block';
  window.scrollTo({top:0,behavior:'smooth'});
 }
 function openPracticeView(){
- ['homeMenu','bookLessons','semesterExam','weeklyLearning','roadmapPanel','progressPanel','tipsPanel','result'].forEach(x=>{const el=document.getElementById(x);if(el)el.style.display='none';});
+ ['homeMenu','bookLessons','semesterExam','roadmapPanel','progressPanel','tipsPanel','result'].forEach(x=>{const el=document.getElementById(x);if(el)el.style.display='none';});
  document.getElementById('subjectPicker').style.display='block';
  document.getElementById('quizPanel').style.display='block';
  window.scrollTo({top:0,behavior:'smooth'});
@@ -511,6 +518,9 @@ const vietOneChapters = [
 
 let activeBookLesson = null;
 let bookSubject = "math";
+let bookSemester = 1;
+function openSubject(which){ bookSubject=which; bookSemester=1; const sel=document.getElementById('bookSemester'); if(sel)sel.value='1'; switchBookSubject(which); openMainSection('bookLessons'); }
+function changeBookSemester(value){ bookSemester=Number(value)||1; initBookLessons(); }
 
 function currentBookChapters(){ return bookSubject === "math" ? bookOneChapters : vietOneChapters; }
 function switchBookSubject(which){
@@ -527,6 +537,14 @@ function switchBookSubject(which){
 function initBookLessons(){
  const ch=document.getElementById("bookChapter"), le=document.getElementById("bookLesson");
  ch.innerHTML="";
+ if(bookSemester===2){
+  const o=document.createElement("option");o.value="0";o.textContent="Nội dung học kì 2";ch.appendChild(o);
+  le.innerHTML="";
+  const item=document.createElement("option");item.value="-1";item.textContent="Ngân hàng bài học học kì 2 đang được bổ sung";le.appendChild(item);
+  document.getElementById("bookLessonTitle").textContent="Học kì 2 · "+(bookSubject==="math"?"Toán":"Tiếng Việt");
+  document.getElementById("bookLessonDesc").textContent="Khung học kì 2 đã được tạo. Danh sách bài và câu hỏi sẽ được bổ sung sau khi đối chiếu đúng mục lục sách giáo khoa.";
+  return;
+ }
  currentBookChapters().forEach((c,i)=>{const o=document.createElement("option");o.value=i;o.textContent=c.name;ch.appendChild(o);});
  function fillLessons(){
   const c=currentBookChapters()[Number(ch.value)||0];le.innerHTML="";
@@ -547,6 +565,7 @@ function updateBookLessonInfo(){
   : "Luyện đọc hiểu, từ và câu, chính tả hoặc viết câu theo nội dung bài.";
 }
 function startBookLesson(){
+ if(bookSemester===2){ alert("Nội dung bài học và ngân hàng câu hỏi học kì 2 đang được bổ sung sau khi đối chiếu mục lục sách. Hiện bạn có thể luyện các bài học kì 1."); return; }
  const id=Number(document.getElementById("bookLesson").value)||0;
  const l=getBookLessons()[id]; if(!l)return;
  activeBookLesson=id; topicIndex=l.topic;
