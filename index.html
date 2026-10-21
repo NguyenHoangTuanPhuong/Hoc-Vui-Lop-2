@@ -195,8 +195,6 @@ main>section:not(#homeMenu){display:none}
     <p class="small menu-intro">Con chọn một mục bên dưới để bắt đầu nhé!</p>
     <button class="menu-card" onclick="openBookSubject('math')"><span class="menu-icon">🔢</span><strong>Toán</strong><small>Chọn học kì và bài Toán cần luyện</small></button>
     <button class="menu-card" onclick="openBookSubject('viet')"><span class="menu-icon">📚</span><strong>Tiếng Việt</strong><small>Chọn học kì và bài Tiếng Việt cần luyện</small></button>
-    <button class="menu-card" onclick="openMainSection('semesterExam')"><span class="menu-icon">🌟</span><strong>Đề thi học kì tham khảo</strong><small>Làm đề và xem điểm</small></button>
-    <button class="menu-card" onclick="openMainSection('progressPanel')"><span class="menu-icon">🏆</span><strong>Kết quả của con</strong><small>Xem những lần đã làm</small></button>
     <button class="menu-card" onclick="openMainSection('tipsPanel')"><span class="menu-icon">💡</span><strong>Mẹo học tốt</strong><small>Mẹo nhỏ cho con</small></button>
   </section>
   <section class="panel" id="bookLessons">
@@ -218,6 +216,11 @@ main>section:not(#homeMenu){display:none}
       <p id="bookLessonDesc">Luyện tập theo kiến thức của bài học.</p>
       <button class="primary" type="button" onclick="startBookLesson()">▶ BẮT ĐẦU LÀM BÀI</button>
     </div>
+    <div class="controls" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px">
+      <button class="primary" type="button" onclick="openSubjectExam()">📝 Đề thi tham khảo học kì</button>
+      <button class="secondary" type="button" onclick="openSubjectResults()">🏆 Kết quả môn này</button>
+    </div>
+    <p class="small">Đề thi và kết quả được phân theo môn đang chọn.</p>
     <p class="small">Bài tập được tự biên soạn theo kiến thức của từng môn. Một số dạng bài sẽ tiếp tục được bổ sung.</p>
   </section>
 
@@ -530,11 +533,20 @@ let bookSemester = 1;
 function switchBookSemester(value){ bookSemester=Number(value)||1; activeBookLesson=null; initBookLessons(); }
 function currentBookChapters(){ return bookSubject === "math" ? (bookSemester===1?bookOneChapters:bookTwoChapters) : (bookSemester===1?vietOneChapters:vietTwoChapters); }
 function openBookSubject(which){ openMainSection("bookLessons"); switchBookSubject(which); }
+function openSubjectExam(){
+ document.getElementById("examSemesterSelect").value=String(bookSemester);
+ openMainSection("semesterExam");
+ startSemesterExam(bookSubject);
+}
+let progressSubjectFilter = null;
+function openSubjectResults(){
+ progressSubjectFilter = bookSubject;
+ openMainSection("progressPanel");
+ renderHistory();
+}
 function switchBookSubject(which){
  bookSubject = which;
  const math = which === "math";
- document.getElementById("mathTab").className = "subject-tab " + (math ? "primary active" : "secondary");
- document.getElementById("vietTab").className = "subject-tab " + (!math ? "primary active" : "secondary");
  document.getElementById("lessonPickerTitle").textContent = math ? "🔢 Chọn bài Toán em muốn luyện" : "📚 Chọn bài Tiếng Việt em muốn luyện";
  document.getElementById("chapterLabel").textContent = "② Chọn chủ điểm";
  document.getElementById("bookChapter").setAttribute("aria-label", math ? `Chọn chương sách Toán tập ${bookSemester}` : `Chọn chủ điểm Tiếng Việt tập ${bookSemester}`);
@@ -1189,10 +1201,13 @@ function startSemesterExam(which){
 function getHistory(){try{return JSON.parse(localStorage.getItem(HISTORY_KEY)||"[]");}catch(e){return [];}}
 function saveHistory(item){try{const history=getHistory();history.unshift(item);localStorage.setItem(HISTORY_KEY,JSON.stringify(history.slice(0,20)));renderHistory();}catch(e){const summary=document.getElementById("progressSummary");if(summary)summary.textContent="Không lưu được nhật ký trên trình duyệt này. Điểm bài vừa làm vẫn hiển thị bình thường.";}}
 function renderHistory(){
-  const history=getHistory(), summary=document.getElementById("progressSummary"), root=document.getElementById("progressHistory");
-  if(!history.length){summary.textContent="Chưa có kết quả được lưu.";root.innerHTML="";return;}
+  const allHistory=getHistory(), summary=document.getElementById("progressSummary"), root=document.getElementById("progressHistory");
+  const history=progressSubjectFilter ? allHistory.filter(x=>x.subjectName===(progressSubjectFilter==="math"?"Toán":"Tiếng Việt")) : allHistory;
+  const clearButton=document.querySelector("#progressPanel button[onclick=\"clearProgress()\"]");
+  if(summary) summary.textContent=progressSubjectFilter ? `Kết quả môn ${progressSubjectFilter==="math"?"Toán":"Tiếng Việt"}` : "Kết quả tất cả môn học";
+  if(!history.length){summary.textContent += " · Chưa có kết quả được lưu.";root.innerHTML="";return;}
   const avg=Math.round(history.reduce((s,x)=>s+(x.score/x.total)*100,0)/history.length);
-  summary.textContent=`Đã lưu ${history.length} lượt làm bài gần nhất · Tỉ lệ đúng trung bình: ${avg}%.`;
+  summary.textContent += ` · Đã lưu ${history.length} lượt làm bài · Tỉ lệ đúng trung bình: ${avg}%.`;
   root.innerHTML='<div class="history-list"></div>';const list=root.firstChild;
   history.slice(0,10).forEach(item=>{const row=document.createElement("div");row.className="history-item";const left=document.createElement("div");const title=document.createElement("strong");title.textContent=`${item.subjectName} · ${item.topic}`;const date=document.createElement("div");date.className="small";date.textContent=item.date;left.append(title,date);const right=document.createElement("strong");right.textContent=`${item.score}/${item.total}`;row.append(left,right);list.appendChild(row);});
 }
