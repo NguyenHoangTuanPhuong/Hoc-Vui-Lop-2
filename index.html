@@ -313,6 +313,76 @@ main{width:min(1120px,calc(100% - 48px));margin:-22px auto 42px}
  #homeMenu .menu-card{min-height:unset}
 }
 
+
+/* FIX GOC GIAO DIEN V5 - homeMenu la panel, subjects moi la grid */
+html,body{width:100%;max-width:100%;overflow-x:hidden}
+body{font-size:16px;line-height:1.55}
+.site-header{width:100%;padding:30px 20px 46px;text-align:center}
+.site-header h1{max-width:920px;margin:0 auto 14px;font-size:clamp(30px,3.4vw,46px);line-height:1.18}
+.site-header p{max-width:760px;margin-left:auto;margin-right:auto}
+main{width:min(1120px,calc(100% - 48px))!important;max-width:1120px!important;margin:-22px auto 42px!important}
+#homeMenu{
+ display:block!important;
+ width:100%!important;
+ min-width:0;
+ padding:30px!important;
+ border-radius:22px;
+}
+#homeMenu h2{font-size:28px;line-height:1.35;margin:0 0 10px}
+#homeMenu .menu-intro{font-size:16px;margin:0 0 20px;color:#52627a}
+#homeMenu .home-subjects{
+ display:grid!important;
+ width:100%!important;
+ max-width:none!important;
+ grid-template-columns:repeat(4,minmax(0,1fr))!important;
+ gap:18px!important;
+ margin:0!important;
+ align-items:stretch;
+}
+#homeMenu .home-subjects>.subject{
+ display:flex!important;
+ flex-direction:column;
+ align-items:flex-start;
+ justify-content:flex-start;
+ gap:10px;
+ width:100%!important;
+ min-width:0!important;
+ min-height:170px!important;
+ height:auto!important;
+ padding:22px 20px!important;
+ text-align:left!important;
+ border-radius:18px;
+ overflow-wrap:break-word;
+ word-break:normal;
+}
+#homeMenu .home-subjects>.subject>.emoji{display:block;font-size:36px;line-height:1.1;margin:0 0 3px}
+#homeMenu .home-subjects>.subject>span:last-child{display:block;width:100%;min-width:0}
+#homeMenu .home-subjects>.subject strong{display:block;font-size:21px;line-height:1.3;white-space:normal;word-break:normal}
+#homeMenu .home-subjects>.subject .small{display:inline;font-size:14px;line-height:1.5;color:#52627a;overflow-wrap:normal;word-break:normal}
+@media(min-width:700px) and (max-width:1000px){
+ main{width:calc(100% - 36px)!important}
+ #homeMenu{padding:24px!important}
+ #homeMenu .home-subjects{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:14px!important}
+ #homeMenu .home-subjects>.subject{min-height:145px!important;padding:18px!important}
+}
+@media(max-width:699px){
+ .site-header{padding:24px 15px 36px}
+ .site-header h1{font-size:clamp(26px,7vw,34px);line-height:1.18}
+ main{width:calc(100% - 20px)!important;margin:-14px auto 26px!important}
+ #homeMenu{padding:16px!important}
+ #homeMenu h2{font-size:22px;line-height:1.35}
+ #homeMenu .menu-intro{font-size:14px;line-height:1.5;margin-bottom:16px}
+ #homeMenu .home-subjects{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:10px!important}
+ #homeMenu .home-subjects>.subject{min-height:145px!important;padding:14px 12px!important;gap:8px}
+ #homeMenu .home-subjects>.subject>.emoji{font-size:30px}
+ #homeMenu .home-subjects>.subject strong{font-size:18px;line-height:1.3}
+ #homeMenu .home-subjects>.subject .small{font-size:13px;line-height:1.4}
+}
+@media(max-width:360px){
+ #homeMenu .home-subjects{grid-template-columns:1fr!important}
+ #homeMenu .home-subjects>.subject{min-height:unset!important}
+}
+
 </style>
 </head>
 <body>
