@@ -195,7 +195,7 @@ main>section:not(#homeMenu){display:none}
     <p class="small menu-intro">Con chọn một mục bên dưới để bắt đầu nhé!</p>
     <button class="menu-card" onclick="openMainSection('bookLessons')"><span class="menu-icon">📘</span><strong>Học theo bài</strong><small>Chọn Toán hoặc Tiếng Việt</small></button>
     <button class="menu-card" onclick="openMainSection('semesterExam')"><span class="menu-icon">🌟</span><strong>Thi thử học kì I</strong><small>Làm đề và xem điểm</small></button>
-    <button class="menu-card" onclick="openMainSection('weeklyLearning')"><span class="menu-icon">🗓️</span><strong>Học theo tuần</strong><small>Ôn bài từng tuần</small></button>
+    <button class="menu-card" onclick="openMainSection('weeklyLearning')"><span class="menu-icon">🗓️</span><strong>Ôn tập theo chủ đề</strong><small>Luyện tập theo từng chủ đề</small></button>
     <button class="menu-card" onclick="openMainSection('progressPanel')"><span class="menu-icon">🏆</span><strong>Kết quả của con</strong><small>Xem những lần đã làm</small></button>
     <button class="menu-card" onclick="openMainSection('tipsPanel')"><span class="menu-icon">💡</span><strong>Mẹo học tốt</strong><small>Mẹo nhỏ cho con</small></button>
   </section>
@@ -278,15 +278,15 @@ main>section:not(#homeMenu){display:none}
 
   <section class="panel" id="weeklyLearning">
     <button class="back-home" type="button" onclick="openMainSection('homeMenu')">🏠 Về trang chủ</button>
-  <h2>🗓️ Luyện tập theo tuần lớp 2</h2>
-    <p class="small">Chọn học kỳ và tuần để mở bài luyện. Đây là lộ trình ôn tập tự biên soạn theo các mạch kiến thức lớp 2; thứ tự từng tuần là khung tham khảo, chưa phải bản đối chiếu chính thức từng bài trong sách giáo khoa.</p>
+  <h2>🧩 Ôn tập theo chủ đề lớp 2</h2>
+    <p class="small">Chọn nhóm chủ đề để mở bài luyện. Các chủ đề được sắp xếp theo mạch kiến thức lớp 2, giúp em ôn tập từng phần thay vì học theo tuần cố định.</p>
     <div class="controls">
-      <label for="semesterSelect" class="small">Học kỳ:</label>
+      <label for="semesterSelect" class="small">Nhóm chủ đề:</label>
       <select id="semesterSelect" class="chip" aria-label="Chọn học kỳ">
         <option value="1">Học kỳ I · Tuần 1–18</option>
         <option value="2">Học kỳ II · Tuần 19–35</option>
       </select>
-      <label for="weekSelect" class="small">Tuần:</label>
+      <label for="weekSelect" class="small">Chủ đề:</label>
       <select id="weekSelect" class="chip" aria-label="Chọn tuần"></select>
     </div>
     <div class="week-card" id="weekCard">
@@ -297,11 +297,11 @@ main>section:not(#homeMenu){display:none}
         <div><strong>📖 Tiếng Việt</strong><p id="weekViet"></p></div>
       </div>
       <div class="controls">
-        <button class="primary" type="button" onclick="startWeeklyPractice('math')">Luyện Toán tuần này</button>
-        <button class="primary" type="button" onclick="startWeeklyPractice('viet')">Luyện Tiếng Việt tuần này</button>
+        <button class="primary" type="button" onclick="startWeeklyPractice('math')">Luyện Toán chủ đề này</button>
+        <button class="primary" type="button" onclick="startWeeklyPractice('viet')">Luyện Tiếng Việt chủ đề này</button>
       </div>
     </div>
-    <p class="small">Lưu ý: bài luyện tuần hiện sử dụng ngân hàng câu hỏi theo chủ đề gần nhất và tạo đề từ đó. Chúng tôi sẽ tiếp tục bổ sung bộ câu hỏi riêng cho từng tuần.</p>
+    <p class="small">Lưu ý: câu hỏi được tạo từ ngân hàng theo mạch kiến thức gần nhất. Nội dung sẽ tiếp tục được rà soát để bám sát hơn từng chủ đề và bài học.</p>
   </section>
 
   <section class="panel" id="roadmapPanel">
@@ -712,13 +712,13 @@ function renderWeekSelectors(){
  const sem=document.getElementById("semesterSelect"), sel=document.getElementById("weekSelect");
  sem.value=activeWeek<=18?"1":"2";
  sel.innerHTML="";
- weeklyPlan.filter(x=>String(x.sem)===sem.value).forEach(w=>{const o=document.createElement("option");o.value=w.w;o.textContent=`Tuần ${w.w} · ${w.title}`;sel.appendChild(o);});
+ weeklyPlan.filter(x=>String(x.sem)===sem.value).forEach(w=>{const o=document.createElement("option");o.value=w.w;o.textContent=`Chủ đề ${w.w} · ${w.title}`;sel.appendChild(o);});
  sel.value=String(activeWeek);renderWeekCard();
 }
 function renderWeekCard(){
  const w=getWeek();
  document.getElementById("weekSelect").value=String(w.w);
- document.getElementById("weekTitle").textContent=`Tuần ${w.w} · ${w.title}`;
+ document.getElementById("weekTitle").textContent=`Chủ đề ${w.w} · ${w.title}`;
  document.getElementById("weekFocus").textContent=w.focus;
  document.getElementById("weekMath").textContent=w.mathFocus;
  document.getElementById("weekViet").textContent=w.vietFocus;
@@ -729,7 +729,7 @@ function startWeeklyPractice(s){
  document.getElementById("mathSubject").classList.toggle("active",s==="math");
  document.getElementById("vietSubject").classList.toggle("active",s==="viet");
  renderTopics();renderQuiz(true);
- document.getElementById("quizTitle").textContent=`Tuần ${w.w} · ${s==="math"?"🔢 Toán":"📖 Tiếng Việt"} · ${banks[s][topicIndex].name}`;
+ document.getElementById("quizTitle").textContent=`Chủ đề ${w.w} · ${s==="math"?"🔢 Toán":"📖 Tiếng Việt"} · ${banks[s][topicIndex].name}`;
  document.getElementById("quizDesc").textContent=(s==="math"?w.mathFocus:w.vietFocus)+" Bài luyện lấy câu hỏi từ chủ đề liên quan trong ngân hàng hiện có.";
  document.getElementById("generationNote").textContent=`Lộ trình tham khảo · Tuần ${w.w}: ${w.title}. Đây là đề luyện theo chủ đề gần nhất, chưa phải bộ câu hỏi riêng cho từng bài trong sách.`;
  document.getElementById("quizForm").scrollIntoView({behavior:"smooth",block:"start"});
