@@ -529,8 +529,23 @@ function startBookLesson(){
 }
 
 function mcq(q,correct,others,e){
- const vals=[String(correct),...others.map(String)].slice(0,4);while(vals.length<4)vals.push(String(Number(vals[vals.length-1])+3));
- const shuffled=shuffleArray(vals);return {q,a:shuffled,c:shuffled.indexOf(String(correct)),e};
+ const correctText=String(correct).trim();
+ const vals=[];
+ [correctText,...others.map(v=>String(v).trim())].forEach(v=>{if(v&&!vals.includes(v))vals.push(v);});
+ const numeric=Number(correctText);
+ let offset=1;
+ while(vals.length<4){
+   let candidate;
+   if(Number.isFinite(numeric)&&correctText!==''){
+     const match=correctText.match(/^(-?\d+)(\s+.*)?$/);
+     candidate=match?String(Number(match[1])+offset*3)+(match[2]||''):`Phương án ${offset}`;
+   }else candidate=`Phương án khác ${offset}`;
+   if(!vals.includes(candidate))vals.push(candidate);
+   offset++;
+ }
+ const finalVals=vals.slice(0,4);
+ const shuffled=shuffleArray(finalVals);
+ return {q,a:shuffled,c:shuffled.indexOf(correctText),e};
 }
 function createBookLessonQuestions(id,count){
  const qs=[]; const rndInt=(a,b)=>Math.floor(Math.random()*(b-a+1))+a;
@@ -661,7 +676,11 @@ function makeDynamicMathQuestion(topicIndex){
     const type=rnd(0,3), n=rnd(12,50), m=rnd(2,20);
     if(type===0){q=`Thư viện có ${n} quyển truyện, được tặng thêm ${m} quyển. Có tất cả bao nhiêu quyển?`;c=n+m;e=`${n} + ${m} = ${c} quyển truyện.`;}
     else if(type===1){const total=Math.max(n,m)+Math.min(n,m);q=`Có ${total} quả bóng, ${m} quả đã được mang đi. Còn lại bao nhiêu quả?`;c=total-m;e=`${total} − ${m} = ${c} quả bóng.`;}
-    else if(type===2){q=`Có ${n} học sinh chia đều thành ${m>n?2:m>6?4:2} nhóm. Nếu chia ${n} học sinh thành 2 nhóm bằng nhau, mỗi nhóm có bao nhiêu bạn?`;c=Math.floor(n/2);e=`Chia ${n} học sinh thành 2 nhóm: ${n} : 2 = ${c} bạn mỗi nhóm (nếu số lẻ, cần chia lại số liệu).`;if(n%2!==0){q=`Có ${n-1} chiếc kẹo chia đều cho 2 bạn. Mỗi bạn được bao nhiêu chiếc?`;c=(n-1)/2;e=`${n-1} : 2 = ${c} chiếc kẹo.`;}}
+    else if(type===2){
+      const even=n%2===0?n:n-1;
+      q=`Có ${even} chiếc kẹo chia đều cho 2 bạn. Mỗi bạn được bao nhiêu chiếc?`;
+      c=even/2;e=`${even} : 2 = ${c} chiếc kẹo.`;
+    }
     else {q=`Một hộp có ${m} bút. ${Math.max(2,Math.min(5,Math.floor(n/10)))} hộp như vậy có bao nhiêu bút?`;const boxes=Math.max(2,Math.min(5,Math.floor(n/10)));c=m*boxes;e=`${m} × ${boxes} = ${c} chiếc bút.`;}
     a=[String(c),String(c+2),String(Math.max(0,c-2)),String(c+5)];
   }
@@ -698,9 +717,11 @@ function createVietLessonQuestions(id,count){
  const names=["An","Bình","Chi","Dũng","Hà","Lan","Minh","Nam","Mai","Vy","Phúc","Thảo"];
  const pick=a=>a[rnd(0,a.length-1)];
  const make=(q,correct,wrong,e)=>{
-   const correctText=String(correct);
-   let vals=[correctText,...wrong.map(String)].filter((v,i,a)=>a.indexOf(v)===i);
-   while(vals.length<4) vals.push("Chưa phù hợp");
+   const correctText=String(correct).trim();
+   let vals=[];
+   [correctText,...wrong.map(v=>String(v).trim())].forEach(v=>{if(v&&!vals.includes(v))vals.push(v);});
+   let extra=1;
+   while(vals.length<4){const candidate=`Phương án chưa phù hợp ${extra++}`;if(!vals.includes(candidate))vals.push(candidate);}
    vals=shuffleArray(vals.slice(0,4));
    return {q,a:vals,c:vals.indexOf(correctText),e};
  };
@@ -727,7 +748,7 @@ function createVietLessonQuestions(id,count){
      } else if(kind===4){
        q="Từ nào gần nghĩa với “chăm chỉ”?"; correct="siêng năng"; wrong=["lười biếng","ồn ào","vội vàng"]; e="“Chăm chỉ” gần nghĩa với “siêng năng”.";
      } else if(kind===5){
-       q="Chọn câu kể rõ nghĩa."; correct=`${n} đang đọc sách trong thư viện.`; wrong=["Đọc thư viện sách đang.","Trong đang ${n} sách đọc.","Sách thư viện ${n} đang."]; e="Câu đúng có trật tự từ rõ ràng và diễn đạt đủ ý.";
+       q="Chọn câu kể rõ nghĩa."; correct=`${n} đang đọc sách trong thư viện.`; wrong=["Đọc thư viện sách đang.",`Trong đang ${n} sách đọc.`,`Sách thư viện ${n} đang.`]; e="Câu đúng có trật tự từ rõ ràng và diễn đạt đủ ý.";
      } else if(kind===6){
        q="Từ nào chỉ hoạt động?"; correct=pick(["viết bài","đọc sách","xếp hàng"]); wrong=["bảng xanh","học sinh","cặp sách"].filter(x=>x!==correct); e=`“${correct}” chỉ hoạt động.`;
      } else {
@@ -735,7 +756,7 @@ function createVietLessonQuestions(id,count){
      }
    } else if(group===1){
      if(kind===0){
-       const things=pick([["hoa","tưới cây"],["chú mèo","cho mèo ăn"],["cây non","bón nước"],["quyển sách","đọc sách"],["bức tranh","vẽ tranh"]]);
+       const things=pick([["hoa","tưới cây"],["chú mèo","cho mèo ăn"],["cây non","tưới cây non"],["quyển sách","đọc sách"],["bức tranh","vẽ tranh"]]);
        q=`Đọc đoạn văn: “${n} chăm sóc ${things[0]} mỗi ngày. Bạn thường ${things[1]} vào buổi sáng.” ${n} thường làm gì?`;
        correct=things[1].charAt(0).toUpperCase()+things[1].slice(1); wrong=["Đi ngủ muộn","Bỏ đi học","Chơi điện tử cả ngày"]; e=`Đoạn văn nói ${n.toLowerCase()} thường ${things[1]}.`;
      } else if(kind===1){q="Từ nào chỉ đặc điểm?";correct=pick(["xanh mướt","long lanh","thơm ngát","cao lớn"]);wrong=["chạy nhảy","bông hoa","học sinh"].filter(x=>x!==correct);e=`“${correct}” dùng để nêu đặc điểm.`;}
@@ -953,12 +974,23 @@ const semesterExamBanks = {
 })();
 function rndExam(min,max){return Math.floor(Math.random()*(max-min+1))+min;}
 function pickSemesterExam(which,count=10){
- const pool=[...semesterExamBanks[which]];
- for(let i=pool.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[pool[i],pool[j]]=[pool[j],pool[i]];}
- return pool.slice(0,Math.min(count,pool.length)).map(item=>{
-  const correct=item.a[item.c];const answers=[...item.a];
-  for(let i=answers.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[answers[i],answers[j]]=[answers[j],answers[i]];}
-  return {...item,a:answers,c:answers.indexOf(correct)};
+ // Đề thi thử lấy câu từ ngân hàng theo chủ đề, cộng câu biến thể mới; không chỉ đảo thứ tự 10 câu cố định.
+ const pool=[...semesterExamBanks[which],...banks[which].flatMap(topic=>topic.qs)];
+ if(which==='math'){
+   for(let i=0;i<24;i++)pool.push(makeDynamicMathQuestion(rnd(0,banks.math.length-1)));
+ }else{
+   const lessonCount=Math.min(8,getBookLessons().length);
+   for(let id=0;id<lessonCount;id++)pool.push(...createVietLessonQuestions(id,8));
+ }
+ const unique=[];const seen=new Set();
+ for(const item of pool){
+   if(!item||typeof item.q!=='string'||!Array.isArray(item.a)||item.a.length<2||!Number.isInteger(item.c)||item.c<0||item.c>=item.a.length)continue;
+   const key=item.q.trim();if(!seen.has(key)){seen.add(key);unique.push(item);}
+ }
+ const shuffledPool=shuffleArray(unique);
+ return shuffledPool.slice(0,Math.min(count,shuffledPool.length)).map(item=>{
+  const correct=item.a[item.c];const answers=shuffleArray(item.a.map(String));
+  return {...item,a:answers,c:answers.indexOf(String(correct))};
  });
 }
 let activeExamSubject = null;
@@ -1030,7 +1062,7 @@ function startSemesterExam(which){
 }
 
 function getHistory(){try{return JSON.parse(localStorage.getItem(HISTORY_KEY)||"[]");}catch(e){return [];}}
-function saveHistory(item){const history=getHistory();history.unshift(item);localStorage.setItem(HISTORY_KEY,JSON.stringify(history.slice(0,20)));renderHistory();}
+function saveHistory(item){try{const history=getHistory();history.unshift(item);localStorage.setItem(HISTORY_KEY,JSON.stringify(history.slice(0,20)));renderHistory();}catch(e){const summary=document.getElementById("progressSummary");if(summary)summary.textContent="Không lưu được nhật ký trên trình duyệt này. Điểm bài vừa làm vẫn hiển thị bình thường.";}}
 function renderHistory(){
   const history=getHistory(), summary=document.getElementById("progressSummary"), root=document.getElementById("progressHistory");
   if(!history.length){summary.textContent="Chưa có kết quả được lưu.";root.innerHTML="";return;}
@@ -1055,7 +1087,7 @@ document.getElementById("quizForm").addEventListener("submit",e=>{
   document.getElementById("result").style.display="block";submitted=true;
   document.querySelectorAll("#questions input").forEach(x=>x.disabled=true);
   document.querySelector("#quizForm button[type=submit]").disabled=true;
-  if(!missing){saveHistory({subjectName:subject==="math"?"Toán":"Tiếng Việt",topic:(typeof activeBookLesson!=="undefined"&&activeBookLesson!==null?getBookLessons()[activeBookLesson].title+" · ":typeof activeWeek!=="undefined"&&activeWeek?`Tuần ${activeWeek} · `:"")+banks[subject][topicIndex].name,score,total:qs.length,date:new Date().toLocaleString("vi-VN")});}
+  if(!missing){const historyTopic=(typeof activeBookLesson!=="undefined"&&activeBookLesson!==null?getBookLessons()[activeBookLesson].title:typeof activeWeek!=="undefined"&&activeWeek?`Tuần ${activeWeek} · ${banks[subject][topicIndex].name}`:banks[subject][topicIndex].name);saveHistory({subjectName:subject==="math"?"Toán":"Tiếng Việt",topic:historyTopic,score,total:qs.length,date:new Date().toLocaleString("vi-VN")});}
   document.getElementById("result").scrollIntoView({behavior:"smooth",block:"center"});
 });
 function resetQuiz(){renderQuiz();document.querySelector("#quizForm button[type=submit]").disabled=false;}
