@@ -398,6 +398,11 @@ main{width:min(1120px,calc(100% - 48px))!important;max-width:1120px!important;ma
 .reward-reset{margin-top:10px;border:1px solid #cbd8ee;border-radius:10px;padding:8px 12px;background:white;color:#344563;font-size:13px;cursor:pointer}
 @media(max-width:699px){.reward-panel{padding:15px}.reward-panel h3{font-size:19px}.reward-summary{gap:7px}.reward-stat{padding:10px 6px}.reward-stat strong{font-size:20px}.reward-stat span{font-size:12px}}
 
+
+/* BUOC 3: chuyen man hinh mon hoc, khong cuon xuong duoi trang chu */
+main>section[hidden]{display:none!important}
+main>section:not(#homeMenu){width:100%;max-width:100%;min-width:0;box-sizing:border-box}
+
 </style>
 </head>
 <body>
@@ -631,13 +636,26 @@ main{width:min(1120px,calc(100% - 48px))!important;max-width:1120px!important;ma
 <script>
 function openMainSection(id){
  const ids=['homeMenu','bookLessons','englishLessons','subjectPicker','quizPanel','result','semesterExam','roadmapPanel','progressPanel','tipsPanel'];
- ids.forEach(x=>{const el=document.getElementById(x);if(el)el.style.display=(x===id)?'block':'none';});
- if(id==='homeMenu') document.getElementById('homeMenu').style.display='grid';
- if(id==='bookLessons') document.getElementById('bookLessons').style.display='block';
- if(id==='semesterExam') document.getElementById('semesterExam').style.display='block';
- if(id==='progressPanel') document.getElementById('progressPanel').style.display='block';
- if(id==='tipsPanel') document.getElementById('tipsPanel').style.display='block';
- window.scrollTo({top:0,behavior:'smooth'});
+ // Chuyển hẳn sang màn hình được chọn: ẩn các màn hình khác, không để nội dung môn học nối dài bên dưới trang chủ.
+ ids.forEach(x=>{
+   const el=document.getElementById(x);
+   if(el) el.style.display='none';
+ });
+ const target=document.getElementById(id);
+ if(target){
+   target.style.display = id==='homeMenu' ? 'grid' : 'block';
+   target.hidden = false;
+   target.setAttribute('aria-hidden','false');
+ }
+ // Đưa người học lên đầu phần nội dung vừa mở, thay vì phải tự cuộn tìm.
+ window.scrollTo({top:0,behavior:'instant'});
+ if(target){
+   const heading=target.querySelector('h1,h2,h3');
+   if(heading){
+     if(!heading.hasAttribute('tabindex')) heading.setAttribute('tabindex','-1');
+     try{heading.focus({preventScroll:true});}catch(e){}
+   }
+ }
 }
 function openPracticeView(){
  ['homeMenu','bookLessons','semesterExam','roadmapPanel','progressPanel','tipsPanel','result'].forEach(x=>{const el=document.getElementById(x);if(el)el.style.display='none';});
