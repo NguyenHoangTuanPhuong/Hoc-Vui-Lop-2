@@ -1772,6 +1772,95 @@ const englishExtraQuestions = {
  16:[ ["Which word means 'ấm trà'?",["teapot","tent","blanket","table"],0,"Teapot nghĩa là ấm trà."],["Is the blanket near the tent? (No)",["No, it isn't. It's in the tent.","No, I don't.","No, there aren't.","No, she isn't."],0,"Mẫu câu trong Lesson 3 Unit 16: No, it isn't. It's in the tent."] ]
 };
 englishUnits.forEach(u=>{(englishExtraQuestions[u.n]||[]).forEach(q=>u.questions.push(q));});
+
+// NGAN HANG TIENG ANH MO RONG BUOC 2 - them 3 cau moi moi Unit
+// Cac cau hoi duoi day la bai tap bo tro tu bien soan theo chu diem/tieng mau cua tung Unit.
+const englishExtraQuestionsV2 = {
+  1: [
+    ["Choose the correct sentence.", ["The pasta is yummy.", "The pasta are yummy.", "The pasta yummy is.", "Pasta are on the zoo."], 0, "Với danh từ món ăn trong mẫu câu Unit 1, dùng 'The ... is yummy.'."],
+    ["Which word rhymes/starts with the same letter as pizza?", ["pasta", "kite", "zebra", "tent"], 0, "Pizza và pasta đều bắt đầu bằng chữ Pp."],
+    ["Complete: The ___ is yummy.", ["popcorn", "river", "kitten", "shorts"], 0, "Popcorn là từ vựng trọng tâm của Unit 1."]
+  ],
+  2: [
+    ["Choose the correct answer: Is she flying a kite? (Yes)", ["Yes, she is.", "Yes, she does.", "Yes, she can.", "Yes, there is."], 0, "Câu hỏi Is she ...? được trả lời bằng Yes, she is."],
+    ["Which word is a small animal?", ["kitten", "kite", "bike", "sail"], 0, "Kitten nghĩa là mèo con."],
+    ["Complete: He is riding a ___.", ["bike", "pizza", "river", "blanket"], 0, "Bike nghĩa là xe đạp và xuất hiện trong Unit 2."]
+  ],
+  3: [
+    ["Which word means “cát”?", ["sand", "sail", "sea", "road"], 0, "Sand nghĩa là cát."],
+    ["Choose the correct invitation.", ["Let's look at the sea!", "Let's looks at the sea!", "Let's looking the sea!", "Let's looked at sea!"], 0, "Sau Let's dùng động từ nguyên mẫu: look."],
+    ["Which word belongs to a seaside scene?", ["sail", "square", "yams", "teapot"], 0, "Sail (cánh buồm) là từ vựng Unit 3."]
+  ],
+  4: [
+    ["Which word means “cầu vồng”?", ["rainbow", "river", "road", "village"], 0, "Rainbow nghĩa là cầu vồng."],
+    ["Complete: I can ___ a river.", ["see", "sees", "seeing", "saw"], 0, "Mẫu câu Unit 4 là I can see ..."],
+    ["Choose the correct question.", ["What can you see?", "What you can see?", "What can see you?", "What do can you see?"], 0, "Đây là mẫu câu hỏi trọng tâm của Unit 4."]
+  ],
+  5: [
+    ["What is he doing? He is doing a ___.", ["quiz", "kite", "river", "tent"], 0, "Quiz nghĩa là bài đố/bài kiểm tra ngắn."],
+    ["Which word means “hình vuông”?", ["square", "question", "quiz", "shorts"], 0, "Square nghĩa là hình vuông."],
+    ["Choose the correct sentence.", ["She's answering a question.", "She answering a question.", "She are answering a question.", "She's answer a question."], 0, "Với she, dùng She's + động từ -ing trong mẫu câu bài học."]
+  ],
+  6: [
+    ["Which word means “con cáo”?", ["fox", "box", "ox", "van"], 0, "Fox nghĩa là con cáo."],
+    ["Choose the correct answer: Is there a fox? (No)", ["No, there isn't.", "No, it isn't.", "No, I don't.", "No, she can't."], 0, "Câu hỏi Is there ...? trả lời No, there isn't."],
+    ["Complete: There is ___ ox.", ["an", "a", "are", "do"], 0, "Dùng 'an' trước ox trong mẫu câu Unit 6."]
+  ],
+  7: [
+    ["Which word means “nước ép”?", ["juice", "jelly", "jam", "yogurt"], 0, "Juice nghĩa là nước ép."],
+    ["Choose the polite request.", ["Pass me the jam, please.", "Pass the jam me, please.", "Please the jam pass.", "Pass me jam are."], 0, "Mẫu yêu cầu lịch sự là Pass me the ..., please."],
+    ["Complete the reply: Here you ___.", ["are", "is", "am", "do"], 0, "Câu đáp lịch sự là Here you are."]
+  ],
+  8: [
+    ["Which word means “ngôi làng”?", ["village", "van", "volleyball", "zebra"], 0, "Village nghĩa là ngôi làng."],
+    ["Choose the correct answer: Can you draw a van? (No)", ["No, I can't.", "No, I don't.", "No, there isn't.", "No, she isn't."], 0, "Câu hỏi Can you ...? trả lời No, I can't."],
+    ["Which word is a sport?", ["volleyball", "village", "van", "yams"], 0, "Volleyball nghĩa là bóng chuyền."]
+  ],
+  9: [
+    ["Which word means “khoai mỡ”?", ["yams", "yogurt", "yo-yos", "zebu"], 0, "Yams nghĩa là củ khoai mỡ."],
+    ["Choose the correct sentence.", ["I want some yogurt.", "I wants some yogurt.", "I want yogurt some.", "I am want yogurt."], 0, "Mẫu câu Unit 9: I want some ..."],
+    ["What do you want? (yo-yos)", ["I want some yo-yos.", "I wants yo-yos.", "I want a yogurt.", "I can yo-yos."], 0, "Dùng I want some ... để nói điều mình muốn."]
+  ],
+  10: [
+    ["Which word means “ngựa vằn”?", ["zebra", "zebu", "zoo", "zucchini"], 0, "Zebra nghĩa là ngựa vằn."],
+    ["Choose the correct answer: Do you like the zoo? (No)", ["No, I don't.", "No, I isn't.", "No, I can't.", "No, there isn't."], 0, "Câu hỏi Do you like ...? trả lời No, I don't."],
+    ["Which place can you see animals?", ["zoo", "campsite", "classroom", "kitchen"], 0, "Zoo nghĩa là sở thú."]
+  ],
+  11: [
+    ["Which word means “đang trượt cầu trượt”?", ["sliding", "riding", "driving", "sailing"], 0, "Sliding là hoạt động trượt."],
+    ["Complete: They are ___ bikes.", ["riding", "ride", "rides", "rode"], 0, "Mẫu câu đang diễn ra dùng are + V-ing."],
+    ["Choose the correct sentence.", ["He's sliding.", "He's slide.", "He sliding is.", "He are sliding."], 0, "Với he, dùng He's + động từ -ing."]
+  ],
+  12: [
+    ["Which word means “nho”?", ["grapes", "cake", "table", "grape juice"], 0, "Grapes nghĩa là nho."],
+    ["Complete: The cake is ___ the table.", ["on", "are", "am", "to on"], 0, "Mẫu câu vị trí trong Unit 12 dùng on the table."],
+    ["Choose the correct sentence.", ["The grapes are on the table.", "The grapes is on the table.", "The grapes am on the table.", "The grapes be on the table."], 0, "Grapes là danh từ số nhiều nên dùng are."]
+  ],
+  13: [
+    ["Which number is thirteen?", ["13", "11", "14", "15"], 0, "Thirteen là số 13."],
+    ["Complete: 11 = ___.", ["eleven", "thirteen", "fourteen", "fifteen"], 0, "Eleven là số 11."],
+    ["What number is it? It's fifteen. Which number?", ["15", "13", "14", "11"], 0, "Fifteen là số 15."]
+  ],
+  14: [
+    ["Which word means “bà”?", ["grandmother", "brother", "sister", "mother's"], 0, "Grandmother nghĩa là bà."],
+    ["Choose the correct answer: How old is your brother? (19)", ["He's nineteen.", "He's nineteen years old brother.", "He nineteen.", "He's a nineteen."], 0, "Mẫu câu tuổi trong Unit 14: He's nineteen."],
+    ["Which word means “anh/em trai”?", ["brother", "sister", "grandmother", "shorts"], 0, "Brother nghĩa là anh/em trai."]
+  ],
+  15: [
+    ["Which word means “quần đùi”?", ["shorts", "shirts", "shoes", "socks"], 0, "Shorts nghĩa là quần đùi."],
+    ["Choose the correct question about location.", ["Where are the shoes?", "Where the shoes are?", "Where is the shoes?", "Where do the shoes?"], 0, "Shoes là danh từ số nhiều nên dùng are."],
+    ["Which word starts with the sound /ʃ/ in this Unit?", ["shirts", "cake", "zebra", "tent"], 0, "Shirts bắt đầu bằng âm sh /ʃ/."]
+  ],
+  16: [
+    ["Which word means “chăn”?", ["blanket", "teapot", "tent", "table"], 0, "Blanket nghĩa là chăn."],
+    ["Complete: The teapot is ___ the table.", ["on", "are", "is", "under to"], 0, "Mẫu câu trong Unit 16: The teapot is on the table."],
+    ["Choose the correct sentence.", ["It's in the tent.", "It's the in tent.", "It in the tent is.", "It's at tent in."], 0, "Mẫu câu vị trí: It's in the tent."]
+  ]
+};
+englishUnits.forEach(u => {
+  (englishExtraQuestionsV2[u.n] || []).forEach(q => u.questions.push(q));
+});
+
 let englishActiveUnit=0, englishCurrentQuestions=[], englishSubmitted=false;
 function initEnglishLessons(){
  const sem=Number(document.getElementById('englishSemester')?.value||1), select=document.getElementById('englishUnit');if(!select)return;
