@@ -55,7 +55,7 @@ h2{font-size:23px}
 #bookLessons .primary{width:100%;min-height:56px;font-size:19px;border-radius:15px}
 #bookLessons .small{font-size:13px}
 #bookLessons .small:last-child{margin-bottom:0}
-#subjectPicker,#weeklyLearning,#roadmapPanel{display:none!important}
+#subjectPicker,#weeklyLearning,#roadmapPanel{display:none}
 #quizTitle{font-size:23px}
 #quizDesc{font-size:16px}
 #questionCount{min-height:46px}
@@ -180,32 +180,9 @@ main>section:not(#homeMenu){display:none}
   .site-header .school-line{border-radius:14px;line-height:1.4}
   .site-header .title-break{display:block}
 }
-
-/* Hiệu ứng nộp bài và điểm số vui nhộn */
-#result{position:relative;overflow:hidden;animation:resultPop .55s cubic-bezier(.2,.9,.3,1.25)}
-#score.score-pop{animation:scoreBounce .7s ease;color:#15803d}
-#result.perfect{background:linear-gradient(135deg,#fef9c3,#dcfce7,#dbeafe);border:2px solid #86efac}
-#result.good{background:linear-gradient(135deg,#eff6ff,#f0fdf4);border:2px solid #bfdbfe}
-#result.try-again{background:linear-gradient(135deg,#fff7ed,#fefce8);border:2px solid #fed7aa}
-#result .reward{font-size:46px;line-height:1.25;animation:rewardWiggle 1s ease-in-out infinite alternate}
-#result .score-stars{font-size:26px;letter-spacing:4px;margin:4px 0 8px;animation:starGlow 1.2s ease-in-out infinite alternate}
-#result .score-message{font-size:18px;font-weight:800;margin:6px 0;color:#1e3a8a}
-.confetti-piece{position:fixed;top:-18px;width:10px;height:14px;z-index:9999;pointer-events:none;animation:confettiFall 1.8s ease-in forwards;border-radius:3px}
-@keyframes resultPop{0%{opacity:.25;transform:translateY(18px) scale(.96)}70%{transform:translateY(-3px) scale(1.01)}100%{opacity:1;transform:none}}
-@keyframes scoreBounce{0%{transform:scale(.55)}65%{transform:scale(1.18)}100%{transform:scale(1)}}
-@keyframes rewardWiggle{from{transform:rotate(-7deg) scale(.96)}to{transform:rotate(7deg) scale(1.06)}}
-@keyframes starGlow{from{opacity:.7;transform:scale(.98)}to{opacity:1;transform:scale(1.04)}}
-@keyframes confettiFall{to{transform:translate(var(--drift),105vh) rotate(720deg);opacity:.1}}
-@media(prefers-reduced-motion:reduce){#result,#score.score-pop,#result .reward,#result .score-stars,.confetti-piece{animation:none!important}}
-
-
-#soundToggle{position:fixed;right:16px;bottom:18px;z-index:10000;border:0;border-radius:999px;padding:11px 15px;background:#172554;color:#fff;font-weight:800;box-shadow:0 5px 18px #17255444;cursor:pointer;font-size:14px}
-#soundToggle:focus-visible{outline:3px solid #facc15;outline-offset:3px}
-@media(max-width:520px){#soundToggle{right:10px;bottom:10px;padding:10px 12px}}
 </style>
 </head>
 <body>
-<button id="soundToggle" type="button" aria-pressed="true" title="Bật hoặc tắt âm thanh">🔊 Âm thanh: Bật</button>
 <header class="site-header">
   <div class="logo" aria-hidden="true">🌈 📚</div>
   <h1>Góc học tập của<br class="title-break"> Nguyễn Vũ Trúc Giang</h1>
@@ -216,17 +193,25 @@ main>section:not(#homeMenu){display:none}
   <section class="panel" id="homeMenu">
     <h2>👋 Trúc Giang muốn học gì hôm nay?</h2>
     <p class="small menu-intro">Con chọn một mục bên dưới để bắt đầu nhé!</p>
-    <button class="menu-card" onclick="openBookSubject('math')"><span class="menu-icon">🔢</span><strong>Toán</strong><small>Chọn học kì và bài Toán cần luyện</small></button>
-    <button class="menu-card" onclick="openBookSubject('viet')"><span class="menu-icon">📚</span><strong>Tiếng Việt</strong><small>Chọn học kì và bài Tiếng Việt cần luyện</small></button>
+    <button class="menu-card" onclick="openMainSection('bookLessons')"><span class="menu-icon">📘</span><strong>Học theo bài</strong><small>Chọn Toán hoặc Tiếng Việt</small></button>
+    <button class="menu-card" onclick="openMainSection('semesterExam')"><span class="menu-icon">🌟</span><strong>Thi thử học kì I</strong><small>Làm đề và xem điểm</small></button>
+    <button class="menu-card" onclick="openMainSection('weeklyLearning')"><span class="menu-icon">🗓️</span><strong>Học theo tuần</strong><small>Ôn bài từng tuần</small></button>
+    <button class="menu-card" onclick="openMainSection('progressPanel')"><span class="menu-icon">🏆</span><strong>Kết quả của con</strong><small>Xem những lần đã làm</small></button>
     <button class="menu-card" onclick="openMainSection('tipsPanel')"><span class="menu-icon">💡</span><strong>Mẹo học tốt</strong><small>Mẹo nhỏ cho con</small></button>
   </section>
   <section class="panel" id="bookLessons">
     <button class="back-home" type="button" onclick="openMainSection('homeMenu')">🏠 Về trang chủ</button>
   <h2 id="lessonPickerTitle">📘 Chọn bài em muốn luyện</h2>
-    <p class="small">① Chọn học kì · ② Chọn chủ điểm và bài · ③ Bấm nút xanh để bắt đầu nhé!</p>
+    <p class="small">① Chọn môn học · ② Chọn bài · ③ Bấm nút xanh để bắt đầu nhé!</p>
     <div class="controls">
       <label for="bookSemester">① Chọn học kì</label>
-      <select id="bookSemester" class="chip" onchange="switchBookSemester(this.value)"><option value="1">Học kì 1</option><option value="2">Học kì 2</option></select>
+      <select id="bookSemester" class="chip" aria-label="Chọn học kì">
+        <option value="1">Học kì 1</option><option value="2">Học kì 2</option>
+      </select>
+    </div>
+    <div class="controls subject-toggle" role="group" aria-label="Chọn môn học">
+      <button type="button" class="primary subject-tab active" id="mathTab" onclick="switchBookSubject('math')">🔢 Toán</button>
+      <button type="button" class="secondary subject-tab" id="vietTab" onclick="switchBookSubject('viet')">📚 Tiếng Việt</button>
     </div>
     <div class="controls">
       <label for="bookChapter" id="chapterLabel">② Chọn chương</label>
@@ -239,11 +224,6 @@ main>section:not(#homeMenu){display:none}
       <p id="bookLessonDesc">Luyện tập theo kiến thức của bài học.</p>
       <button class="primary" type="button" onclick="startBookLesson()">▶ BẮT ĐẦU LÀM BÀI</button>
     </div>
-    <div class="controls" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px">
-      <button class="primary" type="button" onclick="openSubjectExam()">📝 Đề thi tham khảo học kì</button>
-      <button class="secondary" type="button" onclick="openSubjectResults()">🏆 Kết quả môn này</button>
-    </div>
-    <p class="small">Đề thi và kết quả được phân theo môn đang chọn.</p>
     <p class="small">Bài tập được tự biên soạn theo kiến thức của từng môn. Một số dạng bài sẽ tiếp tục được bổ sung.</p>
   </section>
 
@@ -288,13 +268,13 @@ main>section:not(#homeMenu){display:none}
 
 <section class="panel" id="semesterExam">
   <button class="back-home" type="button" onclick="openMainSection('homeMenu')">🏠 Về trang chủ</button>
-  <h2>🌟 Đề thi học kì tham khảo</h2>
+  <h2>🌟 Góc thử sức học kì I</h2>
   <div class="exam-intro"><span class="mascot" aria-hidden="true">🦉</span><p><strong>Em làm bài thật bình tĩnh nhé!</strong><br>Đọc câu hỏi, chọn một đáp án. Làm xong, bấm nút xanh để xem kết quả và lời giải.</p></div>
   <div class="controls exam-subjects" role="group" aria-label="Chọn môn thi thử">
     <button type="button" class="primary" id="examMathBtn" onclick="startSemesterExam('math')">🔢 Toán vui</button>
     <button type="button" class="secondary" id="examVietBtn" onclick="startSemesterExam('viet')">📚 Tiếng Việt</button>
   </div>
-  <div class="exam-settings"><label for="examSemesterSelect">Học kì</label><select id="examSemesterSelect"><option value="1">Học kì 1</option><option value="2">Học kì 2</option></select><label for="examQuestionCount">Em muốn làm bao nhiêu câu?</label><select id="examQuestionCount"><option value="5">5 câu · Làm quen</option><option value="10" selected>10 câu · Thử sức</option></select></div>
+  <div class="exam-settings"><label for="examQuestionCount">Em muốn làm bao nhiêu câu?</label><select id="examQuestionCount"><option value="5">5 câu · Làm quen</option><option value="10" selected>10 câu · Thử sức</option></select></div>
   <div class="week-card">
     <h3 id="examHeading">Chọn môn em thích để bắt đầu nhé!</h3>
     <p id="examInstructions">Đây là đề tham khảo do website tự biên soạn, không phải đề thi chính thức của trường.</p>
@@ -304,15 +284,15 @@ main>section:not(#homeMenu){display:none}
 
   <section class="panel" id="weeklyLearning">
     <button class="back-home" type="button" onclick="openMainSection('homeMenu')">🏠 Về trang chủ</button>
-  <h2>🧩 Ôn tập theo chủ đề lớp 2</h2>
-    <p class="small">Chọn nhóm chủ đề để mở bài luyện. Các chủ đề được sắp xếp theo mạch kiến thức lớp 2, giúp em ôn tập từng phần thay vì học theo tuần cố định.</p>
+  <h2>🗓️ Luyện tập theo tuần lớp 2</h2>
+    <p class="small">Chọn học kỳ và tuần để mở bài luyện. Đây là lộ trình ôn tập tự biên soạn theo các mạch kiến thức lớp 2; thứ tự từng tuần là khung tham khảo, chưa phải bản đối chiếu chính thức từng bài trong sách giáo khoa.</p>
     <div class="controls">
-      <label for="semesterSelect" class="small">Nhóm chủ đề:</label>
+      <label for="semesterSelect" class="small">Học kỳ:</label>
       <select id="semesterSelect" class="chip" aria-label="Chọn học kỳ">
         <option value="1">Học kỳ I · Tuần 1–18</option>
         <option value="2">Học kỳ II · Tuần 19–35</option>
       </select>
-      <label for="weekSelect" class="small">Chủ đề:</label>
+      <label for="weekSelect" class="small">Tuần:</label>
       <select id="weekSelect" class="chip" aria-label="Chọn tuần"></select>
     </div>
     <div class="week-card" id="weekCard">
@@ -323,11 +303,11 @@ main>section:not(#homeMenu){display:none}
         <div><strong>📖 Tiếng Việt</strong><p id="weekViet"></p></div>
       </div>
       <div class="controls">
-        <button class="primary" type="button" onclick="startWeeklyPractice('math')">Luyện Toán chủ đề này</button>
-        <button class="primary" type="button" onclick="startWeeklyPractice('viet')">Luyện Tiếng Việt chủ đề này</button>
+        <button class="primary" type="button" onclick="startWeeklyPractice('math')">Luyện Toán tuần này</button>
+        <button class="primary" type="button" onclick="startWeeklyPractice('viet')">Luyện Tiếng Việt tuần này</button>
       </div>
     </div>
-    <p class="small">Lưu ý: câu hỏi được tạo từ ngân hàng theo mạch kiến thức gần nhất. Nội dung sẽ tiếp tục được rà soát để bám sát hơn từng chủ đề và bài học.</p>
+    <p class="small">Lưu ý: bài luyện tuần hiện sử dụng ngân hàng câu hỏi theo chủ đề gần nhất và tạo đề từ đó. Chúng tôi sẽ tiếp tục bổ sung bộ câu hỏi riêng cho từng tuần.</p>
   </section>
 
   <section class="panel" id="roadmapPanel">
@@ -367,17 +347,18 @@ main>section:not(#homeMenu){display:none}
 <footer>🌈 Góc học tập của Nguyễn Vũ Trúc Giang · Bố làm tặng con yêu · Không yêu cầu đăng nhập<br><strong>Người sáng tạo: Nguyễn Hoàng Tuấn Phương</strong></footer>
 <script>
 function openMainSection(id){
- const ids=['homeMenu','bookLessons','subjectPicker','quizPanel','result','semesterExam','roadmapPanel','progressPanel','tipsPanel'];
+ const ids=['homeMenu','bookLessons','subjectPicker','quizPanel','result','semesterExam','weeklyLearning','roadmapPanel','progressPanel','tipsPanel'];
  ids.forEach(x=>{const el=document.getElementById(x);if(el)el.style.display=(x===id)?'block':'none';});
  if(id==='homeMenu') document.getElementById('homeMenu').style.display='grid';
  if(id==='bookLessons') document.getElementById('bookLessons').style.display='block';
  if(id==='semesterExam') document.getElementById('semesterExam').style.display='block';
+ if(id==='weeklyLearning') document.getElementById('weeklyLearning').style.display='block';
  if(id==='progressPanel') document.getElementById('progressPanel').style.display='block';
  if(id==='tipsPanel') document.getElementById('tipsPanel').style.display='block';
  window.scrollTo({top:0,behavior:'smooth'});
 }
 function openPracticeView(){
- ['homeMenu','bookLessons','semesterExam','roadmapPanel','progressPanel','tipsPanel','result'].forEach(x=>{const el=document.getElementById(x);if(el)el.style.display='none';});
+ ['homeMenu','bookLessons','semesterExam','weeklyLearning','roadmapPanel','progressPanel','tipsPanel','result'].forEach(x=>{const el=document.getElementById(x);if(el)el.style.display='none';});
  document.getElementById('subjectPicker').style.display='block';
  document.getElementById('quizPanel').style.display='block';
  window.scrollTo({top:0,behavior:'smooth'});
@@ -534,42 +515,43 @@ const vietOneChapters = [
   ["Bài 29. Cánh cửa nhớ bà",0],["Bài 30. Thương ông",0],["Bài 31. Ánh sáng của yêu thương",0],["Bài 32. Chơi chong chóng",1]]}
 ];
 
-const bookTwoChapters = [
- {name:"8. Phép nhân, phép chia",lessons:[["Bài 37. Phép nhân",1],["Bài 38. Thừa số, tích",1],["Bài 39. Bảng nhân 2",1],["Bài 40. Bảng nhân 5",1],["Bài 41. Phép chia",1],["Bài 42. Số bị chia, số chia, thương",1],["Bài 43. Bảng chia 2",1],["Bài 44. Bảng chia 5",1],["Bài 45. Luyện tập chung",4]]},
- {name:"9. Làm quen với hình khối",lessons:[["Bài 46. Khối trụ, khối cầu",3],["Bài 47. Luyện tập chung",3]]},
- {name:"10. Các số trong phạm vi 1000",lessons:[["Bài 48. Đơn vị, chục, trăm, nghìn",1],["Bài 49. Các số tròn trăm, tròn chục",1],["Bài 50. So sánh các số tròn trăm, tròn chục",1],["Bài 51. Số có ba chữ số",1],["Bài 52. Viết số thành tổng các trăm, chục, đơn vị",1],["Bài 53. So sánh các số có ba chữ số",1],["Bài 54. Luyện tập chung",4]]},
- {name:"11. Đo độ dài",lessons:[["Bài 55. Đề-xi-mét, mét, ki-lô-mét",3],["Bài 56. Thực hành và trải nghiệm đo độ dài",3],["Bài 57. Luyện tập chung",4]]},
- {name:"12. Cộng, trừ trong phạm vi 1000",lessons:[["Bài 58. Phép cộng không nhớ trong phạm vi 1000",1],["Bài 59. Phép trừ không nhớ trong phạm vi 1000",1],["Bài 60. Luyện tập chung",4],["Bài 61. Phép cộng có nhớ trong phạm vi 1000",1],["Bài 62. Phép trừ có nhớ trong phạm vi 1000",1],["Bài 63. Luyện tập chung",4]]},
- {name:"13. Thời gian, tiền Việt Nam và dữ liệu",lessons:[["Bài 64. Tiền Việt Nam",3],["Bài 65. Thực hành và trải nghiệm mua bán",3],["Bài 66. Ngày, tháng, năm",3],["Bài 67. Thực hành xem lịch",3],["Bài 68. Thu thập, phân loại, kiểm đếm số liệu",3],["Bài 69. Biểu đồ tranh",3],["Bài 70. Có thể, chắc chắn, không thể",3]]},
- {name:"14. Ôn tập cuối năm",lessons:[["Bài 71. Ôn tập phép nhân, phép chia",4],["Bài 72. Ôn tập hình học",4],["Bài 73. Ôn tập đo lường",4],["Bài 74. Ôn tập kiểm đếm số liệu và lựa chọn khả năng",4],["Bài 75. Ôn tập chung",4]]}
-];
 const vietTwoChapters = [
- {name:"1. Vẻ đẹp quanh em",lessons:[["Bài 1. Chuyện bốn mùa",0],["Bài 2. Mùa nước nổi",0],["Bài 3. Họa mi hót",0],["Bài 4. Tết đến rồi",0],["Bài 5. Giọt nước và biển lớn",0],["Bài 6. Mùa vàng",0]]},
- {name:"2. Hành tinh xanh của em",lessons:[["Bài 7. Hạt thóc",0],["Bài 8. Lũy tre",0],["Bài 9. Về chim",0],["Bài 10. Khủng long",0],["Bài 11. Sự tích cây thì là",0],["Bài 12. Bờ tre đón khách",0],["Bài 13. Tiếng chổi tre",0],["Bài 14. Cỏ non cười rồi",0],["Bài 15. Những con sao biển",0],["Bài 16. Tạm biệt cánh cam",0]]},
- {name:"3. Giao tiếp và kết nối",lessons:[["Bài 17. Những cách chào độc đáo",0],["Bài 18. Thư viện biết đi",0],["Bài 19. Cảm ơn anh hà mã",0],["Bài 20. Từ chú bồ câu đến in-tơ-nét",0]]},
- {name:"4. Con người Việt Nam",lessons:[["Bài 21. Mai An Tiêm",0],["Bài 22. Thư gửi bố ngoài đảo",0],["Bài 23. Bóp nát quả cam",0],["Bài 24. Chiếc rễ đa tròn",0]]},
- {name:"5. Việt Nam quê hương em",lessons:[["Bài 25. Đất nước chúng mình",0],["Bài 26. Trên các miền đất nước",0],["Bài 27. Chuyện quả bầu",0],["Bài 28. Khám phá đáy biển ở Trường Sa",0],["Bài 29. Hồ Gươm",0],["Bài 30. Cánh đồng quê em",0]]}
+ {name:"1. Vẻ đẹp quanh em", lessons:[
+  ["Bài 1. Chuyện bốn mùa",0],["Bài 2. Mùa nước nổi",1],["Bài 3. Hoa mi hót",0],["Bài 4. Tết đến rồi",1],
+  ["Bài 5. Giọt nước và biển lớn",0],["Bài 6. Mùa vàng",1],["Bài 7. Hạt thóc",0],["Bài 8. Lũy tre",1]]},
+ {name:"2. Hành tinh xanh của em", lessons:[
+  ["Bài 9. Vè chim",0],["Bài 10. Khủng long",1],["Bài 11. Sự tích cây thì là",0],["Bài 12. Bờ tre đón khách",1],
+  ["Bài 13. Tiếng chổi tre",0],["Bài 14. Cỏ non cười rồi",1],["Bài 15. Những con sao biển",0],["Bài 16. Tạm biệt cánh cam",1]]},
+ {name:"3. Giao tiếp và kết nối", lessons:[
+  ["Bài 17. Những cách chào độc đáo",0],["Bài 18. Thư viện biết đi",1],["Bài 19. Cảm ơn anh hà mã",0],["Bài 20. Từ chú bồ câu đến in-tơ-nét",1]]},
+ {name:"4. Con người Việt Nam", lessons:[
+  ["Bài 21. Mai An Tiêm",0],["Bài 22. Thư gửi bố ngoài đảo",1],["Bài 23. Bóp nát quả cam",0],["Bài 24. Chiếc rễ đa tròn",1]]},
+ {name:"5. Việt Nam quê hương em", lessons:[
+  ["Bài 25. Đất nước chúng mình",0],["Bài 26. Trên các miền đất nước",1],["Bài 27. Chuyện quả bầu",0],["Bài 28. Khám phá đáy biển ở Trường Sa",1],
+  ["Bài 29. Hồ Gươm",0],["Bài 30. Cánh đồng quê em",1]]}
 ];
 let activeBookLesson = null;
 let bookSubject = "math";
 let bookSemester = 1;
-function switchBookSemester(value){ bookSemester=Number(value)||1; activeBookLesson=null; initBookLessons(); }
-function currentBookChapters(){ return bookSubject === "math" ? (bookSemester===1?bookOneChapters:bookTwoChapters) : (bookSemester===1?vietOneChapters:vietTwoChapters); }
-function openBookSubject(which){ openMainSection("bookLessons"); switchBookSubject(which); }
-function openSubjectExam(){
- document.getElementById("examSemesterSelect").value=String(bookSemester);
- openMainSection("semesterExam");
- startSemesterExam(bookSubject);
+
+function currentBookChapters(){
+ if(bookSubject === "math" && bookSemester===2){
+   return [{name:"Học kì 2 · Toán (cần rà soát theo SGK Toán tập 2)",lessons:[
+    ["Nội dung Toán học kì 2 đang được đối chiếu",4]
+   ]}];
+ }
+ if(bookSubject === "math") return bookOneChapters;
+ return bookSemester===1 ? vietOneChapters : vietTwoChapters;
 }
-let progressSubjectFilter = null;
-function openSubjectResults(){
- progressSubjectFilter = bookSubject;
- openMainSection("progressPanel");
- renderHistory();
-}
+document.getElementById("bookSemester").addEventListener("change",()=>{
+ bookSemester=Number(document.getElementById("bookSemester").value)||1;
+ activeBookLesson=null; initBookLessons();
+});
 function switchBookSubject(which){
  bookSubject = which;
  const math = which === "math";
+ document.getElementById("mathTab").className = "subject-tab " + (math ? "primary active" : "secondary");
+ document.getElementById("vietTab").className = "subject-tab " + (!math ? "primary active" : "secondary");
  document.getElementById("lessonPickerTitle").textContent = math ? "🔢 Chọn bài Toán em muốn luyện" : "📚 Chọn bài Tiếng Việt em muốn luyện";
  document.getElementById("chapterLabel").textContent = "② Chọn chủ điểm";
  document.getElementById("bookChapter").setAttribute("aria-label", math ? `Chọn chương sách Toán tập ${bookSemester}` : `Chọn chủ điểm Tiếng Việt tập ${bookSemester}`);
@@ -594,9 +576,9 @@ function updateBookLessonInfo(){
  const l=getBookLessons()[Number(document.getElementById("bookLesson").value)||0];
  if(!l)return;
  document.getElementById("bookLessonTitle").textContent=l.title;
- document.getElementById("bookLessonDesc").textContent = bookSemester===2
-  ? (bookSubject==="math" ? "Bài tập tự biên soạn theo mạch kiến thức học kì 2; nên đối chiếu với sách của con." : "Câu hỏi và ngữ liệu luyện đọc tự biên soạn theo chủ điểm học kì 2; không chép nguyên văn SGK.")
-  : (bookSubject==="math" ? "Bài tập Toán tự biên soạn theo kiến thức của bài." : "Luyện đọc hiểu, từ và câu, chính tả hoặc viết câu theo nội dung bài.");
+ document.getElementById("bookLessonDesc").textContent = bookSubject==="math"
+  ? "Bài tập Toán tự biên soạn theo kiến thức của bài."
+  : `Bài tập bổ trợ tự biên soạn theo chủ điểm và kỹ năng được nêu trong SGK Tiếng Việt 2, tập ${bookSemester}; không sao chép nguyên văn bài đọc.`;
 }
 function startBookLesson(){
  const id=Number(document.getElementById("bookLesson").value)||0;
@@ -642,27 +624,7 @@ function mcq(q,correct,others,e){
  const shuffled=shuffleArray(finalVals);
  return {q,a:shuffled,c:shuffled.indexOf(correctText),e};
 }
-function createSecondSemesterMathQuestions(id,count){
- const title=getBookLessons()[id]?.title||"Ôn tập Toán"; const qs=[]; const R=(a,b)=>Math.floor(Math.random()*(b-a+1))+a;
- const add=(q,c,w,e)=>qs.push(mcq(q,c,w,e));
- for(let i=0;i<count;i++){
-  let a,b,c,q,w,e;
-  if(/nhân|thừa số|bảng nhân/i.test(title)){let k=/nhân 5/i.test(title)?5:2; a=R(2,10); c=a*k; q=`Có ${a} nhóm, mỗi nhóm có ${k} đồ vật. Có tất cả bao nhiêu đồ vật?`;w=[c+1,Math.max(0,c-1),a+k];e=`${a} × ${k} = ${c}.`}
-  else if(/chia|số bị chia|số chia|thương/i.test(title)){let k=/chia 5/i.test(title)?5:2; c=R(2,10); a=c*k;q=`Có ${a} đồ vật chia đều vào ${k} nhóm. Mỗi nhóm có bao nhiêu đồ vật?`;w=[c+1,Math.max(0,c-1),a+k];e=`${a} ÷ ${k} = ${c}.`}
-  else if(/khối trụ|khối cầu|hình học/i.test(title)){q=/khối cầu/i.test(title)?"Vật nào có dạng khối cầu?":"Hình tứ giác có bao nhiêu cạnh?";c=/khối cầu/i.test(title)?"Quả bóng": "4 cạnh";w=/khối cầu/i.test(title)?["Hộp sữa hình trụ","Quyển vở","Thước thẳng"]:["3 cạnh","5 cạnh","6 cạnh"];e=/khối cầu/i.test(title)?"Quả bóng có dạng gần với khối cầu.":"Hình tứ giác có 4 cạnh."}
-  else if(/độ dài|mét|đề-xi-mét|ki-lô-mét/i.test(title)){a=R(2,8);b=R(2,8);c=a*100;q=`${a} m bằng bao nhiêu xăng-ti-mét?`;w=[a*10,a*1000,a+100];e=`1 m = 100 cm nên ${a} m = ${c} cm.`}
-  else if(/tiền|mua bán/i.test(title)){a=R(2,9)*1000;b=R(1,5)*1000;c=a-b;q=`Một món hàng giá ${a.toLocaleString('vi-VN')} đồng. Em trả ${a.toLocaleString('vi-VN')} đồng thì tiền thừa là bao nhiêu?`;w=[b,b+1000,1000];c=0; q=`Một món đồ giá ${a.toLocaleString('vi-VN')} đồng. Em đưa đúng số tiền đó. Em được trả lại bao nhiêu?`;c="0 đồng";w=["1 000 đồng","2 000 đồng","5 000 đồng"];e="Đưa đúng số tiền phải trả thì không có tiền thừa."}
-  else if(/ba chữ số|trăm|so sánh các số/i.test(title)){a=R(100,899);b=R(1,99);c=a+b;q=`Tính: ${a} + ${b} = ?`;w=[c+1,c-1,Math.max(0,c-10)];e=`${a} + ${b} = ${c}.`}
-  else if(/biểu đồ|kiểm đếm|số liệu/i.test(title)){a=R(3,9);b=R(2,8);c=a+b;q=`Lớp 2A có ${a} bạn thích đọc truyện và ${b} bạn thích vẽ. Có tất cả bao nhiêu bạn?`;w=[c+1,Math.abs(a-b),a*b];e=`${a} + ${b} = ${c} bạn.`}
-  else if(/chắc chắn|không thể|có thể|khả năng/i.test(title)){q="Mặt trời mọc ở hướng nào là điều gì?";c="Chắc chắn xảy ra theo quy luật thông thường";w=["Không thể xảy ra","Chỉ xảy ra khi tung đồng xu","Không thể biết ngày nào cũng có mặt trời"];e="Mặt trời mọc ở hướng đông theo quy luật thông thường."}
-  else {a=R(100,699);b=R(100,Math.min(299,999-a));c=a+b;q=`Tính: ${a} + ${b} = ?`;w=[c+1,c-1,c+10];e=`${a} + ${b} = ${c}.`}
-  add(q,c,w,e);
- }
- return qs;
-}
-
 function createBookLessonQuestions(id,count){
- if(bookSemester===2) return createSecondSemesterMathQuestions(id,count);
  // Bộ câu hỏi Toán được chia theo đúng mạch kiến thức của từng bài trong danh sách học kì I.
  // id là chỉ số bài 0-based trong getBookLessons().
  const qs=[];
@@ -784,13 +746,13 @@ function renderWeekSelectors(){
  const sem=document.getElementById("semesterSelect"), sel=document.getElementById("weekSelect");
  sem.value=activeWeek<=18?"1":"2";
  sel.innerHTML="";
- weeklyPlan.filter(x=>String(x.sem)===sem.value).forEach(w=>{const o=document.createElement("option");o.value=w.w;o.textContent=`Chủ đề ${w.w} · ${w.title}`;sel.appendChild(o);});
+ weeklyPlan.filter(x=>String(x.sem)===sem.value).forEach(w=>{const o=document.createElement("option");o.value=w.w;o.textContent=`Tuần ${w.w} · ${w.title}`;sel.appendChild(o);});
  sel.value=String(activeWeek);renderWeekCard();
 }
 function renderWeekCard(){
  const w=getWeek();
  document.getElementById("weekSelect").value=String(w.w);
- document.getElementById("weekTitle").textContent=`Chủ đề ${w.w} · ${w.title}`;
+ document.getElementById("weekTitle").textContent=`Tuần ${w.w} · ${w.title}`;
  document.getElementById("weekFocus").textContent=w.focus;
  document.getElementById("weekMath").textContent=w.mathFocus;
  document.getElementById("weekViet").textContent=w.vietFocus;
@@ -801,7 +763,7 @@ function startWeeklyPractice(s){
  document.getElementById("mathSubject").classList.toggle("active",s==="math");
  document.getElementById("vietSubject").classList.toggle("active",s==="viet");
  renderTopics();renderQuiz(true);
- document.getElementById("quizTitle").textContent=`Chủ đề ${w.w} · ${s==="math"?"🔢 Toán":"📖 Tiếng Việt"} · ${banks[s][topicIndex].name}`;
+ document.getElementById("quizTitle").textContent=`Tuần ${w.w} · ${s==="math"?"🔢 Toán":"📖 Tiếng Việt"} · ${banks[s][topicIndex].name}`;
  document.getElementById("quizDesc").textContent=(s==="math"?w.mathFocus:w.vietFocus)+" Bài luyện lấy câu hỏi từ chủ đề liên quan trong ngân hàng hiện có.";
  document.getElementById("generationNote").textContent=`Lộ trình tham khảo · Tuần ${w.w}: ${w.title}. Đây là đề luyện theo chủ đề gần nhất, chưa phải bộ câu hỏi riêng cho từng bài trong sách.`;
  document.getElementById("quizForm").scrollIntoView({behavior:"smooth",block:"start"});
@@ -876,107 +838,134 @@ function makeDynamicMathQuestion(topicIndex){
   return {q,a:shuffled,c:correctValue===undefined?-1:shuffled.indexOf(correctValue),e};
 }
 
-function createSecondSemesterVietQuestions(id,count){
- // Câu hỏi bổ trợ tự biên soạn theo tên bài và trọng tâm chủ điểm trong SGK; không chép nguyên văn văn bản đọc.
- const bank = [
-  ["Chuyện bốn mùa","bốn mùa trong năm","Mỗi mùa có nét thời tiết và cảnh sắc riêng.","Đoạn bổ trợ nhắc đến điều gì?","Các mùa trong năm",["Các phương tiện giao thông","Các môn thể thao","Đồ dùng học tập"],"mùa"],
-  ["Mùa nước nổi","nước nổi ở miền sông nước","Khi nước dâng, người dân vùng sông nước thích nghi với sinh hoạt và đi lại theo mùa.","Đoạn bổ trợ nói về điều gì?","Sinh hoạt khi nước nổi",["Trượt tuyết trên núi","Ngày hội ở trường","Cách chăm sóc thú cưng"],"sông nước"],
-  ["Họa mi hót","tiếng hót của chim họa mi","Chim họa mi cất tiếng hót trong trẻo, làm khu vườn buổi sáng thêm vui.","Tiếng hót của họa mi được miêu tả thế nào?","Trong trẻo",["Ồn ào như máy móc","Không phát ra âm thanh","Giống tiếng còi xe"],"trong trẻo"],
-  ["Tết đến rồi","không khí ngày Tết","Ngày Tết, gia đình dọn dẹp nhà cửa, chuẩn bị hoa và thăm hỏi người thân.","Gia đình làm gì để chuẩn bị Tết?","Dọn dẹp nhà cửa và chuẩn bị hoa",["Thu dọn lớp học sau giờ thể dục","Đóng cửa đi ngủ cả ngày","Mang đồ chơi ra sân trường"],"ngày Tết"],
-  ["Giọt nước và biển lớn","sự gắn kết của những giọt nước","Nhiều giọt nước cùng hòa vào dòng suối rồi chảy ra biển rộng.","Các giọt nước cùng tạo nên điều gì?","Dòng nước lớn hơn",["Một chiếc cặp sách","Một ngọn núi lửa","Một quyển truyện"],"giọt nước"],
-  ["Mùa vàng","mùa lúa chín","Cánh đồng lúa chín vàng báo hiệu vụ mùa thu hoạch, người nông dân vui vì thành quả lao động.","Màu vàng của cánh đồng báo hiệu điều gì?","Lúa chín, đến mùa thu hoạch",["Trời sắp có tuyết","Cây vừa được trồng","Đêm đã xuống"],"thu hoạch"],
-  ["Hạt thóc","hạt thóc và công sức lao động","Để có hạt thóc, người nông dân phải gieo mạ, cấy lúa, chăm sóc và thu hoạch.","Hạt thóc có được nhờ điều gì?","Công sức lao động của người nông dân",["Chỉ nhờ đồ chơi","Nhờ những chiếc lá rụng","Nhờ một cơn gió"],"hạt thóc"],
-  ["Lũy tre","tre ở làng quê","Lũy tre xanh che bóng đường làng, gắn bó với cảnh vật và cuộc sống quê hương.","Lũy tre gắn với nơi nào?","Làng quê",["Giữa lòng đại dương sâu","Trong nhà ga vũ trụ","Bên trong lớp học"],"lũy tre"],
-  ["Về chim","đặc điểm của các loài chim","Các loài chim có hình dáng, tiếng kêu và cách kiếm ăn khác nhau.","Các loài chim có thể khác nhau ở điểm nào?","Hình dáng, tiếng kêu và cách kiếm ăn",["Đều có cùng một tiếng kêu","Đều sống dưới nước","Đều không có cánh"],"loài chim"],
-  ["Khủng long","loài khủng long thời xa xưa","Khủng long từng sống trên Trái Đất từ rất lâu trước đây; các loài có kích thước và cách sống khác nhau.","Khủng long sống vào thời gian nào?","Từ thời xa xưa",["Chỉ trong tuần trước","Ngày mai","Chỉ vào mùa hè năm nay"],"thời xa xưa"],
-  ["Sự tích cây thì là","câu chuyện giải thích tên cây thì là","Một câu chuyện dân gian có thể giải thích cách sự vật có tên gọi và gửi gắm bài học cho người đọc.","Truyện sự tích thường giúp người đọc hiểu điều gì?","Nguồn gốc hoặc cách giải thích một sự vật",["Cách giải một phép chia","Lịch học trong tuần","Luật chơi bóng rổ chuyên nghiệp"],"sự tích"],
-  ["Bờ tre đón khách","bờ tre và các vị khách","Bờ tre ven đường là nơi nhiều loài vật ghé qua, tạo nên cảnh quê gần gũi và sinh động.","Bờ tre được miêu tả như thế nào?","Gần gũi với cảnh quê và các loài vật",["Là một chiếc tàu biển","Là phòng học trên tầng cao","Là cửa hàng đồ điện"],"bờ tre"],
-  ["Tiếng chổi tre","công việc quét dọn đường phố","Người lao công quét đường khi phố còn yên tĩnh để giữ đường phố sạch đẹp.","Công việc quét đường đem lại ích lợi gì?","Giữ đường phố sạch đẹp",["Làm đường phố nhiều rác hơn","Làm cây cối ngừng lớn","Làm lớp học đóng cửa"],"lao công"],
-  ["Cỏ non cười rồi","cỏ non và thiên nhiên","Sau cơn mưa, những ngọn cỏ non xanh mướt đón nắng, khiến khu vườn trông tươi mới.","Sau cơn mưa, cỏ non trông thế nào?","Xanh mướt và tươi mới",["Khô thành cát","Biến thành đá","Mất hết màu sắc mãi mãi"],"cỏ non"],
-  ["Những con sao biển","sao biển dưới biển","Sao biển sống ở biển, có hình dáng đặc biệt và cần được quan sát, bảo vệ trong môi trường tự nhiên.","Sao biển sống ở đâu?","Ở biển",["Trên ngọn cây cao","Trong tủ sách","Trên mái nhà"],"sao biển"],
-  ["Tạm biệt cánh cam","cánh cam và thế giới tự nhiên","Một bạn nhỏ quan sát cánh cam rồi để nó trở về nơi sống, không làm hại con vật bé nhỏ.","Bạn nhỏ nên làm gì với con vật bé nhỏ?","Quan sát nhẹ nhàng và không làm hại nó",["Làm đau con vật","Phá nơi sống của nó","Bắt để trêu chọc"],"cánh cam"],
-  ["Những cách chào độc đáo","cách chào ở các nơi khác nhau","Mỗi nơi có thể có cách chào riêng; lời chào lịch sự thể hiện sự thân thiện và tôn trọng.","Lời chào lịch sự thể hiện điều gì?","Sự thân thiện và tôn trọng",["Sự giận dữ","Sự thờ ơ","Ý muốn gây gổ"],"lời chào"],
-  ["Thư viện biết đi","đưa sách đến với người đọc","Một thư viện lưu động mang sách đến nơi xa để nhiều bạn nhỏ có cơ hội đọc sách.","Thư viện lưu động giúp ích thế nào?","Đưa sách đến với nhiều bạn đọc",["Cất sách để không ai đọc","Thay sách bằng đồ chơi","Ngăn mọi người học đọc"],"thư viện"],
-  ["Cảm ơn anh hà mã","lòng biết ơn và lời cảm ơn","Khi được giúp đỡ, bạn nhỏ nói lời cảm ơn để thể hiện sự trân trọng với người giúp mình.","Khi được giúp đỡ, em nên làm gì?","Nói lời cảm ơn",["Giả vờ không biết","Giận dữ bỏ đi","Đòi hỏi thêm mà không nói gì"],"cảm ơn"],
-  ["Từ chú bồ câu đến in-tơ-nét","cách con người gửi thông tin","Con người có nhiều cách liên lạc, từ gửi thư đến sử dụng internet để trao đổi thông tin nhanh hơn.","Internet có thể giúp con người làm gì?","Trao đổi thông tin",["Làm cây tự ra hoa ngay","Thay thế mọi tình cảm gia đình","Khiến sách không cần đọc"],"liên lạc"],
-  ["Mai An Tiêm","sự chăm chỉ và tự lập của Mai An Tiêm","Trong câu chuyện dân gian, Mai An Tiêm vượt khó bằng lao động và tìm cách xây dựng cuộc sống.","Phẩm chất nào phù hợp với nhân vật Mai An Tiêm?","Chăm chỉ, tự lập",["Lười biếng, bỏ cuộc","Không chịu làm việc","Chỉ chờ người khác giúp"],"tự lập"],
-  ["Thư gửi bố ngoài đảo","tình cảm với người thân làm nhiệm vụ xa nhà","Một bức thư có thể gửi lời hỏi thăm, tình yêu thương và niềm tự hào tới người thân ở xa.","Bức thư giúp người viết thể hiện điều gì?","Tình cảm và lời hỏi thăm",["Bảng cửu chương","Danh sách đồ dùng lớp học","Dự báo thời tiết"],"bức thư"],
-  ["Bóp nát quả cam","lòng yêu nước của Trần Quốc Toản","Câu chuyện lịch sử kể về Trần Quốc Toản còn nhỏ nhưng có lòng yêu nước và mong muốn góp sức bảo vệ đất nước.","Trần Quốc Toản thể hiện tình cảm gì với đất nước?","Lòng yêu nước",["Sự thờ ơ","Ý muốn bỏ học mãi mãi","Niềm thích thú phá đồ chơi"],"yêu nước"],
-  ["Chiếc rễ đa tròn","sự quan tâm và cách làm sáng tạo","Một việc làm nhỏ nhưng sáng tạo có thể tạo niềm vui cho mọi người và giúp cảnh vật thêm đẹp.","Việc làm sáng tạo có thể đem lại điều gì?","Niềm vui và ích lợi",["Chỉ gây phiền phức","Làm mọi người không vui","Khiến cây không thể lớn"],"sáng tạo"],
-  ["Đất nước chúng mình","đặc điểm của đất nước Việt Nam","Việt Nam có cảnh sắc thiên nhiên đa dạng, nhiều vùng miền và những con người cần cù, thân thiện.","Đất nước Việt Nam có điều gì?","Nhiều cảnh sắc và vùng miền",["Chỉ có một kiểu cảnh vật","Không có người dân","Chỉ toàn sa mạc băng giá"],"đất nước"],
-  ["Trên các miền đất nước","sự đa dạng của các vùng miền","Mỗi vùng miền có cảnh quan, sản vật và nét văn hóa riêng, cùng góp phần làm nên vẻ đẹp đất nước.","Các vùng miền có thể khác nhau ở điểm nào?","Cảnh quan, sản vật và văn hóa",["Tất cả đều giống hệt nhau","Không có cảnh quan","Chỉ có một món ăn"],"vùng miền"],
-  ["Chuyện quả bầu","truyện dân gian về nguồn gốc các dân tộc","Truyện dân gian thường kể lại cách người xưa hình dung về nguồn gốc cộng đồng và nhắc mọi người sống hòa thuận.","Truyện dân gian thường gửi gắm điều gì?","Cách nhìn của người xưa và bài học sống",["Công thức nấu ăn","Hướng dẫn sửa máy tính","Bảng điểm thi đấu"],"truyện dân gian"],
-  ["Khám phá đáy biển ở Trường Sa","thiên nhiên biển đảo Trường Sa","Vùng biển Trường Sa có hệ sinh thái biển phong phú; con người cần tìm hiểu và bảo vệ môi trường biển.","Vì sao cần bảo vệ môi trường biển?","Để giữ gìn hệ sinh thái biển",["Để làm biển ô nhiễm hơn","Để phá nơi sống của sinh vật","Để vứt rác xuống nước"],"Trường Sa"],
-  ["Hồ Gươm","cảnh đẹp và ý nghĩa lịch sử Hồ Gươm","Hồ Gươm ở Hà Nội là danh thắng nổi tiếng, gắn với truyền thuyết lịch sử và là nơi nhiều người đến tham quan.","Hồ Gươm nằm ở đâu?","Hà Nội",["Cần Thơ","Đà Lạt","Sa Pa"],"danh thắng"],
-  ["Cánh đồng quê em","cảnh đồng quê và lao động nông nghiệp","Buổi sáng, cánh đồng xanh mướt; người nông dân chăm sóc lúa để mong mùa màng tốt tươi.","Ai chăm sóc lúa trên cánh đồng?","Người nông dân",["Người lái máy bay","Người bán sách trong thư viện","Người thợ làm đồng hồ"],"cánh đồng"]
- ];
- const item=bank[id]||bank[0];
- const make=(q,correct,wrong,explain)=>{let a=shuffleArray([correct,...wrong]);return {q,a,c:a.indexOf(correct),e:explain};};
- const passage=`Đoạn đọc bổ trợ tự biên soạn về “${item[0]}”: ${item[2]}`;
- const pool=[
-  make(`${passage} ${item[3]}`,item[4],item[5],`Đáp án đúng: ${item[4]}. Câu hỏi này là bài luyện bổ trợ theo chủ điểm, không phải câu trích nguyên văn SGK.`),
-  make(`Từ/cụm từ nào gắn trực tiếp với bài “${item[0]}”?`,item[6],["bảng nhân","chiếc máy tính","đường cao tốc"],`Từ khóa liên quan đến bài là “${item[6]}”.`),
-  make(`Chọn câu phù hợp với chủ điểm “${item[0]}”.`,item[2],["Em vứt rác bừa bãi và phá hoại cây cối.","Em không lắng nghe và không tôn trọng người khác.","Em làm hỏng đồ vật chỉ để trêu đùa."],`Câu đúng phù hợp với nội dung bổ trợ của chủ điểm “${item[0]}”.`),
-  make(`Bài “${item[0]}” thuộc mạch nội dung nào gần nhất?`,item[1],["Phép tính trong Toán học","Quy tắc an toàn giao thông đường sắt","Cách sử dụng thiết bị điện gia dụng"],`Mạch nội dung được chọn dựa trên tên bài và chủ điểm trong mục lục.`),
-  make(`Sau khi đọc nội dung bổ trợ về “${item[0]}”, em rút ra điều gì phù hợp?`,item[4],["Không cần quan tâm đến người khác.","Nên làm ngược lại mọi việc tốt.","Không cần tìm hiểu bài học."],`Đáp án được suy ra từ đoạn đọc bổ trợ tự biên soạn về “${item[0]}”.`),
-  make(`Chọn từ khóa đúng cho bài “${item[0]}”.`,item[6],["phép chia","hình vuông","bảng nhân 5"],`Từ khóa được gắn theo nội dung chủ điểm.`)
- ];
- return shuffleArray(pool).slice(0,Math.min(count,pool.length));
-}
+const vietLessonAnchor = {
+ "Bài 1. Chuyện bốn mùa": {q:"Trong câu chuyện về bốn mùa, mỗi mùa có nét riêng nào?",a:["Mỗi mùa có đặc điểm và ích lợi riêng","Bốn mùa hoàn toàn giống nhau","Chỉ mùa hè mới có ích","Các mùa không thay đổi cây cối"],c:0,e:"Câu hỏi luyện nhận biết đặc điểm và ích lợi của từng mùa theo chủ điểm bài đọc."},
+ "Bài 2. Mùa nước nổi": {q:"Bài học về mùa nước nổi giúp em chú ý điều gì?",a:["Cảnh vật và sinh hoạt thay đổi khi nước dâng","Tuyệt đối không có nước trên đồng","Mùa nước nổi chỉ xảy ra ở vùng núi cao","Cây cối không chịu ảnh hưởng của nước"],c:0,e:"Bài đọc giới thiệu cảnh vật, dòng nước và sinh hoạt trong mùa nước nổi."},
+ "Bài 3. Hoa mi hót": {q:"Khi đọc bài về họa mi, em cần chú ý chi tiết nào?",a:["Tiếng hót và sự thay đổi cảnh vật khi chim hót","Cách làm một chiếc thuyền","Danh sách học sinh trong lớp","Cách xem lịch tháng"],c:0,e:"Câu hỏi bám vào hình ảnh tiếng hót của chim và cảnh vật trong bài."},
+ "Bài 4. Tết đến rồi": {q:"Nội dung bài Tết đến rồi gắn với hoạt động nào?",a:["Chuẩn bị đón Tết và sinh hoạt gia đình","Chăm sóc cá trong bể","Tổ chức giờ học ở thư viện","Quan sát khủng long"],c:0,e:"Bài học nói về không khí Tết và những hoạt động quen thuộc trong gia đình."},
+ "Bài 5. Giọt nước và biển lớn": {q:"Hành trình của giọt nước trong bài thơ dẫn ra đâu?",a:["Từ dòng nước nhỏ đến biển lớn","Từ lớp học đến sân trường","Từ ngọn núi đến mái nhà","Từ khu vườn đến thư viện"],c:0,e:"Bài thơ gợi hành trình của nước qua suối, sông rồi ra biển."},
+ "Bài 6. Mùa vàng": {q:"Để có mùa thu hoạch, người nông dân cần làm gì?",a:["Chăm sóc cây trồng và làm việc qua nhiều công đoạn","Để cây tự lớn mà không chăm sóc","Hái quả trước khi cây ra hoa","Ngừng tưới nước cho mọi loại cây"],c:0,e:"Bài học nhấn mạnh công sức lao động và việc chăm sóc cây trồng."},
+ "Bài 7. Hạt thóc": {q:"Hạt thóc có ích lợi gì đối với con người?",a:["Được xay xát để tạo ra gạo làm thức ăn","Dùng để đo thời gian","Dùng làm dụng cụ viết bảng","Dùng để xem phương hướng"],c:0,e:"Bài đọc giới thiệu hạt thóc, quá trình lao động và ích lợi của thóc."},
+ "Bài 8. Lũy tre": {q:"Từ ngữ nào phù hợp để miêu tả lũy tre trong bài thơ?",a:["Xanh rì, gần gũi với làng quê","Ồn ào như tiếng còi xe","Lạnh buốt như băng tuyết","Lấp lánh như đèn điện"],c:0,e:"Bài thơ gợi hình ảnh lũy tre và khung cảnh làng quê."},
+ "Bài 9. Vè chim": {q:"Bài vè giới thiệu các loài chim chủ yếu bằng cách nào?",a:["Nêu tên và đặc điểm, hoạt động của chim bằng nhịp điệu vui","Kể các bước nấu cơm","Liệt kê tên học sinh","Hướng dẫn xem đồng hồ"],c:0,e:"Vè chim dùng những câu ngắn có nhịp điệu để nói về các loài chim."},
+ "Bài 10. Khủng long": {q:"Khi đọc bài Khủng long, em cần tìm thông tin nào?",a:["Đặc điểm, kích thước và khả năng tự vệ của khủng long","Cách chăm sóc cây lúa","Cách gửi thư điện tử","Các mùa trong năm"],c:0,e:"Bài đọc cung cấp thông tin về đặc điểm và khả năng của khủng long."},
+ "Bài 11. Sự tích cây thì là": {q:"Truyện Sự tích cây thì là thuộc kiểu nội dung nào?",a:["Truyện giải thích nguồn gốc tên gọi của cây thì là","Bản hướng dẫn sử dụng thư viện","Thời khóa biểu của học sinh","Bài giới thiệu một trận bóng"],c:0,e:"Đây là truyện giải thích sự tích tên gọi cây thì là."},
+ "Bài 12. Bờ tre đón khách": {q:"Trong bài thơ Bờ tre đón khách, bờ tre được miêu tả như thế nào?",a:["Như một nơi có nhiều con vật ghé đến","Như một lớp học có học sinh","Như một cửa hàng bán sách","Như một sân bóng không người"],c:0,e:"Bài thơ miêu tả cảnh bờ tre và những con vật đến quanh đó."},
+ "Bài 13. Tiếng chổi tre": {q:"Bài thơ Tiếng chổi tre giúp em hiểu thêm về điều gì?",a:["Công việc lao động giữ gìn đường phố sạch đẹp","Cách chăm sóc thú cưng","Cách làm bánh ngày Tết","Cách xem thời khóa biểu"],c:0,e:"Bài thơ nhắc đến công việc của người lao công và sự sạch đẹp của đường phố."},
+ "Bài 14. Cỏ non cười rồi": {q:"Khi bạn nhỏ buồn hoặc khóc, cách ứng xử phù hợp là gì?",a:["Quan tâm, an ủi và tìm cách giúp bạn vui lên","Chê cười bạn","Bỏ mặc bạn","Làm bạn buồn thêm"],c:0,e:"Bài học gợi cách quan tâm, giúp đỡ bạn bè và chia sẻ cảm xúc."},
+ "Bài 15. Những con sao biển": {q:"Khi thấy sao biển bị mắc trên bờ, bạn nhỏ đã làm gì?",a:["Nhặt sao biển và tìm cách giúp chúng","Đem sao biển làm đồ chơi","Bỏ đi không quan tâm","Lấp sao biển dưới cát"],c:0,e:"Câu hỏi bám vào hành động giúp đỡ sao biển trong bài đọc."},
+ "Bài 16. Tạm biệt cánh cam": {q:"Khi thấy cánh cam bị thương, việc làm nào thể hiện sự quan tâm?",a:["Nhẹ nhàng chăm sóc và giúp cánh cam an toàn","Trêu chọc cánh cam","Bỏ mặc cánh cam","Làm cánh cam bị thương thêm"],c:0,e:"Bài học gợi lòng yêu thương và biết chăm sóc con vật nhỏ."},
+ "Bài 17. Những cách chào độc đáo": {q:"Khi gặp người khác, lời chào nên như thế nào?",a:["Phù hợp hoàn cảnh và thể hiện sự thân thiện","Luôn quát thật to","Không cần quan tâm người nghe","Dùng lời nói thiếu lịch sự"],c:0,e:"Bài học hướng đến nhận biết những cách chào và giao tiếp phù hợp."},
+ "Bài 18. Thư viện biết đi": {q:"Một thư viện biết đi giúp ích gì?",a:["Đưa sách đến gần người đọc hơn","Làm sách biến mất","Thay thế việc đọc sách","Chỉ dùng để cất đồ chơi"],c:0,e:"Bài học nói về việc đưa sách đến với người đọc bằng hình thức linh hoạt."},
+ "Bài 19. Cảm ơn anh hà mã": {q:"Khi được người khác giúp đỡ, em nên làm gì?",a:["Nói lời cảm ơn chân thành","Im lặng và bỏ đi","Đổ lỗi cho người giúp mình","Đòi hỏi thêm mà không cảm ơn"],c:0,e:"Bài học nhấn mạnh lời cảm ơn khi nhận được sự giúp đỡ."},
+ "Bài 20. Từ chú bồ câu đến in-tơ-nét": {q:"Phương tiện liên lạc ngày nay giúp con người điều gì?",a:["Trao đổi thông tin nhanh hơn qua khoảng cách xa","Không cần giao tiếp với ai","Làm mọi thông tin biến mất","Chỉ dùng để xem giờ"],c:0,e:"Bài học liên hệ các cách truyền tin từ xưa đến phương tiện hiện đại."},
+ "Bài 21. Mai An Tiêm": {q:"Câu chuyện Mai An Tiêm gợi phẩm chất nào?",a:["Chăm chỉ, tự tin và biết lao động","Lười biếng và bỏ cuộc","Chỉ chờ người khác giúp","Không chịu thử sức"],c:0,e:"Câu hỏi hướng đến phẩm chất của nhân vật trong câu chuyện dân gian."},
+ "Bài 22. Thư gửi bố ngoài đảo": {q:"Một bức thư gửi người thân ở xa thường thể hiện điều gì?",a:["Tình cảm, sự nhớ thương và lời hỏi thăm","Danh sách các phép tính","Hướng dẫn trồng cây","Thời khóa biểu lớp học"],c:0,e:"Bài học về thư gửi bố gắn với tình cảm gia đình và người thân ở xa."},
+ "Bài 23. Bóp nát quả cam": {q:"Nhân vật Trần Quốc Toản trong câu chuyện thể hiện điều gì?",a:["Lòng yêu nước và quyết tâm góp sức","Sự thờ ơ với đất nước","Sở thích trồng cây","Mong muốn đi du lịch"],c:0,e:"Câu chuyện lịch sử thể hiện lòng yêu nước và ý chí của Trần Quốc Toản."},
+ "Bài 24. Chiếc rễ đa tròn": {q:"Câu chuyện Chiếc rễ đa tròn gợi phẩm chất nào của Bác Hồ?",a:["Quan tâm đến mọi người và yêu thiên nhiên","Không quan tâm đến trẻ em","Chỉ thích đồ vật đắt tiền","Không thích cây xanh"],c:0,e:"Câu chuyện thể hiện sự quan tâm, gần gũi và tình yêu thiên nhiên của Bác Hồ."},
+ "Bài 25. Đất nước chúng mình": {q:"Khi giới thiệu đất nước mình, em có thể nói về điều gì?",a:["Con người, cảnh đẹp và những nét đặc sắc của Việt Nam","Chỉ tên các đồ dùng học tập","Chỉ các phép cộng","Tên các loài khủng long"],c:0,e:"Bài học giúp học sinh hiểu và giới thiệu những nét đẹp của đất nước."},
+ "Bài 26. Trên các miền đất nước": {q:"Đất nước Việt Nam có những cảnh quan nào?",a:["Miền núi, đồng bằng, biển và nhiều vùng cảnh đẹp","Chỉ có một kiểu cảnh quan","Chỉ có sa mạc","Không có sông ngòi"],c:0,e:"Bài học mở rộng hiểu biết về các miền và cảnh quan trên đất nước."},
+ "Bài 27. Chuyện quả bầu": {q:"Chuyện quả bầu là truyện dân gian giải thích điều gì?",a:["Nguồn gốc các dân tộc theo cách kể dân gian","Cách sử dụng máy tính","Cách làm thời khóa biểu","Cách chăm sóc chim cảnh"],c:0,e:"Truyện dân gian giải thích nguồn gốc các dân tộc qua hình tượng quả bầu."},
+ "Bài 28. Khám phá đáy biển ở Trường Sa": {q:"Khi tìm hiểu đáy biển, điều gì cần được chú ý?",a:["Sinh vật biển và môi trường sống của chúng","Chỉ các loài cây trên núi","Các hoạt động trong lớp","Cách viết thư chúc Tết"],c:0,e:"Bài học mở rộng hiểu biết về thế giới biển và môi trường biển."},
+ "Bài 29. Hồ Gươm": {q:"Hồ Gươm là địa danh gắn với nơi nào của Việt Nam?",a:["Thủ đô Hà Nội","Thành phố Huế","Tỉnh Cà Mau","Đảo Phú Quốc"],c:0,e:"Hồ Gươm là địa danh nổi tiếng ở Hà Nội."},
+ "Bài 30. Cánh đồng quê em": {q:"Khi miêu tả cánh đồng quê, từ ngữ nào phù hợp?",a:["Lúa xanh rì, gió thổi nhẹ trên đồng","Sóng biển vỗ vào bờ cát","Đèn xe sáng giữa phố đông","Tuyết phủ trắng núi cao"],c:0,e:"Bài học hướng đến quan sát và miêu tả cảnh cánh đồng quê."}
+};
 
 function createVietLessonQuestions(id,count){
- if(bookSemester===2) return createSecondSemesterVietQuestions(id,count);
- // Ngân hàng câu hỏi Tiếng Việt được gắn riêng với từng bài trong SGK Kết nối tri thức 2, tập 1.
- // Đoạn đọc và câu hỏi là nội dung tự biên soạn; không chép văn bản SGK.
- const lessons = [
-  {topic:"Tôi là học sinh lớp 2",passage:"Ngày đầu vào lớp Hai, Minh tự xếp sách vở vào cặp. Em vui vẻ chào cô và làm quen với bạn mới.",ask:"Minh làm gì để chuẩn bị vào lớp?",ans:"Tự xếp sách vở vào cặp",bad:["Cất đồ chơi vào tủ","Chạy về nhà","Đi mua bánh"],word:"tự tin",wordAsk:"Từ nào diễn tả thái độ mạnh dạn, tin vào bản thân?",spell:"học sinh lớp Hai",sentence:"Em vui vẻ chào cô giáo.",extra:"đến trường với tâm thế vui vẻ"},
-  {topic:"Ngày hôm qua đâu rồi?",passage:"Lan xem lại quyển vở. Những bài học hôm qua giúp Lan biết thêm nhiều điều mới.",ask:"Điều gì giúp Lan biết thêm nhiều điều mới?",ans:"Những bài học hôm qua",bad:["Một món đồ chơi","Một chuyến đi chợ","Trận bóng chiều nay"],word:"hôm qua",wordAsk:"Từ nào chỉ thời gian đã qua?",spell:"quyển vở",sentence:"Hôm qua, em đã học bài.",extra:"nhớ lại việc đã làm"},
-  {topic:"Niềm vui của Bi và Bống",passage:"Bi và Bống cùng ngắm cầu vồng sau cơn mưa. Hai anh em gọi nhau ra sân và chia sẻ niềm vui.",ask:"Bi và Bống cùng ngắm gì?",ans:"Cầu vồng",bad:["Mặt trăng","Đàn cá","Chiếc thuyền"],word:"chia sẻ",wordAsk:"Từ nào nói về việc cùng nhau chia niềm vui?",spell:"cầu vồng",sentence:"Bi và Bống cùng ngắm cầu vồng.",extra:"vui vẻ cùng người thân"},
-  {topic:"Làm việc thật là vui",passage:"Buổi sáng, mỗi người trong nhà làm một việc. Bố quét sân, mẹ chuẩn bị bữa sáng, bé Na gấp chăn của mình.",ask:"Bé Na làm việc gì?",ans:"Gấp chăn",bad:["Quét sân","Nấu bữa sáng","Tưới ruộng"],word:"gấp chăn",wordAsk:"Cụm từ nào chỉ hoạt động?",spell:"quét sân",sentence:"Bé Na gấp chăn gọn gàng.",extra:"mỗi người làm một việc phù hợp"},
-  {topic:"Em có xinh không?",passage:"Mai hỏi mẹ về chiếc nơ mới. Mẹ mỉm cười nói rằng Mai đáng yêu nhất khi biết lễ phép và giúp đỡ mọi người.",ask:"Theo mẹ, Mai đáng yêu nhất khi nào?",ans:"Khi lễ phép và giúp đỡ mọi người",bad:["Khi mặc áo thật đắt","Khi có nhiều đồ chơi","Khi không nói chuyện"],word:"lễ phép",wordAsk:"Từ nào chỉ cách cư xử ngoan ngoãn, kính trọng?",spell:"đáng yêu",sentence:"Em lễ phép chào người lớn.",extra:"vẻ đẹp từ lời nói và việc làm tốt"},
-  {topic:"Một giờ học",passage:"Trong giờ học, cô giáo nêu câu hỏi. Các bạn giơ tay phát biểu, lắng nghe nhau và cùng tìm ra câu trả lời.",ask:"Các bạn làm gì khi muốn trả lời?",ans:"Giơ tay phát biểu",bad:["Nói chuyện riêng","Chạy quanh lớp","Đóng sách lại"],word:"lắng nghe",wordAsk:"Cụm từ nào chỉ việc chú ý nghe người khác nói?",spell:"giờ học",sentence:"Chúng em chăm chú nghe cô giảng.",extra:"tích cực tham gia giờ học"},
-  {topic:"Cây xấu hổ",passage:"Khi có người chạm nhẹ, những chiếc lá cây xấu hổ khép lại. Một lúc sau, lá lại từ từ mở ra.",ask:"Điều gì xảy ra khi có người chạm nhẹ vào cây?",ans:"Lá cây khép lại",bad:["Cây chạy đi","Hoa biến mất","Cành cây phát sáng"],word:"khép lại",wordAsk:"Cụm từ nào chỉ hành động của lá cây?",spell:"chiếc lá",sentence:"Lá cây từ từ mở ra.",extra:"quan sát đặc điểm của cây"},
-  {topic:"Cầu thủ dự bị",passage:"Trong trận bóng, Nam ngồi ghế dự bị. Khi được vào sân, bạn cố gắng phối hợp với đồng đội và cổ vũ cả đội.",ask:"Khi được vào sân, Nam làm gì?",ans:"Phối hợp với đồng đội",bad:["Bỏ về nhà","Giấu quả bóng","Ngồi ngủ trên sân"],word:"đồng đội",wordAsk:"Từ nào chỉ những người cùng một đội?",spell:"cầu thủ",sentence:"Nam phối hợp với đồng đội.",extra:"cố gắng và hỗ trợ tập thể"},
-  {topic:"Cô giáo lớp em",passage:"Cô giáo dịu dàng hướng dẫn học sinh đọc bài. Khi bạn nào chưa hiểu, cô kiên nhẫn giải thích thêm.",ask:"Cô giáo làm gì khi học sinh chưa hiểu bài?",ans:"Kiên nhẫn giải thích thêm",bad:["Bỏ lớp đi","Cất hết sách vở","Bảo các bạn tự về"],word:"kiên nhẫn",wordAsk:"Từ nào chỉ sự bình tĩnh, không nóng vội?",spell:"cô giáo",sentence:"Cô giáo kiên nhẫn hướng dẫn chúng em.",extra:"lòng yêu quý và biết ơn cô giáo"},
-  {topic:"Thời khóa biểu",passage:"Thời khóa biểu cho biết thứ, tiết và môn học trong ngày. Nhờ xem thời khóa biểu, Hoa chuẩn bị đúng sách vở.",ask:"Thời khóa biểu giúp Hoa làm gì?",ans:"Chuẩn bị đúng sách vở",bad:["Biết dự báo thời tiết","Tìm đường về nhà","Đếm số cây trong sân"],word:"môn học",wordAsk:"Từ nào chỉ nội dung học như Toán hoặc Tiếng Việt?",spell:"thời khóa biểu",sentence:"Em xem thời khóa biểu trước khi đi học.",extra:"đọc thông tin theo thứ và tiết"},
-  {topic:"Cái trống trường em",passage:"Tiếng trống vang lên báo hiệu giờ vào học. Đến giờ ra chơi, tiếng trống lại rộn ràng gọi học sinh ra sân.",ask:"Tiếng trống báo hiệu điều gì?",ans:"Giờ vào học hoặc giờ ra chơi",bad:["Trời sắp mưa","Xe buýt đến nhà","Đã đến giờ ăn tối"],word:"rộn ràng",wordAsk:"Từ nào diễn tả âm thanh vui, náo nức?",spell:"tiếng trống",sentence:"Tiếng trống trường vang lên.",extra:"âm thanh quen thuộc của trường học"},
-  {topic:"Danh sách học sinh",passage:"Cô giáo lập danh sách học sinh theo thứ tự. Mỗi dòng ghi tên một bạn để cô dễ kiểm tra sĩ số.",ask:"Danh sách giúp cô giáo làm gì?",ans:"Dễ kiểm tra sĩ số",bad:["Chấm điểm bóng đá","Chọn món ăn","Xem giờ tàu chạy"],word:"danh sách",wordAsk:"Từ nào chỉ bảng ghi tên các thành viên?",spell:"học sinh",sentence:"Cô kiểm tra tên trong danh sách.",extra:"đọc tên và thông tin theo từng dòng"},
-  {topic:"Yêu lắm trường ơi!",passage:"Sân trường có hàng cây xanh và những lớp học sáng sủa. Mỗi ngày đến trường, các bạn được học điều hay và gặp bạn bè.",ask:"Điều gì khiến các bạn vui khi đến trường?",ans:"Được học điều hay và gặp bạn bè",bad:["Được nghỉ học cả tuần","Không cần học bài","Được ở một mình"],word:"sáng sủa",wordAsk:"Từ nào miêu tả nơi có nhiều ánh sáng, sạch đẹp?",spell:"sân trường",sentence:"Em yêu mái trường của mình.",extra:"tình cảm gắn bó với trường lớp"},
-  {topic:"Em học vẽ",passage:"Trong giờ mỹ thuật, Linh vẽ một khu vườn có hoa đỏ, lá xanh và chú bướm vàng. Linh tô màu cẩn thận.",ask:"Linh vẽ những gì trong khu vườn?",ans:"Hoa, lá và chú bướm",bad:["Tàu hỏa và máy bay","Bàn ghế trong bếp","Những con cá dưới biển"],word:"tô màu",wordAsk:"Cụm từ nào chỉ hoạt động khi hoàn thiện bức tranh?",spell:"khu vườn",sentence:"Linh tô màu bức tranh cẩn thận.",extra:"tên màu sắc và hoạt động vẽ"},
-  {topic:"Cuốn sách của em",passage:"Nam giữ sách sạch sẽ, không gấp góc trang. Đọc xong, bạn đặt sách ngay ngắn lên giá.",ask:"Nam làm gì để giữ sách?",ans:"Giữ sách sạch và đặt ngay ngắn",bad:["Vẽ lên trang sách","Xé trang giấy","Để sách dưới mưa"],word:"ngay ngắn",wordAsk:"Từ nào miêu tả đồ vật được xếp gọn gàng?",spell:"cuốn sách",sentence:"Em giữ gìn sách cẩn thận.",extra:"cách sử dụng và bảo quản sách"},
-  {topic:"Khi trang sách mở ra",passage:"Mỗi lần mở sách, An được gặp những nhân vật mới và khám phá vùng đất lạ. Bạn thấy mình học thêm nhiều điều.",ask:"Sách giúp An làm gì?",ans:"Khám phá điều mới và học thêm nhiều điều",bad:["Làm mất đồ chơi","Không cần đến lớp","Quên mọi điều đã học"],word:"khám phá",wordAsk:"Từ nào chỉ việc tìm hiểu điều mới lạ?",spell:"trang sách",sentence:"Em thích đọc sách mỗi ngày.",extra:"niềm vui và ích lợi của việc đọc"},
-  {topic:"Gọi bạn",passage:"Trên đồng cỏ rộng, một bạn nhỏ gọi người bạn đang đi xa. Tiếng gọi thể hiện nỗi nhớ và mong muốn được gặp bạn.",ask:"Tiếng gọi thể hiện điều gì?",ans:"Nỗi nhớ và mong muốn gặp bạn",bad:["Sự tức giận với thầy cô","Niềm vui khi được ngủ","Mong muốn bỏ học"],word:"gọi bạn",wordAsk:"Cụm từ nào chỉ hành động muốn người bạn nghe thấy?",spell:"người bạn",sentence:"Em gọi bạn cùng chơi.",extra:"tình bạn và sự mong nhớ"},
-  {topic:"Tớ nhớ cậu",passage:"Dù không ngồi cạnh nhau, hai người bạn vẫn nhớ những giờ cùng học và chơi. Các bạn hẹn sẽ gặp lại nhau.",ask:"Hai người bạn nhớ điều gì?",ans:"Những giờ cùng học và chơi",bad:["Một trận cãi vã","Việc làm mất sách","Một buổi dọn nhà"],word:"nhớ",wordAsk:"Từ nào diễn tả việc nghĩ đến người hoặc việc đã xa?",spell:"bạn thân",sentence:"Tớ rất nhớ bạn.",extra:"tình cảm chân thành giữa bạn bè"},
-  {topic:"Chữ A và những người bạn",passage:"Chữ A làm quen với những chữ cái khác. Khi đứng cạnh nhau, các chữ cái ghép thành tiếng và từ có ý nghĩa.",ask:"Các chữ cái có thể làm gì khi đứng cạnh nhau?",ans:"Ghép thành tiếng và từ",bad:["Biến thành con vật","Tự chạy ra sân","Làm đồng hồ kêu"],word:"chữ cái",wordAsk:"Cụm từ nào chỉ các kí hiệu dùng để ghi âm?",spell:"chữ A",sentence:"Các chữ cái ghép thành từ.",extra:"chữ cái và cách tạo tiếng, từ"},
-  {topic:"Nhím nâu kết bạn",passage:"Nhím nâu muốn chơi cùng các bạn nhưng còn ngại ngùng. Khi các bạn vui vẻ mời gọi, Nhím nâu mạnh dạn tham gia.",ask:"Điều gì giúp Nhím nâu tham gia chơi cùng các bạn?",ans:"Các bạn vui vẻ mời gọi",bad:["Các bạn xua đuổi","Nhím nâu bỏ đi","Trời bắt đầu tối"],word:"mạnh dạn",wordAsk:"Từ nào gần nghĩa với tự tin, không rụt rè?",spell:"nhím nâu",sentence:"Em vui vẻ làm quen với bạn mới.",extra:"chủ động kết bạn và thân thiện"},
-  {topic:"Thả diều",passage:"Chiều mát, Bình cùng chị thả diều trên bãi cỏ rộng. Gió nâng cánh diều bay cao trên bầu trời.",ask:"Gió làm gì với cánh diều?",ans:"Nâng cánh diều bay cao",bad:["Làm cánh diều thành chiếc thuyền","Kéo cánh diều xuống đất ngay","Biến cánh diều thành chiếc lá"],word:"bay cao",wordAsk:"Cụm từ nào miêu tả chuyển động của cánh diều?",spell:"cánh diều",sentence:"Cánh diều bay cao trên trời.",extra:"hoạt động vui chơi ngoài trời"},
-  {topic:"Tớ là Lê-gô",passage:"Từ những viên gạch nhiều màu, Minh lắp thành một chiếc xe. Bạn thử tháo ra rồi lắp thành ngôi nhà.",ask:"Minh dùng gì để lắp đồ chơi?",ans:"Những viên gạch nhiều màu",bad:["Lá cây và cành khô","Bát đĩa trong bếp","Đất và nước"],word:"lắp ráp",wordAsk:"Cụm từ nào chỉ việc ghép các bộ phận thành đồ vật?",spell:"đồ chơi",sentence:"Minh lắp ráp chiếc xe bằng Lê-gô.",extra:"sáng tạo khi chơi đồ lắp ghép"},
-  {topic:"Rồng rắn lên mây",passage:"Các bạn xếp thành hàng, người sau bám vào người trước và cùng chơi trò Rồng rắn lên mây. Mọi người chú ý nghe lời đối đáp.",ask:"Các bạn làm gì khi chơi trò Rồng rắn lên mây?",ans:"Xếp thành hàng và bám vào người trước",bad:["Ngồi yên đọc sách","Mỗi bạn chơi một nơi","Đứng thành vòng im lặng"],word:"xếp hàng",wordAsk:"Cụm từ nào chỉ việc đứng nối tiếp nhau theo hàng?",spell:"trò chơi",sentence:"Chúng em cùng chơi Rồng rắn lên mây.",extra:"trò chơi dân gian và chơi cùng tập thể"},
-  {topic:"Nặn đồ chơi",passage:"Vy dùng đất nặn tạo thành một chú thỏ. Bạn vuốt tai, nặn mắt rồi khoe sản phẩm với cả nhà.",ask:"Vy nặn thành đồ vật gì?",ans:"Một chú thỏ",bad:["Một chiếc xe đạp","Một quyển sách","Một cái trống"],word:"vuốt",wordAsk:"Từ nào chỉ hành động làm cho bề mặt mịn hoặc phẳng bằng tay?",spell:"đất nặn",sentence:"Vy nặn một chú thỏ đáng yêu.",extra:"các thao tác tạo hình bằng đất nặn"},
-  {topic:"Sự tích hoa tỉ muội",passage:"Hai chị em luôn yêu thương và chăm sóc nhau. Câu chuyện giải thích tên gọi một loài hoa gắn với tình cảm chị em.",ask:"Tình cảm nào nổi bật trong câu chuyện?",ans:"Tình chị em yêu thương, gắn bó",bad:["Sự ganh ghét giữa bạn bè","Nỗi sợ khi đi học","Niềm vui mua đồ chơi"],word:"gắn bó",wordAsk:"Từ nào chỉ sự thân thiết, luôn quan tâm nhau?",spell:"chị em",sentence:"Chị em luôn yêu thương nhau.",extra:"tình thân và sự quan tâm trong gia đình"},
-  {topic:"Em mang về yêu thương",passage:"Sau buổi học, bé mang về một bông hoa tự làm tặng mẹ. Mẹ ôm bé và cảm ơn món quà nhỏ đầy tình cảm.",ask:"Bé tặng mẹ món quà gì?",ans:"Một bông hoa tự làm",bad:["Một chiếc cặp mới","Một quả bóng","Một quyển lịch"],word:"món quà",wordAsk:"Cụm từ nào chỉ vật được tặng để bày tỏ tình cảm?",spell:"yêu thương",sentence:"Em tặng mẹ một bông hoa.",extra:"thể hiện tình cảm qua việc làm nhỏ"},
-  {topic:"Mẹ",passage:"Mẹ chăm lo cho gia đình mỗi ngày. Dù bận rộn, mẹ vẫn dành thời gian hỏi han và ôm con khi con cần.",ask:"Mẹ làm gì để thể hiện sự quan tâm?",ans:"Hỏi han và ở bên con",bad:["Không trò chuyện với con","Cất đồ chơi của con đi","Bỏ mặc mọi việc"],word:"chăm lo",wordAsk:"Từ nào chỉ việc quan tâm, săn sóc?",spell:"mẹ yêu con",sentence:"Em yêu mẹ và biết giúp mẹ.",extra:"tình mẹ và lòng biết ơn"},
-  {topic:"Trò chơi của bố",passage:"Buổi tối, bố cùng con chơi đoán đồ vật. Bố đưa ra gợi ý, còn con chăm chú suy nghĩ rồi vui mừng trả lời.",ask:"Bố và con chơi trò gì?",ans:"Đoán đồ vật",bad:["Thi chạy xe ngoài đường","Nấu ăn trong lớp","Trồng cây ở sân trường"],word:"gợi ý",wordAsk:"Từ nào chỉ thông tin giúp người khác đoán ra đáp án?",spell:"đồ vật",sentence:"Bố cùng em chơi đoán đồ vật.",extra:"niềm vui khi chơi cùng bố"},
-  {topic:"Cánh cửa nhớ bà",passage:"Mỗi lần nhìn cánh cửa cũ, Lan nhớ những ngày được bà đón về nhà và kể chuyện. Cánh cửa gợi lại nhiều kỉ niệm thân thương.",ask:"Cánh cửa gợi cho Lan nhớ điều gì?",ans:"Những kỉ niệm bên bà",bad:["Một buổi thi đấu bóng","Chuyến đi mua sách","Bài kiểm tra Toán"],word:"kỉ niệm",wordAsk:"Từ nào chỉ điều đáng nhớ đã xảy ra trong quá khứ?",spell:"thân thương",sentence:"Lan nhớ những kỉ niệm bên bà.",extra:"kỉ niệm và tình cảm với bà"},
-  {topic:"Thương ông",passage:"Thấy ông đi lại chậm, Hà đỡ ông ngồi xuống ghế và rót nước. Ông xoa đầu Hà, mỉm cười cảm động.",ask:"Hà làm gì để giúp ông?",ans:"Đỡ ông ngồi và rót nước",bad:["Chạy ra sân chơi","Giấu chiếc ghế","Bảo ông tự làm"],word:"đỡ",wordAsk:"Từ nào chỉ hành động hỗ trợ người khác?",spell:"rót nước",sentence:"Hà ân cần giúp ông.",extra:"quan tâm, chăm sóc ông bà"},
-  {topic:"Ánh sáng của yêu thương",passage:"Khi em nhỏ bị ốm, người thân thay nhau chăm sóc. Những lời hỏi han và bàn tay dịu dàng giúp em cảm thấy được yêu thương.",ask:"Điều gì giúp em nhỏ cảm thấy được yêu thương?",ans:"Sự chăm sóc và lời hỏi han",bad:["Sự thờ ơ của mọi người","Những lời trách mắng","Việc bị bỏ ở một mình"],word:"dịu dàng",wordAsk:"Từ nào chỉ cách cư xử nhẹ nhàng, ân cần?",spell:"yêu thương",sentence:"Gia đình chăm sóc em bằng tình yêu thương.",extra:"sự quan tâm khi người thân gặp khó khăn"},
-  {topic:"Chơi chong chóng",passage:"Huy cầm chiếc chong chóng chạy trên sân. Gió thổi làm các cánh quay tít, Huy thích thú nhìn theo.",ask:"Điều gì làm cánh chong chóng quay?",ans:"Gió",bad:["Ánh đèn","Tiếng hát","Màu sắc"],word:"quay tít",wordAsk:"Cụm từ nào diễn tả sự quay nhanh của chong chóng?",spell:"chong chóng",sentence:"Gió làm chong chóng quay tít.",extra:"đồ chơi và chuyển động của gió"}
- ];
- const item=lessons[id]||lessons[0];
- const make=(q,correct,wrong,e)=>{let vals=[correct,...wrong].map(x=>String(x).trim()).filter((x,i,a)=>x&&a.indexOf(x)===i);let k=1;while(vals.length<4){let v="Lựa chọn khác "+k++;if(!vals.includes(v))vals.push(v);}vals=shuffleArray(vals.slice(0,4));return {q,a:vals,c:vals.indexOf(correct),e};};
- const pool=[
-  make("Đọc đoạn văn về “"+item.topic+"”: “"+item.passage+"” "+item.ask,item.ans,item.bad,"Chi tiết trong đoạn văn cho biết: "+item.ans+"."),
-  make(item.wordAsk,item.word,[item.topic.toLowerCase(),"chiếc bàn","chạy thật nhanh"].filter(x=>x!==item.word),"Từ/cụm từ phù hợp với nội dung bài là “"+item.word+"”."),
-  make("Chọn cách viết đúng liên quan đến bài “"+item.topic+"”.",item.spell,[item.spell.replace(/[ăâđêôơư]/gi,"a"),item.spell.toUpperCase(),item.spell+"g"],"Cách viết đúng là “"+item.spell+"”."),
-  make("Chọn câu phù hợp với chủ điểm “"+item.topic+"”.",item.sentence,["Bàn ghế chạy nhanh qua sân.","Hôm nay em không cần nghe ai.","Quyển vở biết nấu cơm."],"Câu này đúng ngữ pháp và phù hợp với nội dung bài."),
-  make("Nội dung chính gần nhất với bài “"+item.topic+"” là gì?",item.extra,["Cách tính phép cộng có nhớ","Cách xem dự báo thời tiết","Cách sửa một chiếc xe máy"],"Câu hỏi được xây dựng theo chủ đề của bài học: "+item.topic+"."),
-  make("Từ/cụm từ nào là từ trọng tâm của bài “"+item.topic+"”?",item.word,["xa lạ","ồn ào","xô đẩy"],"Từ/cụm từ trọng tâm gắn với bài là “"+item.word+"”."),
-  make("Đọc lại ý chính của bài “"+item.topic+"”. Việc nào phù hợp nhất?",item.ans,item.bad,"Đáp án được xác định từ ngữ liệu tự biên soạn gắn với bài học."),
-  make("Chọn câu kể đúng, phù hợp chủ đề “"+item.topic+"”.",item.sentence,["Phù hợp chủ đề câu không.","Câu em học vui trường?","đẹp quá bạn sách chạy"],"Câu kể cần có trật tự từ rõ ràng và diễn đạt trọn ý."),
-  make("Chi tiết nào phù hợp với bài “"+item.topic+"”?",item.ans,item.bad,"Đáp án bám theo chi tiết của ngữ liệu dành riêng cho bài này."),
-  make("Chọn câu có ý nghĩa gần với nội dung bài “"+item.topic+"”.",item.sentence,["Em bỏ mặc mọi người khi cần giúp đỡ.","Em không cần quan tâm đến bài học.","Em làm ngược lại mọi việc được nhắc đến."],"Câu đúng phù hợp với nội dung và thông điệp của bài.")
- ];
- return shuffleArray(pool).slice(0,Math.min(count,pool.length));
+ // Ngân hàng Tiếng Việt: sinh nhiều biến thể theo chủ điểm, trộn câu và đáp án mỗi lượt.
+ // Nội dung do website tự biên soạn, không sao chép nguyên văn sách giáo khoa.
+ const lessons=getBookLessons();
+ const lesson=lessons[id]||{title:"Bài Tiếng Việt"};
+ const title=lesson.title.toLowerCase();
+ let group=0;
+ if(/bạn|bóng|chơi|trò chơi|chong chóng|diều|lê-gô|nhím/.test(title)) group=2;
+ else if(/bà|ông|mẹ|gia đình|yêu thương|người thân|bố|cha|tỉ muội|cánh cửa/.test(title)) group=3;
+ else if(/cây|hoa|thiên nhiên|mùa|con vật|chim|sông|suối|vẽ|sách|trang sách/.test(title)) group=1;
+ else if(/ngày hôm qua|ngày hôm nay|học sinh|lớp 2|làm việc|thời khóa biểu|danh sách|trống trường|cô giáo/.test(title)) group=0;
+ const names=["An","Bình","Chi","Dũng","Hà","Lan","Minh","Nam","Mai","Vy","Phúc","Thảo"];
+ const pick=a=>a[rnd(0,a.length-1)];
+ const make=(q,correct,wrong,e)=>{
+   const correctText=String(correct).trim();
+   let vals=[];
+   [correctText,...wrong.map(v=>String(v).trim())].forEach(v=>{if(v&&!vals.includes(v))vals.push(v);});
+   let extra=1;
+   while(vals.length<4){const candidate=`Phương án chưa phù hợp ${extra++}`;if(!vals.includes(candidate))vals.push(candidate);}
+   vals=shuffleArray(vals.slice(0,4));
+   return {q,a:vals,c:vals.indexOf(correctText),e};
+ };
+ const pool=[];
+ // Tạo 48 câu mỗi lượt từ các mẫu ngữ liệu và kiến thức Tiếng Việt lớp 2.
+ for(let i=0;i<48;i++){
+   const n=pick(names), other=pick(names.filter(x=>x!==n));
+   const kind=i%8;
+   let q,correct,wrong,e;
+   if(group===0){
+     if(kind===0){
+       const actions=["xếp sách vào cặp","chào cô giáo","đọc bài cùng bạn","tưới cây ở lớp","lau bảng giúp cô","mượn bút chì của bạn"];
+       const act=pick(actions);
+       q=`Đọc đoạn văn: “${n} đến lớp sớm. ${n} ${act} rồi chuẩn bị vào học.” ${n} đã làm gì?`;
+       correct=act.charAt(0).toUpperCase()+act.slice(1);
+       wrong=["Chạy về nhà", "Ngủ trong lớp", "Bỏ đi chơi"];
+       e=`Đoạn văn cho biết ${n.toLowerCase()} ${act}.`;
+     } else if(kind===1){
+       q="Từ nào dưới đây chỉ người?"; correct=pick(["học sinh","cô giáo","bạn nhỏ"]); wrong=["đọc sách","xanh tươi","nhanh nhẹn"].filter(x=>x!==correct); e=`“${correct}” là từ chỉ người.`;
+     } else if(kind===2){
+       q="Câu nào viết hoa đầu câu đúng?"; correct=`${pick(["Hôm nay","Buổi sáng","Sau giờ học"])}, em đến lớp đúng giờ.`; wrong=["hôm nay em đến lớp đúng giờ.","Hôm Nay em đến lớp đúng giờ.","hôm nay Em đến lớp đúng giờ."]; e="Chữ cái đầu câu cần viết hoa; các từ còn lại viết hoa theo quy tắc riêng.";
+     } else if(kind===3){
+       q=`Điền dấu câu thích hợp: “${n}, bạn đã làm bài tập chưa__”`; correct="?"; wrong=[".",",","!"]; e="Đây là câu hỏi nên dùng dấu chấm hỏi.";
+     } else if(kind===4){
+       q="Từ nào gần nghĩa với “chăm chỉ”?"; correct="siêng năng"; wrong=["lười biếng","ồn ào","vội vàng"]; e="“Chăm chỉ” gần nghĩa với “siêng năng”.";
+     } else if(kind===5){
+       q="Chọn câu kể rõ nghĩa."; correct=`${n} đang đọc sách trong thư viện.`; wrong=["Đọc thư viện sách đang.",`Trong đang ${n} sách đọc.`,`Sách thư viện ${n} đang.`]; e="Câu đúng có trật tự từ rõ ràng và diễn đạt đủ ý.";
+     } else if(kind===6){
+       q="Từ nào chỉ hoạt động?"; correct=pick(["viết bài","đọc sách","xếp hàng"]); wrong=["bảng xanh","học sinh","cặp sách"].filter(x=>x!==correct); e=`“${correct}” chỉ hoạt động.`;
+     } else {
+       q="Khi gặp thầy cô ở trường, em nên nói thế nào?"; correct="Em chào cô ạ!"; wrong=["Tránh ra!","Đưa đồ đây!","Không cần chào!"]; e="Lời chào lễ phép thể hiện sự tôn trọng.";
+     }
+   } else if(group===1){
+     if(kind===0){
+       const things=pick([["hoa","tưới cây"],["chú mèo","cho mèo ăn"],["cây non","tưới cây non"],["quyển sách","đọc sách"],["bức tranh","vẽ tranh"]]);
+       q=`Đọc đoạn văn: “${n} chăm sóc ${things[0]} mỗi ngày. Bạn thường ${things[1]} vào buổi sáng.” ${n} thường làm gì?`;
+       correct=things[1].charAt(0).toUpperCase()+things[1].slice(1); wrong=["Đi ngủ muộn","Bỏ đi học","Chơi điện tử cả ngày"]; e=`Đoạn văn nói ${n.toLowerCase()} thường ${things[1]}.`;
+     } else if(kind===1){q="Từ nào chỉ đặc điểm?";correct=pick(["xanh mướt","long lanh","thơm ngát","cao lớn"]);wrong=["chạy nhảy","bông hoa","học sinh"].filter(x=>x!==correct);e=`“${correct}” dùng để nêu đặc điểm.`;}
+     else if(kind===2){q="Từ nào chỉ sự vật?";correct=pick(["bông hoa","quyển sách","chú chim","cây bàng"]);wrong=["chạy nhanh","đọc bài","vui vẻ"].filter(x=>x!==correct);e=`“${correct}” là tên sự vật.`;}
+     else if(kind===3){q="Câu nào kết thúc bằng dấu chấm hỏi?";correct="Bạn đã tưới cây chưa?";wrong=["Em đang tưới cây.","Ôi, hoa đẹp quá!","Em thích cây xanh."];e="Câu hỏi thường kết thúc bằng dấu chấm hỏi.";}
+     else if(kind===4){q="Chọn câu miêu tả phù hợp.";correct="Lá cây xanh mướt dưới nắng.";wrong=["Cây lá dưới xanh nắng.","Xanh dưới lá cây nắng.","Lá cây chạy rất nhanh."];e="Câu miêu tả nêu đặc điểm của sự vật.";}
+     else if(kind===5){q="Từ nào chỉ hoạt động?";correct=pick(["quan sát","vẽ tranh","chăm sóc","đọc sách"]);wrong=["bức tranh","bông hoa","màu xanh"].filter(x=>x!==correct);e=`“${correct}” chỉ hoạt động.`;}
+     else if(kind===6){q="Từ nào gần nghĩa với “xinh đẹp”?";correct="đẹp đẽ";wrong=["xấu xí","mệt mỏi","ồn ào"];e="“Đẹp đẽ” gần nghĩa với “xinh đẹp”.";}
+     else {q="Chọn cách viết đúng.";correct="Chú chim hót líu lo trên cành.";wrong=["chú chim hót líu lo trên cành.","Chú Chim Hót Líu Lo trên cành.","chú Chim hót líu lo trên cành."];e="Chữ đầu câu viết hoa; các từ khác viết thường theo quy tắc.";}
+   } else if(group===2){
+     if(kind===0){const game=pick(["thả diều","đá bóng","xếp hình","chơi chuyền","nhảy dây"]);q=`Đọc đoạn văn: “${n} và ${other} cùng ${game} sau giờ học. Hai bạn nhường lượt cho nhau và rất vui.” Hai bạn làm gì?`;correct=`Cùng ${game}`;wrong=["Cãi nhau","Đi ngủ","Làm bài kiểm tra"];e=`Hai bạn cùng ${game} sau giờ học.`;}
+     else if(kind===1){q="Câu nào là lời mời lịch sự?";correct=pick(["Bạn chơi cùng mình nhé!","Mời bạn cùng chơi nhé!","Chúng mình cùng chơi nhé!"]);wrong=["Đi chỗ khác!","Đưa đây ngay!","Không cho bạn chơi."];e="Lời mời lịch sự dùng cách nói thân thiện.";}
+     else if(kind===2){q="Từ nào chỉ hoạt động?";correct=pick(["chuyền bóng","thả diều","xếp hình","nhảy dây"]);wrong=["quả bóng","cánh diều","bạn nhỏ"].filter(x=>x!==correct);e=`“${correct}” chỉ hoạt động.`;}
+     else if(kind===3){q="Điền dấu câu: “Bạn có muốn chơi cùng mình không__”";correct="?";wrong=[".","!",","];e="Câu hỏi kết thúc bằng dấu chấm hỏi.";}
+     else if(kind===4){q="Khi bạn giúp em nhặt đồ, em nên nói gì?";correct="Cảm ơn bạn nhé!";wrong=["Mặc kệ!","Đó là việc của bạn!","Đưa đây!"];e="Nên nói lời cảm ơn khi được giúp đỡ.";}
+     else if(kind===5){q="Từ nào chỉ sự vật?";correct=pick(["quả bóng","cánh diều","bộ xếp hình"]);wrong=["chạy nhanh","vui vẻ","nhảy cao"].filter(x=>x!==correct);e=`“${correct}” là tên sự vật.`;}
+     else if(kind===6){q="Chọn câu kể đúng.";correct=`${n} và ${other} chơi rất vui.`;wrong=[`Vui chơi ${n} rất và ${other}.`,`Rất ${other} vui ${n} chơi.`,`Chơi vui và rất.`];e="Câu kể cần diễn đạt rõ ai làm gì hoặc thế nào.";}
+     else {q="Từ nào gần nghĩa với “đoàn kết”?";correct="gắn bó";wrong=["chia rẽ","xa lánh","giận dỗi"];e="“Gắn bó” diễn tả sự thân thiết, đoàn kết.";}
+   } else {
+     if(kind===0){const member=pick(["bà","ông","mẹ","bố","chị gái","em trai"]);const act=pick(["kể chuyện cho em nghe","nấu bữa cơm","tưới rau","đọc sách cùng em","chăm sóc vườn cây"]);q=`Đọc đoạn văn: “Buổi tối, ${n} ngồi bên ${member}. ${member.charAt(0).toUpperCase()+member.slice(1)} ${act}.” Người thân đã làm gì?`;correct=act.charAt(0).toUpperCase()+act.slice(1);wrong=["Đi đá bóng","Đến trường học","Mua đồ chơi ở lớp"];e=`Đoạn văn cho biết ${member} ${act}.`;}
+     else if(kind===1){q="Từ nào chỉ người thân trong gia đình?";correct=pick(["bà","ông","mẹ","bố"]);wrong=["chiếc bàn","quyển vở","xanh tươi"].filter(x=>x!==correct);e=`“${correct}” là từ chỉ người thân.`;}
+     else if(kind===2){q="Từ nào chỉ hoạt động?";correct=pick(["mỉm cười","chăm sóc","quét nhà","nấu cơm"]);wrong=["người thân","mái nhà","ấm áp"].filter(x=>x!==correct);e=`“${correct}” chỉ hoạt động.`;}
+     else if(kind===3){q="Chọn câu viết đúng.";correct="Bà kể chuyện cho em nghe.";wrong=["bà kể chuyện cho em nghe.","Bà Kể Chuyện cho em nghe.","bà Kể chuyện cho Em nghe."];e="Đầu câu viết hoa; cuối câu kể thường dùng dấu chấm.";}
+     else if(kind===4){q="Khi được người thân giúp đỡ, em nên nói gì?";correct="Con cảm ơn ạ!";wrong=["Con không cần!","Mặc kệ con!","Đi chỗ khác!"];e="Lời cảm ơn thể hiện sự lễ phép và biết ơn.";}
+     else if(kind===5){q="Từ nào nêu đặc điểm của tình cảm gia đình?";correct=pick(["ấm áp","yêu thương","đầm ấm"]);wrong=["chạy nhảy","quyển sách","cái bàn"].filter(x=>x!==correct);e=`“${correct}” diễn tả đặc điểm hoặc tình cảm.`;}
+     else if(kind===6){q="Câu nào thể hiện sự quan tâm đến người thân?";correct="Ông có mệt không ạ? Con lấy nước cho ông nhé!";wrong=["Con không muốn giúp đâu!","Ông tự làm đi!","Con mặc kệ nhé!"];e="Hỏi thăm và đề nghị giúp đỡ là cách thể hiện sự quan tâm.";}
+     else {q="Từ nào gần nghĩa với “yêu quý”?";correct="thương mến";wrong=["ghét bỏ","xa lạ","giận dữ"];e="“Thương mến” gần nghĩa với “yêu quý”.";}
+   }
+   pool.push(make(q,correct,wrong,e));
+ }
+ // Bảo đảm câu hỏi trong cùng một đề không lặp nguyên văn.
+ const unique=[];const seen=new Set();
+ const anchor=vietLessonAnchor[lesson.title];
+ if(anchor){
+   const opts=shuffleArray(anchor.a.map((text,i)=>({text,original:i})));
+   const correctIndex=opts.findIndex(x=>x.original===anchor.c);
+   unique.push({q:anchor.q,a:opts.map(x=>x.text),c:correctIndex,e:anchor.e});
+   seen.add(anchor.q);
+ }
+ for(const q of shuffleArray(pool)){if(!seen.has(q.q)){seen.add(q.q);unique.push(q);}}
+ return unique.slice(0,count);
 }
 
 function generateNewQuiz(){renderQuiz(true);}
@@ -1161,8 +1150,6 @@ const semesterExamBanks = {
 function rndExam(min,max){return Math.floor(Math.random()*(max-min+1))+min;}
 function pickSemesterExam(which,count=10){
  // Đề thi thử lấy câu từ ngân hàng theo chủ đề, cộng câu biến thể mới; không chỉ đảo thứ tự 10 câu cố định.
- const requestedSemester=Number(document.getElementById("examSemesterSelect")?.value||1);
- const previousSemester=bookSemester; bookSemester=requestedSemester;
  const pool=[...semesterExamBanks[which],...banks[which].flatMap(topic=>topic.qs)];
  if(which==='math'){
    for(let i=0;i<24;i++)pool.push(makeDynamicMathQuestion(rnd(0,banks.math.length-1)));
@@ -1175,12 +1162,7 @@ function pickSemesterExam(which,count=10){
    if(!item||typeof item.q!=='string'||!Array.isArray(item.a)||item.a.length<2||!Number.isInteger(item.c)||item.c<0||item.c>=item.a.length)continue;
    const key=item.q.trim();if(!seen.has(key)){seen.add(key);unique.push(item);}
  }
- if(requestedSemester===2){
-   if(which==='math') for(let id=0;id<getBookLessons().length;id++) pool.push(...createSecondSemesterMathQuestions(id,3));
-   else for(let id=0;id<getBookLessons().length;id++) pool.push(...createSecondSemesterVietQuestions(id,3));
- }
- bookSemester=previousSemester;
- const shuffledPool=shuffleArray(unique.concat(pool.filter(item=>item&&typeof item.q==='string'&&Array.isArray(item.a)&&Number.isInteger(item.c)&&item.c>=0&&item.c<item.a.length)));
+ const shuffledPool=shuffleArray(unique);
  return shuffledPool.slice(0,Math.min(count,shuffledPool.length)).map(item=>{
   const correct=item.a[item.c];const answers=shuffleArray(item.a.map(String));
   return {...item,a:answers,c:answers.indexOf(String(correct))};
@@ -1193,8 +1175,7 @@ function startSemesterExam(which){
  const isMath=which==="math";
  document.getElementById("examMathBtn").className=isMath?"primary":"secondary";
  document.getElementById("examVietBtn").className=isMath?"secondary":"primary";
- const sem=Number(document.getElementById("examSemesterSelect")?.value||1);
- document.getElementById("examHeading").textContent=`Đề tham khảo ${isMath?"Toán":"Tiếng Việt"} – Học kì ${sem}`;
+ document.getElementById("examHeading").textContent=isMath?"Đề tham khảo Toán – Học kì I":"Đề tham khảo Tiếng Việt – Học kì I";
  document.getElementById("examInstructions").textContent=isMath
   ?"Đề Toán có câu hỏi về số, phép tính và bài toán ngắn. Em đọc kỹ rồi chọn một đáp án nhé!"
   :"Đề Tiếng Việt có câu hỏi về đọc hiểu, từ ngữ và câu. Em đọc kỹ rồi chọn một đáp án nhé!";
@@ -1231,53 +1212,7 @@ function startSemesterExam(which){
  const reset=document.createElement("button");reset.type="button";reset.className="secondary";reset.textContent="🔄 Làm đề khác";reset.onclick=()=>startSemesterExam(which);
  actions.append(submit,reset);form.appendChild(actions);
  const score=document.createElement("div");score.className="exam-score";score.id="examScore";score.style.display="none";
- 
-let learningSoundsOn = false;
-let learningAudioContext = null;
-function playLearningSound(kind){
-  if(!learningSoundsOn) return;
-  try {
-    const AudioCtx = window.AudioContext || window.webkitAudioContext;
-    if(!AudioCtx) return;
-    if(!learningAudioContext) learningAudioContext = new AudioCtx();
-    const ctx = learningAudioContext;
-    const play = () => {
-      const notes = kind === "perfect" ? [523.25,659.25,783.99,1046.5] : kind === "good" ? [523.25,659.25,783.99] : [392,330];
-      notes.forEach((freq,i)=>{
-        const osc=ctx.createOscillator(), gain=ctx.createGain();
-        osc.type="sine"; osc.frequency.value=freq;
-        const start=ctx.currentTime+i*0.16;
-        gain.gain.setValueAtTime(0.0001,start);
-        gain.gain.exponentialRampToValueAtTime(0.16,start+0.025);
-        gain.gain.exponentialRampToValueAtTime(0.0001,start+0.25);
-        osc.connect(gain);gain.connect(ctx.destination);osc.start(start);osc.stop(start+0.27);
-      });
-    };
-    if(ctx.state === "suspended") ctx.resume().then(play).catch(()=>{});
-    else play();
-  } catch(e) { /* Keep the quiz working if audio is unavailable. */ }
-}
-const soundToggleButton=document.getElementById("soundToggle");
-if(soundToggleButton){
-  soundToggleButton.textContent="🔇 Âm thanh: Tắt";
-  soundToggleButton.setAttribute("aria-pressed","false");
-  soundToggleButton.addEventListener("click",()=>{
-    learningSoundsOn=!learningSoundsOn;
-    soundToggleButton.textContent=learningSoundsOn?"🔊 Âm thanh: Bật":"🔇 Âm thanh: Tắt";
-    soundToggleButton.setAttribute("aria-pressed",String(learningSoundsOn));
-    if(learningSoundsOn){
-      const AudioCtx=window.AudioContext||window.webkitAudioContext;
-      if(AudioCtx){
-        try { if(!learningAudioContext) learningAudioContext=new AudioCtx();
-          const ready=learningAudioContext.state==="suspended"?learningAudioContext.resume():Promise.resolve();
-          ready.then(()=>playLearningSound("good")).catch(()=>{});
-        } catch(e) {}
-      }
-    }
-  });
-}
-
-form.addEventListener("submit",function(ev){
+ form.addEventListener("submit",function(ev){
   ev.preventDefault();if(examSubmitted)return;
   let scoreValue=0,answered=0;
   examQuestions.forEach((item,i)=>{
@@ -1291,7 +1226,6 @@ form.addEventListener("submit",function(ev){
   const cheer=scoreValue===total?"Tuyệt vời! Em làm đúng tất cả các câu! 🌈":scoreValue>=Math.ceil(total*.7)?"Giỏi lắm! Em đã cố gắng rất tốt. ⭐":"Cố gắng thêm nhé! Xem lời giải rồi thử một đề mới nào. 💪";
   score.innerHTML=`<div>🌟 Em được ${scoreValue}/${total} điểm</div><div class="exam-encourage">${cheer}</div><div style="font-size:15px;font-weight:500;margin-top:6px">Em đã trả lời ${answered}/${total} câu.</div>`;
   score.style.display="block";examSubmitted=true;
-  playLearningSound(scoreValue===total?"perfect":scoreValue>=Math.ceil(total*.7)?"good":"try");
   form.querySelectorAll("input").forEach(input=>input.disabled=true);
   submit.disabled=true;
   progressText.textContent=`Hoàn thành ${answered}/${total} câu`;
@@ -1305,27 +1239,14 @@ form.addEventListener("submit",function(ev){
 function getHistory(){try{return JSON.parse(localStorage.getItem(HISTORY_KEY)||"[]");}catch(e){return [];}}
 function saveHistory(item){try{const history=getHistory();history.unshift(item);localStorage.setItem(HISTORY_KEY,JSON.stringify(history.slice(0,20)));renderHistory();}catch(e){const summary=document.getElementById("progressSummary");if(summary)summary.textContent="Không lưu được nhật ký trên trình duyệt này. Điểm bài vừa làm vẫn hiển thị bình thường.";}}
 function renderHistory(){
-  const allHistory=getHistory(), summary=document.getElementById("progressSummary"), root=document.getElementById("progressHistory");
-  const history=progressSubjectFilter ? allHistory.filter(x=>x.subjectName===(progressSubjectFilter==="math"?"Toán":"Tiếng Việt")) : allHistory;
-  const clearButton=document.querySelector("#progressPanel button[onclick=\"clearProgress()\"]");
-  if(summary) summary.textContent=progressSubjectFilter ? `Kết quả môn ${progressSubjectFilter==="math"?"Toán":"Tiếng Việt"}` : "Kết quả tất cả môn học";
-  if(!history.length){summary.textContent += " · Chưa có kết quả được lưu.";root.innerHTML="";return;}
+  const history=getHistory(), summary=document.getElementById("progressSummary"), root=document.getElementById("progressHistory");
+  if(!history.length){summary.textContent="Chưa có kết quả được lưu.";root.innerHTML="";return;}
   const avg=Math.round(history.reduce((s,x)=>s+(x.score/x.total)*100,0)/history.length);
-  summary.textContent += ` · Đã lưu ${history.length} lượt làm bài · Tỉ lệ đúng trung bình: ${avg}%.`;
+  summary.textContent=`Đã lưu ${history.length} lượt làm bài gần nhất · Tỉ lệ đúng trung bình: ${avg}%.`;
   root.innerHTML='<div class="history-list"></div>';const list=root.firstChild;
   history.slice(0,10).forEach(item=>{const row=document.createElement("div");row.className="history-item";const left=document.createElement("div");const title=document.createElement("strong");title.textContent=`${item.subjectName} · ${item.topic}`;const date=document.createElement("div");date.className="small";date.textContent=item.date;left.append(title,date);const right=document.createElement("strong");right.textContent=`${item.score}/${item.total}`;row.append(left,right);list.appendChild(row);});
 }
 function clearProgress(){if(confirm("Xóa toàn bộ nhật ký luyện tập đã lưu trên trình duyệt này?")){localStorage.removeItem(HISTORY_KEY);renderHistory();}}
-function launchConfetti(count=24){
-  const colors=["#f97316","#22c55e","#3b82f6","#e879f9","#facc15","#fb7185"];
-  for(let i=0;i<count;i++){
-    const piece=document.createElement("span");piece.className="confetti-piece";
-    piece.style.left=(Math.random()*100)+"vw";piece.style.background=colors[i%colors.length];
-    piece.style.setProperty("--drift",((Math.random()-.5)*220)+"px");
-    piece.style.animationDelay=(Math.random()*.45)+"s";piece.style.animationDuration=(1.3+Math.random()*.9)+"s";
-    document.body.appendChild(piece);setTimeout(()=>piece.remove(),2600);
-  }
-}
 document.getElementById("quizForm").addEventListener("submit",e=>{
   e.preventDefault();if(submitted)return;
   const qs=currentQuestions;let score=0,missing=false;
@@ -1337,26 +1258,8 @@ document.getElementById("quizForm").addEventListener("submit",e=>{
   });
   if(missing){document.getElementById("resultText").textContent="Em hãy xem lại những câu chưa chọn đáp án nhé.";}
   else{document.getElementById("resultText").textContent=score===qs.length?"Tuyệt vời! Em đã trả lời đúng tất cả.":score>=Math.ceil(qs.length*.6)?"Khá lắm! Xem lời giải các câu sai rồi thử lại nhé.":"Không sao cả, mình cùng xem lời giải và luyện tập thêm nhé.";}
-  const resultPanel=document.getElementById("result");
-  const scoreEl=document.getElementById("score");
-  const percent=Math.round(score/qs.length*100);
-  let reward="💪", stars="⭐", message="Mình cùng xem lại câu sai và thử thêm lần nữa nhé!", mood="try-again";
-  if(percent===100){reward="🏆🎉";stars="🌟 🌟 🌟";message="Xuất sắc! Con đã chinh phục tất cả câu hỏi!";mood="perfect";}
-  else if(percent>=80){reward="🥇😄";stars="🌟 🌟 ⭐";message="Giỏi lắm! Con đang tiến bộ từng ngày!";mood="perfect";}
-  else if(percent>=60){reward="🎉😊";stars="🌟 ⭐ ⭐";message="Khá lắm! Cố gắng thêm một chút nữa nhé!";mood="good";}
-  else if(percent>=40){reward="🌈🙂";stars="⭐ ⭐";message="Con đã cố gắng rồi! Xem lời giải để hiểu hơn nhé.";mood="good";}
-  resultPanel.classList.remove("perfect","good","try-again");resultPanel.classList.add(mood);
-  resultPanel.querySelector(".reward")?.remove();resultPanel.querySelector(".score-stars")?.remove();resultPanel.querySelector(".score-message")?.remove();
-  const rewardEl=document.createElement("div");rewardEl.className="reward";rewardEl.textContent=reward;
-  const starsEl=document.createElement("div");starsEl.className="score-stars";starsEl.textContent=stars;
-  const messageEl=document.createElement("div");messageEl.className="score-message";messageEl.textContent=message;
-  resultPanel.insertBefore(rewardEl,resultPanel.querySelector("h2"));
-  resultPanel.insertBefore(starsEl,scoreEl);resultPanel.insertBefore(messageEl,document.getElementById("resultText"));
-  scoreEl.textContent=score+"/"+qs.length+" điểm · "+percent+"%";
-  scoreEl.classList.remove("score-pop");void scoreEl.offsetWidth;scoreEl.classList.add("score-pop");
-  resultPanel.style.display="block";submitted=true;
-  playLearningSound(percent===100?"perfect":percent>=60?"good":"try");
-  if(percent>=60) launchConfetti(percent===100?42:22);
+  document.getElementById("score").textContent=score+"/"+qs.length+" điểm";
+  document.getElementById("result").style.display="block";submitted=true;
   document.querySelectorAll("#questions input").forEach(x=>x.disabled=true);
   document.querySelector("#quizForm button[type=submit]").disabled=true;
   if(!missing){const historyTopic=(typeof activeBookLesson!=="undefined"&&activeBookLesson!==null?getBookLessons()[activeBookLesson].title:typeof activeWeek!=="undefined"&&activeWeek?`Tuần ${activeWeek} · ${banks[subject][topicIndex].name}`:banks[subject][topicIndex].name);saveHistory({subjectName:subject==="math"?"Toán":"Tiếng Việt",topic:historyTopic,score,total:qs.length,date:new Date().toLocaleString("vi-VN")});}
