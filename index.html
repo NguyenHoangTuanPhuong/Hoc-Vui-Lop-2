@@ -703,10 +703,28 @@ function openMainSection(id){
   window.scrollTo(0,0);
 }
 function openPracticeView(){
- ['homeMenu','bookLessons','semesterExam','roadmapPanel','progressPanel','tipsPanel','result'].forEach(x=>{const el=document.getElementById(x);if(el)el.style.display='none';});
- document.getElementById('subjectPicker').style.display=activeBookLesson===null?'block':'none';
- document.getElementById('quizPanel').style.display='block';
- window.scrollTo({top:0,behavior:'smooth'});
+  const hideIds=['homeMenu','bookLessons','semesterExam','roadmapPanel','progressPanel','tipsPanel','subjectPicker','quizPanel','result','englishLessons'];
+  hideIds.forEach(id=>{
+    const el=document.getElementById(id);
+    if(!el)return;
+    // Remove stale inline !important styles left by the main-section navigation.
+    el.style.removeProperty('display');
+    el.hidden = true;
+    el.setAttribute('aria-hidden','true');
+  });
+  const picker=document.getElementById('subjectPicker');
+  if(picker){
+    picker.hidden = activeBookLesson !== null;
+    picker.style.setProperty('display',activeBookLesson===null?'block':'none','important');
+    picker.setAttribute('aria-hidden',activeBookLesson===null?'false':'true');
+  }
+  const quiz=document.getElementById('quizPanel');
+  if(quiz){
+    quiz.hidden=false;
+    quiz.style.setProperty('display','block','important');
+    quiz.setAttribute('aria-hidden','false');
+  }
+  window.scrollTo({top:0,behavior:'smooth'});
 }
 const banks = {
  math: [
@@ -957,8 +975,9 @@ function updateBookLessonInfo(){
 }
 function startBookLesson(){
  
- const id=Number(document.getElementById("bookLesson").value)||0;
- const l=getBookLessons()[id]; if(!l)return;
+ const id=Number(document.getElementById("bookLesson").value);
+ const lessons=getBookLessons();
+ const l=lessons[id]; if(!Number.isInteger(id)||id<0||!l){alert("Bạn hãy chọn một bài học hợp lệ nhé.");return;}
  activeBookLesson=id; topicIndex=l.topic;
  openPracticeView();
  if(bookSubject==="math"){
