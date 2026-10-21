@@ -1140,7 +1140,7 @@ function createBookLessonQuestions(id,count){
    } else if(num===53){
      a=R(100,999); b=R(100,999); q=`Điền dấu >, < hoặc =: ${a} ☐ ${b}`;
      c=a>b?">":a<b?"<":"="; w=[">","<","="].filter(x=>x!==c); e=`So sánh từ hàng trăm, rồi hàng chục và hàng đơn vị: ${a} ${c} ${b}.`;
-   } else if(num===54||num===58||num===63||num===75){
+   } else if(num===54||num===63||num===75){
      const skill=R(0,3);
      if(skill===0){a=R(num>=63?100:10,num>=63?800:89);b=R(1,Math.min(num>=63?99:10,999-a));c=a+b;q=`Tính: ${a} + ${b} = ?`;w=[c+1,c-1,Math.max(0,c-10)];e=`${a} + ${b} = ${c}.`;}
      else if(skill===1){a=R(num>=63?200:20,999);b=R(1,Math.min(num>=63?99:20,a));c=a-b;q=`Tính: ${a} − ${b} = ?`;w=[c+1,Math.max(0,c-1),c+10];e=`${a} − ${b} = ${c}.`;}
