@@ -384,38 +384,19 @@ main{width:min(1120px,calc(100% - 48px))!important;max-width:1120px!important;ma
 }
 
 
-/* FIX MOBILE V6 - giu desktop da dep, toi uu rieng dien thoai */
-@media(max-width:699px){
-  body{font-size:16px;line-height:1.55}
-  .site-header{padding:22px 14px 34px!important}
-  .site-header .logo{font-size:32px}
-  .site-header h1{font-size:clamp(26px,7vw,34px)!important;line-height:1.18!important;margin:8px auto 12px!important}
-  .site-header p{font-size:15px;line-height:1.5}
-  .school-line{display:inline-block;max-width:100%;white-space:normal;padding:7px 12px;font-size:13px;line-height:1.45}
-  main{width:calc(100% - 16px)!important;max-width:none!important;margin:-14px auto 24px!important}
-  #homeMenu{padding:16px!important;border-radius:18px!important}
-  #homeMenu h2{font-size:21px!important;line-height:1.35!important;margin-bottom:8px!important}
-  #homeMenu .menu-intro{font-size:14px!important;line-height:1.5!important;margin-bottom:14px!important}
-  #homeMenu .home-subjects{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:10px!important}
-  #homeMenu .home-subjects>.subject{
-    min-width:0!important;
-    min-height:150px!important;
-    padding:14px 12px!important;
-    gap:8px!important;
-    border-radius:16px!important;
-  }
-  #homeMenu .home-subjects>.subject>.emoji{font-size:30px!important;line-height:1.1}
-  #homeMenu .home-subjects>.subject strong{font-size:17px!important;line-height:1.3!important;overflow-wrap:normal!important;word-break:normal!important}
-  #homeMenu .home-subjects>.subject .small{font-size:12px!important;line-height:1.45!important;overflow-wrap:normal!important;word-break:normal!important}
-  footer{font-size:12px;line-height:1.5;padding:14px 12px 24px}
-}
-@media(max-width:380px){
-  #homeMenu{padding:13px!important}
-  #homeMenu .home-subjects{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:8px!important}
-  #homeMenu .home-subjects>.subject{padding:12px 10px!important;min-height:140px!important}
-  #homeMenu .home-subjects>.subject strong{font-size:16px!important}
-  #homeMenu .home-subjects>.subject .small{font-size:11px!important}
-}
+/* BUOC 1 MIEN PHI: thanh tich va sao thuong */
+.reward-panel{margin-top:22px;padding:20px;border:1px solid #dce7fb;border-radius:20px;background:linear-gradient(135deg,#fff,#f2f7ff)}
+.reward-panel h3{margin:0 0 8px;color:#18264b;font-size:21px}
+.reward-summary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:14px 0}
+.reward-stat{padding:13px 12px;border-radius:14px;background:#fff;border:1px solid #e4ebf8;text-align:center}
+.reward-stat strong{display:block;font-size:23px;color:#2457d6;line-height:1.2}
+.reward-stat span{display:block;font-size:13px;color:#52627a;margin-top:5px}
+.reward-badges{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.reward-badge{padding:7px 10px;border-radius:999px;background:#e9eef7;color:#7b879a;font-size:13px;font-weight:700}
+.reward-badge.earned{background:#fff2c6;color:#875400;border:1px solid #f5d978}
+.reward-note{font-size:13px;color:#66758c;margin:12px 0 0}
+.reward-reset{margin-top:10px;border:1px solid #cbd8ee;border-radius:10px;padding:8px 12px;background:white;color:#344563;font-size:13px;cursor:pointer}
+@media(max-width:699px){.reward-panel{padding:15px}.reward-panel h3{font-size:19px}.reward-summary{gap:7px}.reward-stat{padding:10px 6px}.reward-stat strong{font-size:20px}.reward-stat span{font-size:12px}}
 
 </style>
 </head>
@@ -436,7 +417,26 @@ main{width:min(1120px,calc(100% - 48px))!important;max-width:1120px!important;ma
       <button class="subject" onclick="openMainSection('englishLessons'); initEnglishLessons()"><span class="emoji">🔤</span><span><strong>Tiếng Anh</strong><br><span class="small">Global Success · Units 1–16</span></span></button>
       <button class="subject" onclick="openMainSection('tipsPanel')"><span class="emoji">💡</span><span><strong>Mẹo học tập</strong><br><span class="small">Mẹo nhỏ giúp con học tốt hơn</span></span></button>
     </div>
+  
+  <section class="reward-panel" id="rewardPanel" aria-live="polite">
+    <h3>⭐ Góc thành tích của Trúc Giang</h3>
+    <p class="small">Mỗi lần học và hoàn thành bài, con sẽ tích lũy sao thưởng nhé!</p>
+    <div class="reward-summary">
+      <div class="reward-stat"><strong id="rewardStars">0 ⭐</strong><span>Tổng sao</span></div>
+      <div class="reward-stat"><strong id="rewardDone">0</strong><span>Bài đã hoàn thành</span></div>
+      <div class="reward-stat"><strong id="rewardStreak">0</strong><span>Ngày học liên tiếp</span></div>
+    </div>
+    <div><strong>Huy hiệu của con</strong></div>
+    <div class="reward-badges">
+      <span class="reward-badge" data-badge="first">🌱 Bắt đầu học</span>
+      <span class="reward-badge" data-badge="five">⭐ 5 bài hoàn thành</span>
+      <span class="reward-badge" data-badge="ten">🏅 10 bài hoàn thành</span>
+      <span class="reward-badge" data-badge="hundred">💯 100 sao</span>
+    </div>
+    <p class="reward-note">Thành tích lưu trên trình duyệt của thiết bị này, không cần tài khoản hoặc máy chủ.</p>
+    <button class="reward-reset" id="rewardReset" type="button">Đặt lại thành tích</button>
   </section>
+</section>
   <section class="panel" id="bookLessons">
     <button class="back-home" type="button" onclick="openMainSection('homeMenu')">🏠 Về trang chủ</button>
   <h2 id="lessonPickerTitle">📘 Chọn bài em muốn luyện</h2>
@@ -1903,5 +1903,49 @@ document.getElementById("quizForm").addEventListener("submit",e=>{
 function resetQuiz(){renderQuiz();document.querySelector("#quizForm button[type=submit]").disabled=false;}
 renderTopics();renderQuiz();renderHistory();renderWeekSelectors();initBookLessons();
 </script>
+
+<script>
+(function(){
+  "use strict";
+  const KEY="trucGiangLearningRewardsV1";
+  const $=id=>document.getElementById(id);
+  const day=()=>{const d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");};
+  function read(){try{return JSON.parse(localStorage.getItem(KEY)||'{"stars":0,"done":0,"days":[],"completed":[]}');}catch(e){return {stars:0,done:0,days:[],completed:[]};}}
+  function save(s){try{localStorage.setItem(KEY,JSON.stringify(s));}catch(e){}}
+  function streak(days){
+    const set=new Set(days||[]);let n=0;const d=new Date();
+    while(true){const k=d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");if(!set.has(k))break;n++;d.setDate(d.getDate()-1);}
+    return n;
+  }
+  function paint(){
+    const s=read();
+    if($("rewardStars"))$("rewardStars").textContent=(s.stars||0)+" ⭐";
+    if($("rewardDone"))$("rewardDone").textContent=s.done||0;
+    if($("rewardStreak"))$("rewardStreak").textContent=streak(s.days);
+    document.querySelectorAll(".reward-badge").forEach(b=>{
+      const id=b.dataset.badge,earned=id==="first"?(s.done||0)>=1:id==="five"?(s.done||0)>=5:id==="ten"?(s.done||0)>=10:id==="hundred"?(s.stars||0)>=100:false;
+      b.classList.toggle("earned",earned);
+    });
+  }
+  function record(label){
+    const s=read(),d=day(),key=d+"|"+(location.hash||"home")+"|"+label;
+    s.completed=s.completed||[];
+    if(s.completed.includes(key))return;
+    s.completed.push(key);s.stars=(s.stars||0)+1;s.done=(s.done||0)+1;s.days=Array.from(new Set([...(s.days||[]),d])).sort();
+    save(s);paint();
+  }
+  document.addEventListener("click",function(e){
+    const b=e.target.closest("button");if(!b)return;
+    const t=(b.innerText||b.textContent||"").trim();
+    if(!/(nộp bài|xem kết quả|chấm điểm|hoàn thành bài|kiểm tra đáp án|xem đáp án|kết quả bài làm)/i.test(t))return;
+    setTimeout(()=>record(t),350);
+  },true);
+  if($("rewardReset"))$("rewardReset").addEventListener("click",function(){
+    if(confirm("Con có chắc muốn đặt lại toàn bộ sao và huy hiệu không?")){try{localStorage.removeItem(KEY);}catch(e){}paint();}
+  });
+  paint();
+})();
+</script>
+
 </body>
 </html>
