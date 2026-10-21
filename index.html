@@ -2049,7 +2049,7 @@ function renderHistory(){
   const avg=Math.round(history.reduce((s,x)=>s+(x.score/x.total)*100,0)/history.length);
   summary.textContent=`Đã lưu ${history.length} lượt làm bài gần nhất · Tỉ lệ đúng trung bình: ${avg}%.`;
   root.innerHTML='<div class="history-list"></div>';const list=root.firstChild;
-  history.slice(0,10).forEach(item=>{const row=document.createElement("div");row.className="history-item";const left=document.createElement("div");const title=document.createElement("strong");title.textContent=`${item.subjectName} · ${item.topic}`;const date=document.createElement("div");date.className="small";date.textContent=item.date;left.append(title,date);const right=document.createElement("strong");right.textContent=`${item.score}/${item.total}`;row.append(left,right);list.appendChild(row);});
+  history.slice(0,10).forEach(item=>{const row=document.createElement("div");row.className="history-item";const left=document.createElement("div");const title=document.createElement("strong");title.textContent=`${item.subjectName} · ${item.topic}`;const date=document.createElement("div");date.className="small";date.textContent=item.date;left.append(title,date);const right=document.createElement("strong");const pct=Number.isFinite(item.percent)?item.percent:Math.round((item.score/item.total)*100);right.textContent=`${item.score}/${item.total} (${pct}%)${pct>=90?" ⭐":""}`;row.append(left,right);list.appendChild(row);});
 }
 function clearProgress(){if(confirm("Xóa toàn bộ nhật ký luyện tập đã lưu trên trình duyệt này?")){localStorage.removeItem(HISTORY_KEY);renderHistory();}}
 document.getElementById("quizForm").addEventListener("submit",e=>{
@@ -2073,7 +2073,12 @@ document.getElementById("quizForm").addEventListener("submit",e=>{
   submitted=true;
   document.querySelectorAll("#questions input").forEach(x=>x.disabled=true);
   document.querySelector("#quizForm button[type=submit]").disabled=true;
-  if(!missing){const historyTopic=(typeof activeBookLesson!=="undefined"&&activeBookLesson!==null?getBookLessons()[activeBookLesson].title:typeof activeWeek!=="undefined"&&activeWeek?`Tuần ${activeWeek} · ${banks[subject][topicIndex].name}`:banks[subject][topicIndex].name);saveHistory({subjectName:subject==="math"?"Toán":"Tiếng Việt",topic:historyTopic,score,total:qs.length,date:new Date().toLocaleString("vi-VN")});}
+  if(!missing){
+    const historyTopic=(typeof activeBookLesson!=="undefined"&&activeBookLesson!==null?getBookLessons()[activeBookLesson].title:typeof activeWeek!=="undefined"&&activeWeek?`Tuần ${activeWeek} · ${banks[subject][topicIndex].name}`:banks[subject][topicIndex].name);
+    const subjectLabel=subject==="math"?"Toán":subject==="viet"?"Tiếng Việt":String(subject||"Môn học");
+    saveHistory({subjectName:subjectLabel,topic:historyTopic,score,total:qs.length,percent:scorePercent,date:new Date().toLocaleString("vi-VN")});
+    document.dispatchEvent(new CustomEvent("trucGiang:quiz-completed",{detail:{subject:subjectLabel,topic:historyTopic,score,total:qs.length,percent:scorePercent}}));
+  }
 });
 function resetQuiz(){renderQuiz();document.querySelector("#quizForm button[type=submit]").disabled=false;}
 renderTopics();renderQuiz();renderHistory();renderWeekSelectors();initBookLessons();
@@ -2102,19 +2107,23 @@ renderTopics();renderQuiz();renderHistory();renderWeekSelectors();initBookLesson
       b.classList.toggle("earned",earned);
     });
   }
-  function record(label){
-    const s=read(),d=day(),key=d+"|"+(location.hash||"home")+"|"+label;
+  function recordQuiz(detail){
+    if(!detail || typeof detail.percent!=="number")return;
+    const s=read(),d=day();
     s.completed=s.completed||[];
-    if(s.completed.includes(key))return;
-    s.completed.push(key);s.stars=(s.stars||0)+1;s.done=(s.done||0)+1;s.days=Array.from(new Set([...(s.days||[]),d])).sort();
+    const label=String(detail.subject||"Môn học")+"|"+String(detail.topic||"Bài luyện tập");
+    const key=d+"|"+label;
+    // Chỉ tặng sao khi đạt từ 90% trở lên; mỗi bài/môn trong ngày tối đa 1 sao.
+    if(detail.percent<90 || s.completed.includes(key))return;
+    s.completed.push(key);
+    s.stars=(s.stars||0)+1;
+    s.done=(s.done||0)+1;
+    s.days=Array.from(new Set([...(s.days||[]),d])).sort();
     save(s);paint();
   }
-  document.addEventListener("click",function(e){
-    const b=e.target.closest("button");if(!b)return;
-    const t=(b.innerText||b.textContent||"").trim();
-    if(!/(nộp bài|xem kết quả|chấm điểm|hoàn thành bài|kiểm tra đáp án|xem đáp án|kết quả bài làm)/i.test(t))return;
-    setTimeout(()=>record(t),350);
-  },true);
+  document.addEventListener("trucGiang:quiz-completed",function(e){
+    recordQuiz(e.detail);
+  });
   if($("rewardReset"))$("rewardReset").addEventListener("click",function(){
     if(confirm("Con có chắc muốn đặt lại toàn bộ sao và huy hiệu không?")){try{localStorage.removeItem(KEY);}catch(e){}paint();}
   });
