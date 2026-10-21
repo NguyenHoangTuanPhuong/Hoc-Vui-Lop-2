@@ -12,7 +12,7 @@ header{background:linear-gradient(120deg,#2563eb,#7c3aed);color:white;padding:26
 header .logo{font-size:42px}h1{margin:4px 0;font-size:clamp(28px,5vw,42px)}header p{margin:6px auto;max-width:640px}
 main{width:min(960px,100% - 24px);margin:-16px auto 40px}.panel{background:var(--card);border-radius:20px;padding:20px;box-shadow:0 8px 28px #1e3a8a12;margin-bottom:16px}
 h2{margin:0 0 10px;font-size:22px}.small{color:var(--muted);font-size:14px}
-.subjects{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.home-subjects{margin:12px 0}.home-subjects .subject{min-height:94px}.home-subjects .emoji{font-size:30px}
+.subjects{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
 .subject{border:2px solid #dbeafe;background:#eff6ff;border-radius:16px;padding:18px 12px;text-align:left;cursor:pointer;color:var(--ink);font:inherit;transition:.15s}
 .subject:nth-child(2){background:#fff7ed;border-color:#fed7aa}.subject .emoji{font-size:34px;display:block}.subject strong{font-size:19px}.subject.active{border-color:var(--blue);box-shadow:0 0 0 3px #2563eb18}
 .controls{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}.chip,button{font:inherit;cursor:pointer;border:0;border-radius:12px;padding:11px 15px}
@@ -193,27 +193,22 @@ main>section:not(#homeMenu){display:none}
   <section class="panel" id="homeMenu">
     <h2>👋 Trúc Giang muốn học gì hôm nay?</h2>
     <p class="small menu-intro">Con chọn một mục bên dưới để bắt đầu nhé!</p>
-    <div class="subjects home-subjects">
-      <button class="subject" onclick="openSubject('math')"><span class="emoji">🔢</span><span><strong>Toán</strong><br><span class="small">Bài học, ôn tập và đề thi</span></span></button>
-      <button class="subject" onclick="openSubject('viet')"><span class="emoji">📚</span><span><strong>Tiếng Việt</strong><br><span class="small">Đọc hiểu, từ câu và chính tả</span></span></button>
-    </div>
-    <button class="menu-card" onclick="openMainSection('semesterExam')"><span class="menu-icon">🌟</span><strong>Câu hỏi tổng hợp & đề thi học kì</strong><small>Đề tham khảo Toán và Tiếng Việt</small></button>
+    <button class="menu-card" onclick="openMainSection('bookLessons')"><span class="menu-icon">📘</span><strong>Học theo bài</strong><small>Chọn Toán hoặc Tiếng Việt</small></button>
+    <button class="menu-card" onclick="openMainSection('semesterExam')"><span class="menu-icon">🌟</span><strong>Đề thi học kì tham khảo</strong><small>Làm đề và xem điểm</small></button>
     <button class="menu-card" onclick="openMainSection('progressPanel')"><span class="menu-icon">🏆</span><strong>Kết quả của con</strong><small>Xem những lần đã làm</small></button>
     <button class="menu-card" onclick="openMainSection('tipsPanel')"><span class="menu-icon">💡</span><strong>Mẹo học tốt</strong><small>Mẹo nhỏ cho con</small></button>
   </section>
   <section class="panel" id="bookLessons">
     <button class="back-home" type="button" onclick="openMainSection('homeMenu')">🏠 Về trang chủ</button>
   <h2 id="lessonPickerTitle">📘 Chọn bài em muốn luyện</h2>
-    <p class="small">① Chọn học kì · ② Chọn chủ điểm và bài · ③ Bắt đầu luyện tập nhé!</p>
-    <div class="controls" style="margin-bottom:12px">
-      <label for="bookSemester">Học kì:</label>
-      <select id="bookSemester" class="chip" onchange="changeBookSemester(this.value)" aria-label="Chọn học kì">
-        <option value="1">Học kì 1</option><option value="2">Học kì 2</option>
-      </select>
-    </div>
+    <p class="small">① Chọn môn học · ② Chọn bài · ③ Bấm nút xanh để bắt đầu nhé!</p>
     <div class="controls subject-toggle" role="group" aria-label="Chọn môn học">
       <button type="button" class="primary subject-tab active" id="mathTab" onclick="switchBookSubject('math')">🔢 Toán</button>
       <button type="button" class="secondary subject-tab" id="vietTab" onclick="switchBookSubject('viet')">📚 Tiếng Việt</button>
+    </div>
+    <div class="controls">
+      <label for="bookSemester">① Chọn học kì</label>
+      <select id="bookSemester" class="chip" onchange="switchBookSemester(this.value)"><option value="1">Học kì 1</option><option value="2">Học kì 2</option></select>
     </div>
     <div class="controls">
       <label for="bookChapter" id="chapterLabel">② Chọn chương</label>
@@ -270,16 +265,16 @@ main>section:not(#homeMenu){display:none}
 
 <section class="panel" id="semesterExam">
   <button class="back-home" type="button" onclick="openMainSection('homeMenu')">🏠 Về trang chủ</button>
-  <h2>🌟 Câu hỏi tổng hợp & đề thi học kì</h2>
+  <h2>🌟 Đề thi học kì tham khảo</h2>
   <div class="exam-intro"><span class="mascot" aria-hidden="true">🦉</span><p><strong>Em làm bài thật bình tĩnh nhé!</strong><br>Đọc câu hỏi, chọn một đáp án. Làm xong, bấm nút xanh để xem kết quả và lời giải.</p></div>
   <div class="controls exam-subjects" role="group" aria-label="Chọn môn thi thử">
     <button type="button" class="primary" id="examMathBtn" onclick="startSemesterExam('math')">🔢 Toán vui</button>
     <button type="button" class="secondary" id="examVietBtn" onclick="startSemesterExam('viet')">📚 Tiếng Việt</button>
   </div>
-  <div class="exam-settings"><label for="examQuestionCount">Em muốn làm bao nhiêu câu?</label><select id="examQuestionCount"><option value="5">5 câu · Làm quen</option><option value="10" selected>10 câu · Thử sức</option></select></div>
+  <div class="exam-settings"><label for="examSemesterSelect">Học kì</label><select id="examSemesterSelect"><option value="1">Học kì 1</option><option value="2">Học kì 2</option></select><label for="examQuestionCount">Em muốn làm bao nhiêu câu?</label><select id="examQuestionCount"><option value="5">5 câu · Làm quen</option><option value="10" selected>10 câu · Thử sức</option></select></div>
   <div class="week-card">
     <h3 id="examHeading">Chọn môn em thích để bắt đầu nhé!</h3>
-    <p id="examInstructions">Chọn Toán hoặc Tiếng Việt để làm đề tham khảo học kì I. Đề học kì II sẽ được bổ sung sau khi hoàn thiện ngân hàng bài học.</p>
+    <p id="examInstructions">Đây là đề tham khảo do website tự biên soạn, không phải đề thi chính thức của trường.</p>
     <div id="examWorkArea"></div>
   </div>
 </section>
@@ -516,13 +511,27 @@ const vietOneChapters = [
   ["Bài 29. Cánh cửa nhớ bà",0],["Bài 30. Thương ông",0],["Bài 31. Ánh sáng của yêu thương",0],["Bài 32. Chơi chong chóng",1]]}
 ];
 
+const bookTwoChapters = [
+ {name:"8. Phép nhân, phép chia",lessons:[["Bài 37. Phép nhân",1],["Bài 38. Thừa số, tích",1],["Bài 39. Bảng nhân 2",1],["Bài 40. Bảng nhân 5",1],["Bài 41. Phép chia",1],["Bài 42. Số bị chia, số chia, thương",1],["Bài 43. Bảng chia 2",1],["Bài 44. Bảng chia 5",1],["Bài 45. Luyện tập chung",4]]},
+ {name:"9. Làm quen với hình khối",lessons:[["Bài 46. Khối trụ, khối cầu",3],["Bài 47. Luyện tập chung",3]]},
+ {name:"10. Các số trong phạm vi 1000",lessons:[["Bài 48. Đơn vị, chục, trăm, nghìn",1],["Bài 49. Các số tròn trăm, tròn chục",1],["Bài 50. So sánh các số tròn trăm, tròn chục",1],["Bài 51. Số có ba chữ số",1],["Bài 52. Viết số thành tổng các trăm, chục, đơn vị",1],["Bài 53. So sánh các số có ba chữ số",1],["Bài 54. Luyện tập chung",4]]},
+ {name:"11. Đo độ dài",lessons:[["Bài 55. Đề-xi-mét, mét, ki-lô-mét",3],["Bài 56. Thực hành và trải nghiệm đo độ dài",3],["Bài 57. Luyện tập chung",4]]},
+ {name:"12. Cộng, trừ trong phạm vi 1000",lessons:[["Bài 58. Phép cộng không nhớ trong phạm vi 1000",1],["Bài 59. Phép trừ không nhớ trong phạm vi 1000",1],["Bài 60. Luyện tập chung",4],["Bài 61. Phép cộng có nhớ trong phạm vi 1000",1],["Bài 62. Phép trừ có nhớ trong phạm vi 1000",1],["Bài 63. Luyện tập chung",4]]},
+ {name:"13. Thời gian, tiền Việt Nam và dữ liệu",lessons:[["Bài 64. Tiền Việt Nam",3],["Bài 65. Thực hành và trải nghiệm mua bán",3],["Bài 66. Ngày, tháng, năm",3],["Bài 67. Thực hành xem lịch",3],["Bài 68. Thu thập, phân loại, kiểm đếm số liệu",3],["Bài 69. Biểu đồ tranh",3],["Bài 70. Có thể, chắc chắn, không thể",3]]},
+ {name:"14. Ôn tập cuối năm",lessons:[["Bài 71. Ôn tập phép nhân, phép chia",4],["Bài 72. Ôn tập hình học",4],["Bài 73. Ôn tập đo lường",4],["Bài 74. Ôn tập kiểm đếm số liệu và lựa chọn khả năng",4],["Bài 75. Ôn tập chung",4]]}
+];
+const vietTwoChapters = [
+ {name:"1. Vẻ đẹp quanh em",lessons:[["Chuyện bốn mùa",0],["Mùa nước nổi",0],["Hoa mi hót",0],["Tết đến rồi",0],["Giọt nước và biển lớn",0],["Mùa vàng",0]]},
+ {name:"2. Thiên nhiên, cây cối và muông thú",lessons:[["Hạt thóc",0],["Lũy tre",0],["Về chim",0],["Khủng long",0],["Sự tích cây thị",0],["Bờ tre đón khách",0],["Tiếng chổi tre",0],["Cỏ non cười rồi",0]]},
+ {name:"3. Hành tinh xanh của em",lessons:[["Những con sao biển",0],["Tạm biệt cánh cam",0],["Bảo vệ môi trường",1]]},
+ {name:"4. Giao tiếp và kết nối",lessons:[["Những cách chào độc đáo",0],["Thư viện biết đi",0],["Cảm ơn anh hà mã",0],["Từ chú bồ câu đến in-tơ-nét",0]]},
+ {name:"5. Con người Việt Nam",lessons:[["Mai An Tiêm",0],["Thư gửi bố ngoài đảo",0],["Nghề nghiệp quanh em",1],["Ôn tập cuối học kì 2",1]]}
+];
 let activeBookLesson = null;
 let bookSubject = "math";
 let bookSemester = 1;
-function openSubject(which){ bookSubject=which; bookSemester=1; const sel=document.getElementById('bookSemester'); if(sel)sel.value='1'; switchBookSubject(which); openMainSection('bookLessons'); }
-function changeBookSemester(value){ bookSemester=Number(value)||1; initBookLessons(); }
-
-function currentBookChapters(){ return bookSubject === "math" ? bookOneChapters : vietOneChapters; }
+function switchBookSemester(value){ bookSemester=Number(value)||1; activeBookLesson=null; initBookLessons(); }
+function currentBookChapters(){ return bookSubject === "math" ? (bookSemester===1?bookOneChapters:bookTwoChapters) : (bookSemester===1?vietOneChapters:vietTwoChapters); }
 function switchBookSubject(which){
  bookSubject = which;
  const math = which === "math";
@@ -530,21 +539,13 @@ function switchBookSubject(which){
  document.getElementById("vietTab").className = "subject-tab " + (!math ? "primary active" : "secondary");
  document.getElementById("lessonPickerTitle").textContent = math ? "🔢 Chọn bài Toán em muốn luyện" : "📚 Chọn bài Tiếng Việt em muốn luyện";
  document.getElementById("chapterLabel").textContent = "② Chọn chủ điểm";
- document.getElementById("bookChapter").setAttribute("aria-label", math ? "Chọn chương sách Toán tập 1" : "Chọn chủ điểm Tiếng Việt tập 1");
- document.getElementById("bookLesson").setAttribute("aria-label", math ? "Chọn bài trong sách Toán tập 1" : "Chọn bài trong sách Tiếng Việt tập 1");
+ document.getElementById("bookChapter").setAttribute("aria-label", math ? `Chọn chương sách Toán tập ${bookSemester}` : `Chọn chủ điểm Tiếng Việt tập ${bookSemester}`);
+ document.getElementById("bookLesson").setAttribute("aria-label", math ? `Chọn bài trong sách Toán tập ${bookSemester}` : `Chọn bài trong sách Tiếng Việt tập ${bookSemester}`);
  initBookLessons();
 }
 function initBookLessons(){
  const ch=document.getElementById("bookChapter"), le=document.getElementById("bookLesson");
  ch.innerHTML="";
- if(bookSemester===2){
-  const o=document.createElement("option");o.value="0";o.textContent="Nội dung học kì 2";ch.appendChild(o);
-  le.innerHTML="";
-  const item=document.createElement("option");item.value="-1";item.textContent="Ngân hàng bài học học kì 2 đang được bổ sung";le.appendChild(item);
-  document.getElementById("bookLessonTitle").textContent="Học kì 2 · "+(bookSubject==="math"?"Toán":"Tiếng Việt");
-  document.getElementById("bookLessonDesc").textContent="Khung học kì 2 đã được tạo. Danh sách bài và câu hỏi sẽ được bổ sung sau khi đối chiếu đúng mục lục sách giáo khoa.";
-  return;
- }
  currentBookChapters().forEach((c,i)=>{const o=document.createElement("option");o.value=i;o.textContent=c.name;ch.appendChild(o);});
  function fillLessons(){
   const c=currentBookChapters()[Number(ch.value)||0];le.innerHTML="";
@@ -560,12 +561,11 @@ function updateBookLessonInfo(){
  const l=getBookLessons()[Number(document.getElementById("bookLesson").value)||0];
  if(!l)return;
  document.getElementById("bookLessonTitle").textContent=l.title;
- document.getElementById("bookLessonDesc").textContent = bookSubject==="math"
-  ? "Bài tập Toán tự biên soạn theo kiến thức của bài."
-  : "Luyện đọc hiểu, từ và câu, chính tả hoặc viết câu theo nội dung bài.";
+ document.getElementById("bookLessonDesc").textContent = bookSemester===2
+  ? (bookSubject==="math" ? "Bài tập tự biên soạn theo mạch kiến thức học kì 2; nên đối chiếu với sách của con." : "Câu hỏi và ngữ liệu luyện đọc tự biên soạn theo chủ điểm học kì 2; không chép nguyên văn SGK.")
+  : (bookSubject==="math" ? "Bài tập Toán tự biên soạn theo kiến thức của bài." : "Luyện đọc hiểu, từ và câu, chính tả hoặc viết câu theo nội dung bài.");
 }
 function startBookLesson(){
- if(bookSemester===2){ alert("Nội dung bài học và ngân hàng câu hỏi học kì 2 đang được bổ sung sau khi đối chiếu mục lục sách. Hiện bạn có thể luyện các bài học kì 1."); return; }
  const id=Number(document.getElementById("bookLesson").value)||0;
  const l=getBookLessons()[id]; if(!l)return;
  activeBookLesson=id; topicIndex=l.topic;
@@ -609,7 +609,27 @@ function mcq(q,correct,others,e){
  const shuffled=shuffleArray(finalVals);
  return {q,a:shuffled,c:shuffled.indexOf(correctText),e};
 }
+function createSecondSemesterMathQuestions(id,count){
+ const title=getBookLessons()[id]?.title||"Ôn tập Toán"; const qs=[]; const R=(a,b)=>Math.floor(Math.random()*(b-a+1))+a;
+ const add=(q,c,w,e)=>qs.push(mcq(q,c,w,e));
+ for(let i=0;i<count;i++){
+  let a,b,c,q,w,e;
+  if(/nhân|thừa số|bảng nhân/i.test(title)){let k=/nhân 5/i.test(title)?5:2; a=R(2,10); c=a*k; q=`Có ${a} nhóm, mỗi nhóm có ${k} đồ vật. Có tất cả bao nhiêu đồ vật?`;w=[c+1,Math.max(0,c-1),a+k];e=`${a} × ${k} = ${c}.`}
+  else if(/chia|số bị chia|số chia|thương/i.test(title)){let k=/chia 5/i.test(title)?5:2; c=R(2,10); a=c*k;q=`Có ${a} đồ vật chia đều vào ${k} nhóm. Mỗi nhóm có bao nhiêu đồ vật?`;w=[c+1,Math.max(0,c-1),a+k];e=`${a} ÷ ${k} = ${c}.`}
+  else if(/khối trụ|khối cầu|hình học/i.test(title)){q=/khối cầu/i.test(title)?"Vật nào có dạng khối cầu?":"Hình tứ giác có bao nhiêu cạnh?";c=/khối cầu/i.test(title)?"Quả bóng": "4 cạnh";w=/khối cầu/i.test(title)?["Hộp sữa hình trụ","Quyển vở","Thước thẳng"]:["3 cạnh","5 cạnh","6 cạnh"];e=/khối cầu/i.test(title)?"Quả bóng có dạng gần với khối cầu.":"Hình tứ giác có 4 cạnh."}
+  else if(/độ dài|mét|đề-xi-mét|ki-lô-mét/i.test(title)){a=R(2,8);b=R(2,8);c=a*100;q=`${a} m bằng bao nhiêu xăng-ti-mét?`;w=[a*10,a*1000,a+100];e=`1 m = 100 cm nên ${a} m = ${c} cm.`}
+  else if(/tiền|mua bán/i.test(title)){a=R(2,9)*1000;b=R(1,5)*1000;c=a-b;q=`Một món hàng giá ${a.toLocaleString('vi-VN')} đồng. Em trả ${a.toLocaleString('vi-VN')} đồng thì tiền thừa là bao nhiêu?`;w=[b,b+1000,1000];c=0; q=`Một món đồ giá ${a.toLocaleString('vi-VN')} đồng. Em đưa đúng số tiền đó. Em được trả lại bao nhiêu?`;c="0 đồng";w=["1 000 đồng","2 000 đồng","5 000 đồng"];e="Đưa đúng số tiền phải trả thì không có tiền thừa."}
+  else if(/ba chữ số|trăm|so sánh các số/i.test(title)){a=R(100,899);b=R(1,99);c=a+b;q=`Tính: ${a} + ${b} = ?`;w=[c+1,c-1,Math.max(0,c-10)];e=`${a} + ${b} = ${c}.`}
+  else if(/biểu đồ|kiểm đếm|số liệu/i.test(title)){a=R(3,9);b=R(2,8);c=a+b;q=`Lớp 2A có ${a} bạn thích đọc truyện và ${b} bạn thích vẽ. Có tất cả bao nhiêu bạn?`;w=[c+1,Math.abs(a-b),a*b];e=`${a} + ${b} = ${c} bạn.`}
+  else if(/chắc chắn|không thể|có thể|khả năng/i.test(title)){q="Mặt trời mọc ở hướng nào là điều gì?";c="Chắc chắn xảy ra theo quy luật thông thường";w=["Không thể xảy ra","Chỉ xảy ra khi tung đồng xu","Không thể biết ngày nào cũng có mặt trời"];e="Mặt trời mọc ở hướng đông theo quy luật thông thường."}
+  else {a=R(100,699);b=R(100,Math.min(299,999-a));c=a+b;q=`Tính: ${a} + ${b} = ?`;w=[c+1,c-1,c+10];e=`${a} + ${b} = ${c}.`}
+  add(q,c,w,e);
+ }
+ return qs;
+}
+
 function createBookLessonQuestions(id,count){
+ if(bookSemester===2) return createSecondSemesterMathQuestions(id,count);
  // Bộ câu hỏi Toán được chia theo đúng mạch kiến thức của từng bài trong danh sách học kì I.
  // id là chỉ số bài 0-based trong getBookLessons().
  const qs=[];
@@ -823,7 +843,22 @@ function makeDynamicMathQuestion(topicIndex){
   return {q,a:shuffled,c:correctValue===undefined?-1:shuffled.indexOf(correctValue),e};
 }
 
+function createSecondSemesterVietQuestions(id,count){
+ const lesson=getBookLessons()[id]; const title=lesson?.title||"Bài đọc"; const qs=[];
+ const themes=[
+  {keys:/mùa|nước|tết|vàng|hoa mi|giọt nước|bốn mùa/i,passage:"Mỗi mùa trong năm mang một vẻ đẹp riêng. Mùa xuân có cây cối đâm chồi, mùa hè nắng ấm, mùa thu dịu mát và mùa đông se lạnh.",ask:"Đoạn văn nói về điều gì?",ans:"Vẻ đẹp của các mùa",wrong:["Các môn thể thao","Cách đi học","Đồ dùng trong bếp"],word:"mùa",meaning:"Từ nào chỉ một khoảng thời gian trong năm?"},
+  {keys:/chim|khủng long|thóc|tre|cây|cỏ|con vật|sao biển|cánh cam|môi trường|chổi/i,passage:"Khu vườn nhỏ có nhiều cây xanh. Các bạn nhỏ nhặt rác, tưới cây và quan sát những con vật bé xíu mà không làm chúng bị đau.",ask:"Các bạn nhỏ làm gì để chăm sóc môi trường?",ans:"Nhặt rác và tưới cây",wrong:["Bẻ cành cây","Đuổi bắt mọi con vật","Vứt rác xuống ao"],word:"môi trường",meaning:"Từ nào chỉ không gian sống xung quanh chúng ta?"},
+  {keys:/chào|thư viện|bồ câu|in-tơ-nét|hà mã|kết nối|giao tiếp|thư/i,passage:"Khi gặp người khác, An mỉm cười chào hỏi và lắng nghe khi bạn nói. Nếu được giúp đỡ, An nói lời cảm ơn.",ask:"An làm gì khi được người khác giúp đỡ?",ans:"Nói lời cảm ơn",wrong:["Quay đi không nói","La hét thật to","Giấu đồ của bạn"],word:"lắng nghe",meaning:"Cụm từ nào chỉ việc chú ý nghe người khác nói?"},
+  {keys:/mai an tiêm|đảo|bố|nghề|việt nam|con người/i,passage:"Mỗi người đều có việc làm và trách nhiệm riêng. Các chú bộ đội bảo vệ biển đảo, người nông dân trồng lúa, thầy cô dạy học sinh.",ask:"Ai trồng lúa?",ans:"Người nông dân",wrong:["Người lái tàu vũ trụ","Bác sĩ thú y luôn luôn","Người thợ sửa đồng hồ"],word:"trách nhiệm",meaning:"Từ nào chỉ điều mỗi người cần làm và hoàn thành?"}
+ ];
+ const item=themes.find(x=>x.keys.test(title))||themes[0];
+ const make=(q,c,w,e)=>{let a=shuffleArray([c,...w]);return {q,a,c:a.indexOf(c),e};};
+ const pool=[make(`Bài “${title}”: ${item.ask}`,item.ans,item.wrong,`Đáp án: ${item.ans}.`),make(item.meaning,item.word,["cái bàn","chạy nhanh","màu xanh"],`Từ phù hợp là “${item.word}”.`),make(`Chọn câu phù hợp với chủ điểm “${title}”.`,"Em chăm chú đọc và tìm hiểu bài.",["Em vứt rác ra sân trường.","Em ngắt hết hoa trong vườn.","Em không lắng nghe ai."],"Câu trả lời phù hợp với tinh thần học tập và chủ điểm."),make(`Nội dung nào gần với chủ điểm “${title}”?`,title,["Bảng nhân 2","Phép trừ có nhớ","Đơn vị đo độ dài"],`Câu hỏi được xây dựng theo tiêu đề bài học “${title}”.`),make(`Đọc đoạn văn tự biên soạn: “${item.passage}” ${item.ask}`,item.ans,item.wrong,`Đáp án dựa vào đoạn văn luyện đọc tự biên soạn.`)];
+ return Array.from({length:count},(_,i)=>pool[i%pool.length]);
+}
+
 function createVietLessonQuestions(id,count){
+ if(bookSemester===2) return createSecondSemesterVietQuestions(id,count);
  // Ngân hàng câu hỏi Tiếng Việt được gắn riêng với từng bài trong SGK Kết nối tri thức 2, tập 1.
  // Đoạn đọc và câu hỏi là nội dung tự biên soạn; không chép văn bản SGK.
  const lessons = [
@@ -1059,6 +1094,8 @@ const semesterExamBanks = {
 function rndExam(min,max){return Math.floor(Math.random()*(max-min+1))+min;}
 function pickSemesterExam(which,count=10){
  // Đề thi thử lấy câu từ ngân hàng theo chủ đề, cộng câu biến thể mới; không chỉ đảo thứ tự 10 câu cố định.
+ const requestedSemester=Number(document.getElementById("examSemesterSelect")?.value||1);
+ const previousSemester=bookSemester; bookSemester=requestedSemester;
  const pool=[...semesterExamBanks[which],...banks[which].flatMap(topic=>topic.qs)];
  if(which==='math'){
    for(let i=0;i<24;i++)pool.push(makeDynamicMathQuestion(rnd(0,banks.math.length-1)));
@@ -1071,7 +1108,12 @@ function pickSemesterExam(which,count=10){
    if(!item||typeof item.q!=='string'||!Array.isArray(item.a)||item.a.length<2||!Number.isInteger(item.c)||item.c<0||item.c>=item.a.length)continue;
    const key=item.q.trim();if(!seen.has(key)){seen.add(key);unique.push(item);}
  }
- const shuffledPool=shuffleArray(unique);
+ if(requestedSemester===2){
+   if(which==='math') for(let id=0;id<getBookLessons().length;id++) pool.push(...createSecondSemesterMathQuestions(id,3));
+   else for(let id=0;id<getBookLessons().length;id++) pool.push(...createSecondSemesterVietQuestions(id,3));
+ }
+ bookSemester=previousSemester;
+ const shuffledPool=shuffleArray(unique.concat(pool.filter(item=>item&&typeof item.q==='string'&&Array.isArray(item.a)&&Number.isInteger(item.c)&&item.c>=0&&item.c<item.a.length)));
  return shuffledPool.slice(0,Math.min(count,shuffledPool.length)).map(item=>{
   const correct=item.a[item.c];const answers=shuffleArray(item.a.map(String));
   return {...item,a:answers,c:answers.indexOf(String(correct))};
@@ -1084,7 +1126,8 @@ function startSemesterExam(which){
  const isMath=which==="math";
  document.getElementById("examMathBtn").className=isMath?"primary":"secondary";
  document.getElementById("examVietBtn").className=isMath?"secondary":"primary";
- document.getElementById("examHeading").textContent=isMath?"Đề tham khảo Toán – Học kì I":"Đề tham khảo Tiếng Việt – Học kì I";
+ const sem=Number(document.getElementById("examSemesterSelect")?.value||1);
+ document.getElementById("examHeading").textContent=`Đề tham khảo ${isMath?"Toán":"Tiếng Việt"} – Học kì ${sem}`;
  document.getElementById("examInstructions").textContent=isMath
   ?"Đề Toán có câu hỏi về số, phép tính và bài toán ngắn. Em đọc kỹ rồi chọn một đáp án nhé!"
   :"Đề Tiếng Việt có câu hỏi về đọc hiểu, từ ngữ và câu. Em đọc kỹ rồi chọn một đáp án nhé!";
