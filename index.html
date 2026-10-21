@@ -468,7 +468,7 @@ main>#homeMenu{display:block!important;width:100%;max-width:100%;box-sizing:bord
     <h3>⭐ Góc thành tích của Trúc Giang</h3>
     <p class="small">Mỗi lần học và hoàn thành bài, con sẽ tích lũy sao thưởng nhé!</p>
     <div class="reward-summary">
-      <div class="reward-stat"><strong id="rewardStars">0 ⭐</strong><span>Tổng sao</span></div>
+      <div class="reward-stat"><strong id="rewardStars">0 ⭐</strong><div id="rewardNotice" class="small" aria-live="polite"></div><span>Tổng sao</span></div>
       <div class="reward-stat"><strong id="rewardDone">0</strong><span>Bài đã hoàn thành</span></div>
       <div class="reward-stat"><strong id="rewardStreak">0</strong><span>Ngày học liên tiếp</span></div>
     </div>
@@ -1591,7 +1591,7 @@ const semesterExamBanks = {
   addMC(math,`Thư viện có ${all} quyển truyện, học sinh mượn ${used} quyển. Còn lại bao nhiêu quyển?`,remain,[all+used,remain+1,used],`Lấy ${all} − ${used} = ${remain} quyển.`);
  }
  const mathExtra=[
-  ["Số nào lớn hơn 67?",["76","65","66","57"],0,"76 lớn hơn 67 vì 76 có 7 chục, còn 67 có 6 chục."],
+  ["Số nào lớn hơn 67?",["76"," sixty","66","57"],0,"76 lớn hơn 67."],
   ["Một hình tam giác có bao nhiêu đỉnh?",["2 đỉnh","3 đỉnh","4 đỉnh","5 đỉnh"],1,"Hình tam giác có 3 đỉnh."],
   ["Một hình tứ giác có bao nhiêu đỉnh?",["3 đỉnh","4 đỉnh","5 đỉnh","6 đỉnh"],1,"Hình tứ giác có 4 đỉnh."],
   ["1 dm bằng bao nhiêu cm?",["10 cm","1 cm","100 cm","5 cm"],0,"1 dm = 10 cm."],
@@ -2112,18 +2112,23 @@ renderTopics();renderQuiz();renderHistory();renderWeekSelectors();initBookLesson
     });
   }
   function recordQuiz(detail){
-    if(!detail || typeof detail.percent!=="number")return;
+    if(!detail)return;
+    const percent=Number(detail.percent);
+    if(!Number.isFinite(percent)||percent<90)return;
     const s=read(),d=day();
     s.completed=s.completed||[];
-    const label=String(detail.subject||"Môn học")+"|"+String(detail.topic||"Bài luyện tập");
-    const key=d+"|"+label;
-    // Chỉ tặng sao khi đạt từ 90% trở lên; mỗi bài/môn trong ngày tối đa 1 sao.
-    if(detail.percent<90 || s.completed.includes(key))return;
+    const subject=String(detail.subject||"Môn học").trim();
+    const topic=String(detail.topic||"Bài luyện tập").trim();
+    const key=d+"|"+subject+"|"+topic;
+    // Chỉ cộng sao khi đạt >=90%; mỗi bài/môn trong ngày tối đa một sao.
+    if(s.completed.includes(key))return;
     s.completed.push(key);
-    s.stars=(s.stars||0)+1;
-    s.done=(s.done||0)+1;
+    s.stars=(Number(s.stars)||0)+1;
+    s.done=(Number(s.done)||0)+1;
     s.days=Array.from(new Set([...(s.days||[]),d])).sort();
     save(s);paint();
+    const notice=$("rewardNotice");
+    if(notice)notice.textContent="🎉 Đạt "+percent+"%! Em được tặng 1 sao.";
   }
   document.addEventListener("trucGiang:quiz-completed",function(e){
     recordQuiz(e.detail);
