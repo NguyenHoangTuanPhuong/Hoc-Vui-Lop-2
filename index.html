@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#2563eb">
+<title>Học vui lớp 2</title>
+<style>
+:root{--blue:#2563eb;--ink:#172554;--muted:#64748b;--bg:#f3f7ff;--card:#fff;--green:#15803d;--red:#b91c1c}
+*{box-sizing:border-box}body{margin:0;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--bg);color:var(--ink);line-height:1.55}
+header{background:linear-gradient(120deg,#2563eb,#7c3aed);color:white;padding:26px 16px 32px;text-align:center}
+header .logo{font-size:42px}h1{margin:4px 0;font-size:clamp(28px,5vw,42px)}header p{margin:6px auto;max-width:640px}
+main{width:min(960px,100% - 24px);margin:-16px auto 40px}.panel{background:var(--card);border-radius:20px;padding:20px;box-shadow:0 8px 28px #1e3a8a12;margin-bottom:16px}
+h2{margin:0 0 10px;font-size:22px}.small{color:var(--muted);font-size:14px}
+.subjects{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.subject{border:2px solid #dbeafe;background:#eff6ff;border-radius:16px;padding:18px 12px;text-align:left;cursor:pointer;color:var(--ink);font:inherit;transition:.15s}
+.subject:nth-child(2){background:#fff7ed;border-color:#fed7aa}.subject .emoji{font-size:34px;display:block}.subject strong{font-size:19px}.subject.active{border-color:var(--blue);box-shadow:0 0 0 3px #2563eb18}
+.controls{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}.chip,button{font:inherit;cursor:pointer;border:0;border-radius:12px;padding:11px 15px}
+.chip{background:#e2e8f0;color:#334155}.chip.active{background:var(--blue);color:#fff}
+.primary{background:var(--blue);color:white;font-weight:700}.secondary{background:#e2e8f0;color:#1e293b}.primary:disabled{opacity:.45;cursor:not-allowed}
+.question{padding:16px 0;border-top:1px solid #e2e8f0}.question:first-child{border-top:0}.question h3{font-size:18px;margin:0 0 10px}.answers{display:grid;gap:8px}
+.answer{display:flex;align-items:flex-start;gap:10px;border:1px solid #cbd5e1;border-radius:12px;padding:11px 12px;cursor:pointer;background:white}
+.answer:has(input:checked){border-color:var(--blue);background:#eff6ff}.answer input{margin-top:5px;accent-color:var(--blue)}
+.feedback{font-size:14px;margin-top:8px;padding:9px 11px;border-radius:10px}.correct{background:#dcfce7;color:#166534}.incorrect{background:#fee2e2;color:#991b1b}
+#result{display:none;text-align:center;background:#f0fdf4;border:1px solid #bbf7d0}#score{font-size:34px;font-weight:800;color:var(--green)}
+footer{text-align:center;color:var(--muted);font-size:13px;padding:8px 16px 28px}
+@media(max-width:520px){.panel{padding:16px}.subjects{grid-template-columns:1fr}.subject{display:flex;align-items:center;gap:14px}.subject .emoji{font-size:32px}.controls button{flex:1}}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo" aria-hidden="true">🌈📚</div>
+  <h1>Học vui lớp 2</h1>
+  <p>Cùng học mỗi ngày – Tự tin làm bài – Vui khi tiến bộ!</p>
+</header>
+<main>
+  <section class="panel">
+    <h2>🎒 Hôm nay em muốn học gì?</h2>
+    <p class="small">Chọn môn học, sau đó chọn chủ đề và làm bài. Website tự chấm điểm sau khi em nộp bài.</p>
+    <div class="subjects">
+      <button class="subject active" id="mathSubject" onclick="chooseSubject('math')"><span class="emoji">🔢</span><span><strong>Toán lớp 2</strong><br><span class="small">Tính toán và giải toán</span></span></button>
+      <button class="subject" id="vietSubject" onclick="chooseSubject('viet')"><span class="emoji">📖</span><span><strong>Tiếng Việt lớp 2</strong><br><span class="small">Đọc hiểu và luyện từ câu</span></span></button>
+    </div>
+    <div class="controls" id="topics"></div>
+  </section>
+  <section class="panel">
+    <h2 id="quizTitle">✨ Bài luyện tập Toán</h2>
+    <p class="small" id="quizDesc">Đọc kỹ câu hỏi rồi chọn một đáp án.</p>
+    <div class="controls" style="align-items:center">
+      <label for="questionCount" class="small">Số câu mỗi đề:</label>
+      <select id="questionCount" class="chip" aria-label="Số câu mỗi đề">
+        <option value="5">5 câu</option>
+        <option value="10">10 câu</option>
+      </select>
+      <button class="primary" type="button" onclick="generateNewQuiz()">🎲 Tạo bài mới</button>
+    </div>
+    <p class="small" id="generationNote">Đề được tạo từ ngân hàng câu hỏi tự biên soạn và có thể trộn thứ tự.</p>
+    <form id="quizForm">
+      <div id="questions"></div>
+      <div class="controls">
+        <button class="primary" type="submit">Chấm điểm bài làm ✓</button>
+        <button class="secondary" type="button" onclick="resetQuiz()">Làm lại ↻</button>
+      </div>
+    </form>
+  </section>
+  <section class="panel" id="result" aria-live="polite">
+    <div style="font-size:38px">🎉</div><h2>Kết quả của em</h2>
+    <div id="score">0/5</div><p id="resultText"></p>
+  </section>
+  <section class="panel">
+    <h2>🗺️ Lộ trình học theo chương trình</h2>
+    <p class="small">Đây là khung tổ chức nội dung để phát triển dần. Bài tập trên website sẽ được tự biên soạn, không sao chép nội dung trong sách.</p>
+    <h3>🔢 Toán 2 · Tập 1 · Khởi đầu</h3>
+    <ol>
+      <li>Ôn tập các số đến 100</li>
+      <li>Tia số; số liền trước, số liền sau</li>
+      <li>Các thành phần của phép cộng, phép trừ</li>
+      <li>Hơn, kém nhau bao nhiêu</li>
+      <li>Ôn tập phép cộng, phép trừ không nhớ trong phạm vi 100</li>
+      <li>Luyện tập chung</li>
+    </ol>
+    <h3>📖 Tiếng Việt 2 · Tập 1 · Khởi đầu</h3>
+    <p>Chúng ta sẽ chia bài luyện theo tuần và kỹ năng: đọc hiểu văn bản mới tự biên soạn, chính tả, từ ngữ, đặt câu, viết ngắn, nói và nghe. Tên bài và thứ tự từng tuần sẽ được đối chiếu với mục lục bộ sách trước khi hoàn thiện toàn bộ lộ trình.</p>
+    <p class="small">Lưu ý: phần lộ trình là bản khởi đầu, chưa phải danh mục hoàn chỉnh của cả năm học.</p>
+  </section>
+  <section class="panel">
+    <h2>🌟 Mẹo học tốt</h2>
+    <p style="margin-bottom:4px">• Làm bài chậm rãi, đọc kỹ đề trước khi trả lời.</p>
+    <p style="margin:4px 0">• Nếu sai, hãy xem lời giải và thử lại nhé.</p>
+    <p style="margin:4px 0">• Mỗi ngày học một ít sẽ giúp em tiến bộ hơn!</p>
+    <p class="small">Bản thử nghiệm: câu hỏi và lời giải được tự biên soạn để luyện tập kiến thức lớp 2. Website không sao chép nguyên văn bài đọc, bài tập, hình minh họa hoặc trang sách từ sách giáo khoa.</p>
+    <p class="small"><strong>Thông tin bản quyền:</strong> “Kết nối tri thức với cuộc sống” được nhắc đến chỉ để mô tả định hướng chương trình học; website này là tài liệu luyện tập độc lập, không phải website chính thức và không có nghĩa là được nhà xuất bản bảo trợ. Chỉ sử dụng nội dung, hình ảnh và phông chữ do người tạo tự làm hoặc có giấy phép phù hợp.</p>
+  </section>
+</main>
+<footer>Học vui lớp 2 · Bản thử nghiệm miễn phí · Không yêu cầu đăng nhập<br><strong>Người sáng tạo: Nguyễn Hoàng Tuấn Phương</strong></footer>
+<script>
+const banks = {
+ math: [
+  {name:"Cộng, trừ",desc:"Ôn phép cộng và phép trừ trong phạm vi phù hợp với lớp 2.",qs:[
+   {q:"36 + 27 = ?",a:["53","63","73","62"],c:1,e:"36 + 20 = 56; 56 + 7 = 63."},
+   {q:"82 − 45 = ?",a:["47","37","43","27"],c:1,e:"82 − 40 = 42; 42 − 5 = 37."},
+   {q:"Điền số thích hợp: 48 + ☐ = 70",a:["22","28","32","18"],c:0,e:"70 − 48 = 22."},
+   {q:"Mai có 24 nhãn vở, được tặng thêm 18 nhãn vở. Mai có tất cả bao nhiêu nhãn vở?",a:["32","40","42","46"],c:2,e:"24 + 18 = 42 nhãn vở."},
+   {q:"Số nào lớn nhất?",a:["59","95","89","69"],c:1,e:"95 có hàng chục là 9 và hàng đơn vị là 5."}
+  ]},
+  {name:"Nhân, chia",desc:"Luyện các phép tính nhân và chia cơ bản.",qs:[
+   {q:"2 × 5 = ?",a:["7","10","12","15"],c:1,e:"2 × 5 = 10."},
+   {q:"3 × 4 = ?",a:["7","10","12","14"],c:2,e:"3 × 4 = 12."},
+   {q:"12 : 3 = ?",a:["3","4","6","9"],c:1,e:"12 chia thành 3 phần bằng nhau, mỗi phần có 4."},
+   {q:"Có 4 đĩa, mỗi đĩa 2 quả cam. Có tất cả bao nhiêu quả cam?",a:["6","8","10","12"],c:1,e:"4 × 2 = 8 quả cam."},
+   {q:"15 : 5 = ?",a:["2","3","4","5"],c:1,e:"15 : 5 = 3."}
+  ]},
+  {name:"Toán có lời văn",desc:"Đọc đề, chọn phép tính và tìm đáp số.",qs:[
+   {q:"Lan có 35 bông hoa, tặng bạn 12 bông. Lan còn lại bao nhiêu bông?",a:["23","27","47","17"],c:0,e:"35 − 12 = 23 bông hoa."},
+   {q:"Một hộp có 5 chiếc bút. 3 hộp như vậy có bao nhiêu chiếc bút?",a:["8","10","15","20"],c:2,e:"5 × 3 = 15 chiếc bút."},
+   {q:"Bình đọc 18 trang sách buổi sáng và 14 trang buổi chiều. Bình đọc được bao nhiêu trang?",a:["32","34","28","4"],c:0,e:"18 + 14 = 32 trang."},
+   {q:"Có 20 cái bánh chia đều cho 4 bạn. Mỗi bạn được mấy cái?",a:["4","5","6","8"],c:1,e:"20 : 4 = 5 cái bánh."},
+   {q:"Đồng hồ chỉ 7 giờ. Sau 2 giờ là mấy giờ?",a:["8 giờ","9 giờ","10 giờ","12 giờ"],c:1,e:"7 giờ + 2 giờ = 9 giờ."}
+  ]}
+ ],
+ viet: [
+  {name:"Đọc hiểu",desc:"Đọc đoạn văn ngắn rồi trả lời câu hỏi.",qs:[
+   {q:"Đọc đoạn văn: “Sáng chủ nhật, Nam cùng bố tưới cây trong vườn. Nam nhặt lá vàng và vun đất quanh gốc hoa.” Nam làm gì cùng bố?",a:["Nấu cơm","Tưới cây","Đi học","Đá bóng"],c:1,e:"Đoạn văn cho biết Nam cùng bố tưới cây trong vườn."},
+   {q:"Nam nhặt gì?",a:["Quả chín","Lá vàng","Đồ chơi","Sách vở"],c:1,e:"Nam nhặt lá vàng."},
+   {q:"Việc làm của Nam thể hiện điều gì?",a:["Lười biếng","Chăm chỉ giúp đỡ","Hay quên","Nóng giận"],c:1,e:"Nam chăm chỉ cùng bố chăm sóc khu vườn."},
+   {q:"Từ nào chỉ hoạt động?",a:["Vườn","Vàng","Tưới","Chủ nhật"],c:2,e:"“Tưới” là từ chỉ hoạt động."},
+   {q:"Cuối câu kể thường dùng dấu câu nào?",a:["Dấu chấm","Dấu hỏi","Dấu phẩy","Dấu hai chấm"],c:0,e:"Câu kể thường kết thúc bằng dấu chấm."}
+  ]},
+  {name:"Từ và câu",desc:"Nhận biết từ chỉ sự vật, hoạt động và đặc điểm.",qs:[
+   {q:"Từ nào chỉ sự vật?",a:["Chạy","Cái bàn","Đẹp","Nhanh"],c:1,e:"“Cái bàn” là từ chỉ sự vật."},
+   {q:"Từ nào chỉ đặc điểm?",a:["Nhảy","Học","Xanh","Đọc"],c:2,e:"“Xanh” chỉ đặc điểm, màu sắc."},
+   {q:"Chọn câu viết đúng dấu câu.",a:["Bạn tên là gì.","Bạn tên là gì?","Bạn tên là gì!","Bạn tên là gì,"],c:1,e:"Câu hỏi thường kết thúc bằng dấu hỏi."},
+   {q:"Từ nào gần nghĩa với “chăm chỉ”?",a:["Siêng năng","Lười biếng","Ồn ào","Chậm chạp"],c:0,e:"“Siêng năng” gần nghĩa với “chăm chỉ”."},
+   {q:"Sắp xếp thành câu đúng: “đọc sách / đang / Hoa”",a:["Đọc Hoa đang sách.","Hoa đang đọc sách.","Sách Hoa đọc đang.","Đang sách đọc Hoa."],c:1,e:"Câu đúng là “Hoa đang đọc sách.”"}
+  ]},
+  {name:"Chính tả",desc:"Luyện phân biệt âm, vần và cách viết từ thông dụng.",qs:[
+   {q:"Chọn từ viết đúng.",a:["ngỉ ngơi","nghỉ ngơi","nghĩ ngơi","nghỉ ngơii"],c:1,e:"Từ đúng là “nghỉ ngơi”."},
+   {q:"Điền vào chỗ trống: cây …",a:["bàn","bàng","bàngg","bàngh"],c:1,e:"Tên cây được viết là “cây bàng”."},
+   {q:"Từ nào viết đúng?",a:["xạch sẽ","sạch sẽ","sạch xẽ","sạch sẻ"],c:1,e:"Từ đúng là “sạch sẽ”."},
+   {q:"Đầu câu, chữ cái đầu tiên thường được viết thế nào?",a:["Viết thường","Viết hoa","Viết số","Không cần viết"],c:1,e:"Chữ cái đầu câu cần viết hoa."},
+   {q:"Chọn câu viết đúng.",a:["em yêu trường em.","Em yêu trường em.","Em yêu trường em","em yêu Trường em."],c:1,e:"Đầu câu viết hoa và cuối câu kể có dấu chấm."}
+  ]}
+ ]
+};
+let subject="math", topicIndex=0, submitted=false, currentQuestions=[];
+function chooseSubject(s){subject=s;topicIndex=0;document.getElementById("mathSubject").classList.toggle("active",s==="math");document.getElementById("vietSubject").classList.toggle("active",s==="viet");renderTopics();renderQuiz();}
+function renderTopics(){const el=document.getElementById("topics");el.innerHTML="";banks[subject].forEach((t,i)=>{const b=document.createElement("button");b.className="chip"+(i===topicIndex?" active":"");b.textContent=t.name;b.onclick=()=>{topicIndex=i;renderTopics();renderQuiz()};el.appendChild(b);});}
+function shuffleArray(arr){const a=[...arr];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+function generateNewQuiz(){renderQuiz(true);}
+function renderQuiz(generate=false){submitted=false;const topic=banks[subject][topicIndex];document.getElementById("quizTitle").textContent=(subject==="math"?"🔢 Toán: ":"📖 Tiếng Việt: ")+topic.name;document.getElementById("quizDesc").textContent=topic.desc;document.getElementById("result").style.display="none";const root=document.getElementById("questions");root.innerHTML="";
+let pool=generate?shuffleArray(topic.qs):[...topic.qs];const count=Number(document.getElementById("questionCount")?.value||5);currentQuestions=pool.slice(0,Math.min(count,pool.length));
+if(generate){document.getElementById("generationNote").textContent="Đã tạo đề mới từ ngân hàng câu hỏi tự biên soạn. Với chủ đề hiện có, hệ thống sẽ trộn thứ tự câu hỏi; các câu mới sẽ được bổ sung dần."; }
+currentQuestions.forEach((q,i)=>{const section=document.createElement("div");section.className="question";const h=document.createElement("h3");h.textContent=`Câu ${i+1}. ${q.q}`;section.appendChild(h);const answers=document.createElement("div");answers.className="answers";q.a.forEach((a,j)=>{const label=document.createElement("label");label.className="answer";const input=document.createElement("input");input.type="radio";input.name="q"+i;input.value=j;input.setAttribute("aria-label",a);const span=document.createElement("span");span.textContent=a;label.append(input,span);answers.appendChild(label)});section.appendChild(answers);const fb=document.createElement("div");fb.id="fb"+i;fb.style.display="none";section.appendChild(fb);root.appendChild(section);});
+document.querySelector("#quizForm button[type=submit]").disabled=false;
+}
+document.getElementById("quizForm").addEventListener("submit",e=>{e.preventDefault();if(submitted)return;const qs=currentQuestions;let score=0;let missing=false;qs.forEach((q,i)=>{const selected=document.querySelector(`input[name="q${i}"]:checked`);const fb=document.getElementById("fb"+i);fb.style.display="block";if(!selected){missing=true;fb.className="feedback incorrect";fb.textContent="Em chưa chọn đáp án. Đáp án đúng: "+q.a[q.c]+". "+q.e;return;}if(Number(selected.value)===q.c){score++;fb.className="feedback correct";fb.textContent="Chính xác! "+q.e;}else{fb.className="feedback incorrect";fb.textContent="Chưa đúng. Đáp án đúng: "+q.a[q.c]+". "+q.e;}});if(missing){document.getElementById("resultText").textContent="Em hãy xem lại những câu chưa chọn đáp án nhé."; }else{document.getElementById("resultText").textContent=score===qs.length?"Tuyệt vời! Em đã trả lời đúng tất cả.":score>=3?"Khá lắm! Xem lời giải các câu sai rồi thử lại nhé.":"Không sao cả, mình cùng xem lời giải và luyện tập thêm nhé.";}document.getElementById("score").textContent=score+"/"+qs.length+" điểm";document.getElementById("result").style.display="block";submitted=true;document.querySelectorAll("#questions input").forEach(x=>x.disabled=true);document.querySelector("#quizForm button[type=submit]").disabled=true;document.getElementById("result").scrollIntoView({behavior:"smooth",block:"center"});});
+function resetQuiz(){renderQuiz();document.querySelector("#quizForm button[type=submit]").disabled=false;}
+renderTopics();renderQuiz();
+</script>
+</body>
+</html>
