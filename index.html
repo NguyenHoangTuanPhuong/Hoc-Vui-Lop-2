@@ -805,93 +805,57 @@ function makeDynamicMathQuestion(topicIndex){
 }
 
 function createVietLessonQuestions(id,count){
- // Ngân hàng Tiếng Việt: sinh nhiều biến thể theo chủ điểm, trộn câu và đáp án mỗi lượt.
- // Nội dung do website tự biên soạn, không sao chép nguyên văn sách giáo khoa.
- const lessons=getBookLessons();
- const lesson=lessons[id]||{title:"Bài Tiếng Việt"};
- const title=lesson.title.toLowerCase();
- let group=0;
- if(/bạn|bóng|chơi|trò chơi|chong chóng|diều|lê-gô|nhím/.test(title)) group=2;
- else if(/bà|ông|mẹ|gia đình|yêu thương|người thân|bố|cha|tỉ muội|cánh cửa/.test(title)) group=3;
- else if(/cây|hoa|thiên nhiên|mùa|con vật|chim|sông|suối|vẽ|sách|trang sách/.test(title)) group=1;
- else if(/ngày hôm qua|ngày hôm nay|học sinh|lớp 2|làm việc|thời khóa biểu|danh sách|trống trường|cô giáo/.test(title)) group=0;
- const names=["An","Bình","Chi","Dũng","Hà","Lan","Minh","Nam","Mai","Vy","Phúc","Thảo"];
- const pick=a=>a[rnd(0,a.length-1)];
- const make=(q,correct,wrong,e)=>{
-   const correctText=String(correct).trim();
-   let vals=[];
-   [correctText,...wrong.map(v=>String(v).trim())].forEach(v=>{if(v&&!vals.includes(v))vals.push(v);});
-   let extra=1;
-   while(vals.length<4){const candidate=`Phương án chưa phù hợp ${extra++}`;if(!vals.includes(candidate))vals.push(candidate);}
-   vals=shuffleArray(vals.slice(0,4));
-   return {q,a:vals,c:vals.indexOf(correctText),e};
- };
- const pool=[];
- // Tạo 48 câu mỗi lượt từ các mẫu ngữ liệu và kiến thức Tiếng Việt lớp 2.
- for(let i=0;i<48;i++){
-   const n=pick(names), other=pick(names.filter(x=>x!==n));
-   const kind=i%8;
-   let q,correct,wrong,e;
-   if(group===0){
-     if(kind===0){
-       const actions=["xếp sách vào cặp","chào cô giáo","đọc bài cùng bạn","tưới cây ở lớp","lau bảng giúp cô","mượn bút chì của bạn"];
-       const act=pick(actions);
-       q=`Đọc đoạn văn: “${n} đến lớp sớm. ${n} ${act} rồi chuẩn bị vào học.” ${n} đã làm gì?`;
-       correct=act.charAt(0).toUpperCase()+act.slice(1);
-       wrong=["Chạy về nhà", "Ngủ trong lớp", "Bỏ đi chơi"];
-       e=`Đoạn văn cho biết ${n.toLowerCase()} ${act}.`;
-     } else if(kind===1){
-       q="Từ nào dưới đây chỉ người?"; correct=pick(["học sinh","cô giáo","bạn nhỏ"]); wrong=["đọc sách","xanh tươi","nhanh nhẹn"].filter(x=>x!==correct); e=`“${correct}” là từ chỉ người.`;
-     } else if(kind===2){
-       q="Câu nào viết hoa đầu câu đúng?"; correct=`${pick(["Hôm nay","Buổi sáng","Sau giờ học"])}, em đến lớp đúng giờ.`; wrong=["hôm nay em đến lớp đúng giờ.","Hôm Nay em đến lớp đúng giờ.","hôm nay Em đến lớp đúng giờ."]; e="Chữ cái đầu câu cần viết hoa; các từ còn lại viết hoa theo quy tắc riêng.";
-     } else if(kind===3){
-       q=`Điền dấu câu thích hợp: “${n}, bạn đã làm bài tập chưa__”`; correct="?"; wrong=[".",",","!"]; e="Đây là câu hỏi nên dùng dấu chấm hỏi.";
-     } else if(kind===4){
-       q="Từ nào gần nghĩa với “chăm chỉ”?"; correct="siêng năng"; wrong=["lười biếng","ồn ào","vội vàng"]; e="“Chăm chỉ” gần nghĩa với “siêng năng”.";
-     } else if(kind===5){
-       q="Chọn câu kể rõ nghĩa."; correct=`${n} đang đọc sách trong thư viện.`; wrong=["Đọc thư viện sách đang.",`Trong đang ${n} sách đọc.`,`Sách thư viện ${n} đang.`]; e="Câu đúng có trật tự từ rõ ràng và diễn đạt đủ ý.";
-     } else if(kind===6){
-       q="Từ nào chỉ hoạt động?"; correct=pick(["viết bài","đọc sách","xếp hàng"]); wrong=["bảng xanh","học sinh","cặp sách"].filter(x=>x!==correct); e=`“${correct}” chỉ hoạt động.`;
-     } else {
-       q="Khi gặp thầy cô ở trường, em nên nói thế nào?"; correct="Em chào cô ạ!"; wrong=["Tránh ra!","Đưa đồ đây!","Không cần chào!"]; e="Lời chào lễ phép thể hiện sự tôn trọng.";
-     }
-   } else if(group===1){
-     if(kind===0){
-       const things=pick([["hoa","tưới cây"],["chú mèo","cho mèo ăn"],["cây non","tưới cây non"],["quyển sách","đọc sách"],["bức tranh","vẽ tranh"]]);
-       q=`Đọc đoạn văn: “${n} chăm sóc ${things[0]} mỗi ngày. Bạn thường ${things[1]} vào buổi sáng.” ${n} thường làm gì?`;
-       correct=things[1].charAt(0).toUpperCase()+things[1].slice(1); wrong=["Đi ngủ muộn","Bỏ đi học","Chơi điện tử cả ngày"]; e=`Đoạn văn nói ${n.toLowerCase()} thường ${things[1]}.`;
-     } else if(kind===1){q="Từ nào chỉ đặc điểm?";correct=pick(["xanh mướt","long lanh","thơm ngát","cao lớn"]);wrong=["chạy nhảy","bông hoa","học sinh"].filter(x=>x!==correct);e=`“${correct}” dùng để nêu đặc điểm.`;}
-     else if(kind===2){q="Từ nào chỉ sự vật?";correct=pick(["bông hoa","quyển sách","chú chim","cây bàng"]);wrong=["chạy nhanh","đọc bài","vui vẻ"].filter(x=>x!==correct);e=`“${correct}” là tên sự vật.`;}
-     else if(kind===3){q="Câu nào kết thúc bằng dấu chấm hỏi?";correct="Bạn đã tưới cây chưa?";wrong=["Em đang tưới cây.","Ôi, hoa đẹp quá!","Em thích cây xanh."];e="Câu hỏi thường kết thúc bằng dấu chấm hỏi.";}
-     else if(kind===4){q="Chọn câu miêu tả phù hợp.";correct="Lá cây xanh mướt dưới nắng.";wrong=["Cây lá dưới xanh nắng.","Xanh dưới lá cây nắng.","Lá cây chạy rất nhanh."];e="Câu miêu tả nêu đặc điểm của sự vật.";}
-     else if(kind===5){q="Từ nào chỉ hoạt động?";correct=pick(["quan sát","vẽ tranh","chăm sóc","đọc sách"]);wrong=["bức tranh","bông hoa","màu xanh"].filter(x=>x!==correct);e=`“${correct}” chỉ hoạt động.`;}
-     else if(kind===6){q="Từ nào gần nghĩa với “xinh đẹp”?";correct="đẹp đẽ";wrong=["xấu xí","mệt mỏi","ồn ào"];e="“Đẹp đẽ” gần nghĩa với “xinh đẹp”.";}
-     else {q="Chọn cách viết đúng.";correct="Chú chim hót líu lo trên cành.";wrong=["chú chim hót líu lo trên cành.","Chú Chim Hót Líu Lo trên cành.","chú Chim hót líu lo trên cành."];e="Chữ đầu câu viết hoa; các từ khác viết thường theo quy tắc.";}
-   } else if(group===2){
-     if(kind===0){const game=pick(["thả diều","đá bóng","xếp hình","chơi chuyền","nhảy dây"]);q=`Đọc đoạn văn: “${n} và ${other} cùng ${game} sau giờ học. Hai bạn nhường lượt cho nhau và rất vui.” Hai bạn làm gì?`;correct=`Cùng ${game}`;wrong=["Cãi nhau","Đi ngủ","Làm bài kiểm tra"];e=`Hai bạn cùng ${game} sau giờ học.`;}
-     else if(kind===1){q="Câu nào là lời mời lịch sự?";correct=pick(["Bạn chơi cùng mình nhé!","Mời bạn cùng chơi nhé!","Chúng mình cùng chơi nhé!"]);wrong=["Đi chỗ khác!","Đưa đây ngay!","Không cho bạn chơi."];e="Lời mời lịch sự dùng cách nói thân thiện.";}
-     else if(kind===2){q="Từ nào chỉ hoạt động?";correct=pick(["chuyền bóng","thả diều","xếp hình","nhảy dây"]);wrong=["quả bóng","cánh diều","bạn nhỏ"].filter(x=>x!==correct);e=`“${correct}” chỉ hoạt động.`;}
-     else if(kind===3){q="Điền dấu câu: “Bạn có muốn chơi cùng mình không__”";correct="?";wrong=[".","!",","];e="Câu hỏi kết thúc bằng dấu chấm hỏi.";}
-     else if(kind===4){q="Khi bạn giúp em nhặt đồ, em nên nói gì?";correct="Cảm ơn bạn nhé!";wrong=["Mặc kệ!","Đó là việc của bạn!","Đưa đây!"];e="Nên nói lời cảm ơn khi được giúp đỡ.";}
-     else if(kind===5){q="Từ nào chỉ sự vật?";correct=pick(["quả bóng","cánh diều","bộ xếp hình"]);wrong=["chạy nhanh","vui vẻ","nhảy cao"].filter(x=>x!==correct);e=`“${correct}” là tên sự vật.`;}
-     else if(kind===6){q="Chọn câu kể đúng.";correct=`${n} và ${other} chơi rất vui.`;wrong=[`Vui chơi ${n} rất và ${other}.`,`Rất ${other} vui ${n} chơi.`,`Chơi vui và rất.`];e="Câu kể cần diễn đạt rõ ai làm gì hoặc thế nào.";}
-     else {q="Từ nào gần nghĩa với “đoàn kết”?";correct="gắn bó";wrong=["chia rẽ","xa lánh","giận dỗi"];e="“Gắn bó” diễn tả sự thân thiết, đoàn kết.";}
-   } else {
-     if(kind===0){const member=pick(["bà","ông","mẹ","bố","chị gái","em trai"]);const act=pick(["kể chuyện cho em nghe","nấu bữa cơm","tưới rau","đọc sách cùng em","chăm sóc vườn cây"]);q=`Đọc đoạn văn: “Buổi tối, ${n} ngồi bên ${member}. ${member.charAt(0).toUpperCase()+member.slice(1)} ${act}.” Người thân đã làm gì?`;correct=act.charAt(0).toUpperCase()+act.slice(1);wrong=["Đi đá bóng","Đến trường học","Mua đồ chơi ở lớp"];e=`Đoạn văn cho biết ${member} ${act}.`;}
-     else if(kind===1){q="Từ nào chỉ người thân trong gia đình?";correct=pick(["bà","ông","mẹ","bố"]);wrong=["chiếc bàn","quyển vở","xanh tươi"].filter(x=>x!==correct);e=`“${correct}” là từ chỉ người thân.`;}
-     else if(kind===2){q="Từ nào chỉ hoạt động?";correct=pick(["mỉm cười","chăm sóc","quét nhà","nấu cơm"]);wrong=["người thân","mái nhà","ấm áp"].filter(x=>x!==correct);e=`“${correct}” chỉ hoạt động.`;}
-     else if(kind===3){q="Chọn câu viết đúng.";correct="Bà kể chuyện cho em nghe.";wrong=["bà kể chuyện cho em nghe.","Bà Kể Chuyện cho em nghe.","bà Kể chuyện cho Em nghe."];e="Đầu câu viết hoa; cuối câu kể thường dùng dấu chấm.";}
-     else if(kind===4){q="Khi được người thân giúp đỡ, em nên nói gì?";correct="Con cảm ơn ạ!";wrong=["Con không cần!","Mặc kệ con!","Đi chỗ khác!"];e="Lời cảm ơn thể hiện sự lễ phép và biết ơn.";}
-     else if(kind===5){q="Từ nào nêu đặc điểm của tình cảm gia đình?";correct=pick(["ấm áp","yêu thương","đầm ấm"]);wrong=["chạy nhảy","quyển sách","cái bàn"].filter(x=>x!==correct);e=`“${correct}” diễn tả đặc điểm hoặc tình cảm.`;}
-     else if(kind===6){q="Câu nào thể hiện sự quan tâm đến người thân?";correct="Ông có mệt không ạ? Con lấy nước cho ông nhé!";wrong=["Con không muốn giúp đâu!","Ông tự làm đi!","Con mặc kệ nhé!"];e="Hỏi thăm và đề nghị giúp đỡ là cách thể hiện sự quan tâm.";}
-     else {q="Từ nào gần nghĩa với “yêu quý”?";correct="thương mến";wrong=["ghét bỏ","xa lạ","giận dữ"];e="“Thương mến” gần nghĩa với “yêu quý”.";}
-   }
-   pool.push(make(q,correct,wrong,e));
- }
- // Bảo đảm câu hỏi trong cùng một đề không lặp nguyên văn.
- const unique=[];const seen=new Set();
- for(const q of shuffleArray(pool)){if(!seen.has(q.q)){seen.add(q.q);unique.push(q);}}
- return unique.slice(0,count);
+ // Ngân hàng câu hỏi Tiếng Việt được gắn riêng với từng bài trong SGK Kết nối tri thức 2, tập 1.
+ // Đoạn đọc và câu hỏi là nội dung tự biên soạn; không chép văn bản SGK.
+ const lessons = [
+  {topic:"Tôi là học sinh lớp 2",passage:"Ngày đầu vào lớp Hai, Minh tự xếp sách vở vào cặp. Em vui vẻ chào cô và làm quen với bạn mới.",ask:"Minh làm gì để chuẩn bị vào lớp?",ans:"Tự xếp sách vở vào cặp",bad:["Cất đồ chơi vào tủ","Chạy về nhà","Đi mua bánh"],word:"tự tin",wordAsk:"Từ nào diễn tả thái độ mạnh dạn, tin vào bản thân?",spell:"học sinh lớp Hai",sentence:"Em vui vẻ chào cô giáo.",extra:"đến trường với tâm thế vui vẻ"},
+  {topic:"Ngày hôm qua đâu rồi?",passage:"Lan xem lại quyển vở. Những bài học hôm qua giúp Lan biết thêm nhiều điều mới.",ask:"Điều gì giúp Lan biết thêm nhiều điều mới?",ans:"Những bài học hôm qua",bad:["Một món đồ chơi","Một chuyến đi chợ","Trận bóng chiều nay"],word:"hôm qua",wordAsk:"Từ nào chỉ thời gian đã qua?",spell:"quyển vở",sentence:"Hôm qua, em đã học bài.",extra:"nhớ lại việc đã làm"},
+  {topic:"Niềm vui của Bi và Bống",passage:"Bi và Bống cùng ngắm cầu vồng sau cơn mưa. Hai anh em gọi nhau ra sân và chia sẻ niềm vui.",ask:"Bi và Bống cùng ngắm gì?",ans:"Cầu vồng",bad:["Mặt trăng","Đàn cá","Chiếc thuyền"],word:"chia sẻ",wordAsk:"Từ nào nói về việc cùng nhau chia niềm vui?",spell:"cầu vồng",sentence:"Bi và Bống cùng ngắm cầu vồng.",extra:"vui vẻ cùng người thân"},
+  {topic:"Làm việc thật là vui",passage:"Buổi sáng, mỗi người trong nhà làm một việc. Bố quét sân, mẹ chuẩn bị bữa sáng, bé Na gấp chăn của mình.",ask:"Bé Na làm việc gì?",ans:"Gấp chăn",bad:["Quét sân","Nấu bữa sáng","Tưới ruộng"],word:"gấp chăn",wordAsk:"Cụm từ nào chỉ hoạt động?",spell:"quét sân",sentence:"Bé Na gấp chăn gọn gàng.",extra:"mỗi người làm một việc phù hợp"},
+  {topic:"Em có xinh không?",passage:"Mai hỏi mẹ về chiếc nơ mới. Mẹ mỉm cười nói rằng Mai đáng yêu nhất khi biết lễ phép và giúp đỡ mọi người.",ask:"Theo mẹ, Mai đáng yêu nhất khi nào?",ans:"Khi lễ phép và giúp đỡ mọi người",bad:["Khi mặc áo thật đắt","Khi có nhiều đồ chơi","Khi không nói chuyện"],word:"lễ phép",wordAsk:"Từ nào chỉ cách cư xử ngoan ngoãn, kính trọng?",spell:"đáng yêu",sentence:"Em lễ phép chào người lớn.",extra:"vẻ đẹp từ lời nói và việc làm tốt"},
+  {topic:"Một giờ học",passage:"Trong giờ học, cô giáo nêu câu hỏi. Các bạn giơ tay phát biểu, lắng nghe nhau và cùng tìm ra câu trả lời.",ask:"Các bạn làm gì khi muốn trả lời?",ans:"Giơ tay phát biểu",bad:["Nói chuyện riêng","Chạy quanh lớp","Đóng sách lại"],word:"lắng nghe",wordAsk:"Cụm từ nào chỉ việc chú ý nghe người khác nói?",spell:"giờ học",sentence:"Chúng em chăm chú nghe cô giảng.",extra:"tích cực tham gia giờ học"},
+  {topic:"Cây xấu hổ",passage:"Khi có người chạm nhẹ, những chiếc lá cây xấu hổ khép lại. Một lúc sau, lá lại từ từ mở ra.",ask:"Điều gì xảy ra khi có người chạm nhẹ vào cây?",ans:"Lá cây khép lại",bad:["Cây chạy đi","Hoa biến mất","Cành cây phát sáng"],word:"khép lại",wordAsk:"Cụm từ nào chỉ hành động của lá cây?",spell:"chiếc lá",sentence:"Lá cây từ từ mở ra.",extra:"quan sát đặc điểm của cây"},
+  {topic:"Cầu thủ dự bị",passage:"Trong trận bóng, Nam ngồi ghế dự bị. Khi được vào sân, bạn cố gắng phối hợp với đồng đội và cổ vũ cả đội.",ask:"Khi được vào sân, Nam làm gì?",ans:"Phối hợp với đồng đội",bad:["Bỏ về nhà","Giấu quả bóng","Ngồi ngủ trên sân"],word:"đồng đội",wordAsk:"Từ nào chỉ những người cùng một đội?",spell:"cầu thủ",sentence:"Nam phối hợp với đồng đội.",extra:"cố gắng và hỗ trợ tập thể"},
+  {topic:"Cô giáo lớp em",passage:"Cô giáo dịu dàng hướng dẫn học sinh đọc bài. Khi bạn nào chưa hiểu, cô kiên nhẫn giải thích thêm.",ask:"Cô giáo làm gì khi học sinh chưa hiểu bài?",ans:"Kiên nhẫn giải thích thêm",bad:["Bỏ lớp đi","Cất hết sách vở","Bảo các bạn tự về"],word:"kiên nhẫn",wordAsk:"Từ nào chỉ sự bình tĩnh, không nóng vội?",spell:"cô giáo",sentence:"Cô giáo kiên nhẫn hướng dẫn chúng em.",extra:"lòng yêu quý và biết ơn cô giáo"},
+  {topic:"Thời khóa biểu",passage:"Thời khóa biểu cho biết thứ, tiết và môn học trong ngày. Nhờ xem thời khóa biểu, Hoa chuẩn bị đúng sách vở.",ask:"Thời khóa biểu giúp Hoa làm gì?",ans:"Chuẩn bị đúng sách vở",bad:["Biết dự báo thời tiết","Tìm đường về nhà","Đếm số cây trong sân"],word:"môn học",wordAsk:"Từ nào chỉ nội dung học như Toán hoặc Tiếng Việt?",spell:"thời khóa biểu",sentence:"Em xem thời khóa biểu trước khi đi học.",extra:"đọc thông tin theo thứ và tiết"},
+  {topic:"Cái trống trường em",passage:"Tiếng trống vang lên báo hiệu giờ vào học. Đến giờ ra chơi, tiếng trống lại rộn ràng gọi học sinh ra sân.",ask:"Tiếng trống báo hiệu điều gì?",ans:"Giờ vào học hoặc giờ ra chơi",bad:["Trời sắp mưa","Xe buýt đến nhà","Đã đến giờ ăn tối"],word:"rộn ràng",wordAsk:"Từ nào diễn tả âm thanh vui, náo nức?",spell:"tiếng trống",sentence:"Tiếng trống trường vang lên.",extra:"âm thanh quen thuộc của trường học"},
+  {topic:"Danh sách học sinh",passage:"Cô giáo lập danh sách học sinh theo thứ tự. Mỗi dòng ghi tên một bạn để cô dễ kiểm tra sĩ số.",ask:"Danh sách giúp cô giáo làm gì?",ans:"Dễ kiểm tra sĩ số",bad:["Chấm điểm bóng đá","Chọn món ăn","Xem giờ tàu chạy"],word:"danh sách",wordAsk:"Từ nào chỉ bảng ghi tên các thành viên?",spell:"học sinh",sentence:"Cô kiểm tra tên trong danh sách.",extra:"đọc tên và thông tin theo từng dòng"},
+  {topic:"Yêu lắm trường ơi!",passage:"Sân trường có hàng cây xanh và những lớp học sáng sủa. Mỗi ngày đến trường, các bạn được học điều hay và gặp bạn bè.",ask:"Điều gì khiến các bạn vui khi đến trường?",ans:"Được học điều hay và gặp bạn bè",bad:["Được nghỉ học cả tuần","Không cần học bài","Được ở một mình"],word:"sáng sủa",wordAsk:"Từ nào miêu tả nơi có nhiều ánh sáng, sạch đẹp?",spell:"sân trường",sentence:"Em yêu mái trường của mình.",extra:"tình cảm gắn bó với trường lớp"},
+  {topic:"Em học vẽ",passage:"Trong giờ mỹ thuật, Linh vẽ một khu vườn có hoa đỏ, lá xanh và chú bướm vàng. Linh tô màu cẩn thận.",ask:"Linh vẽ những gì trong khu vườn?",ans:"Hoa, lá và chú bướm",bad:["Tàu hỏa và máy bay","Bàn ghế trong bếp","Những con cá dưới biển"],word:"tô màu",wordAsk:"Cụm từ nào chỉ hoạt động khi hoàn thiện bức tranh?",spell:"khu vườn",sentence:"Linh tô màu bức tranh cẩn thận.",extra:"tên màu sắc và hoạt động vẽ"},
+  {topic:"Cuốn sách của em",passage:"Nam giữ sách sạch sẽ, không gấp góc trang. Đọc xong, bạn đặt sách ngay ngắn lên giá.",ask:"Nam làm gì để giữ sách?",ans:"Giữ sách sạch và đặt ngay ngắn",bad:["Vẽ lên trang sách","Xé trang giấy","Để sách dưới mưa"],word:"ngay ngắn",wordAsk:"Từ nào miêu tả đồ vật được xếp gọn gàng?",spell:"cuốn sách",sentence:"Em giữ gìn sách cẩn thận.",extra:"cách sử dụng và bảo quản sách"},
+  {topic:"Khi trang sách mở ra",passage:"Mỗi lần mở sách, An được gặp những nhân vật mới và khám phá vùng đất lạ. Bạn thấy mình học thêm nhiều điều.",ask:"Sách giúp An làm gì?",ans:"Khám phá điều mới và học thêm nhiều điều",bad:["Làm mất đồ chơi","Không cần đến lớp","Quên mọi điều đã học"],word:"khám phá",wordAsk:"Từ nào chỉ việc tìm hiểu điều mới lạ?",spell:"trang sách",sentence:"Em thích đọc sách mỗi ngày.",extra:"niềm vui và ích lợi của việc đọc"},
+  {topic:"Gọi bạn",passage:"Trên đồng cỏ rộng, một bạn nhỏ gọi người bạn đang đi xa. Tiếng gọi thể hiện nỗi nhớ và mong muốn được gặp bạn.",ask:"Tiếng gọi thể hiện điều gì?",ans:"Nỗi nhớ và mong muốn gặp bạn",bad:["Sự tức giận với thầy cô","Niềm vui khi được ngủ","Mong muốn bỏ học"],word:"gọi bạn",wordAsk:"Cụm từ nào chỉ hành động muốn người bạn nghe thấy?",spell:"người bạn",sentence:"Em gọi bạn cùng chơi.",extra:"tình bạn và sự mong nhớ"},
+  {topic:"Tớ nhớ cậu",passage:"Dù không ngồi cạnh nhau, hai người bạn vẫn nhớ những giờ cùng học và chơi. Các bạn hẹn sẽ gặp lại nhau.",ask:"Hai người bạn nhớ điều gì?",ans:"Những giờ cùng học và chơi",bad:["Một trận cãi vã","Việc làm mất sách","Một buổi dọn nhà"],word:"nhớ",wordAsk:"Từ nào diễn tả việc nghĩ đến người hoặc việc đã xa?",spell:"bạn thân",sentence:"Tớ rất nhớ bạn.",extra:"tình cảm chân thành giữa bạn bè"},
+  {topic:"Chữ A và những người bạn",passage:"Chữ A làm quen với những chữ cái khác. Khi đứng cạnh nhau, các chữ cái ghép thành tiếng và từ có ý nghĩa.",ask:"Các chữ cái có thể làm gì khi đứng cạnh nhau?",ans:"Ghép thành tiếng và từ",bad:["Biến thành con vật","Tự chạy ra sân","Làm đồng hồ kêu"],word:"chữ cái",wordAsk:"Cụm từ nào chỉ các kí hiệu dùng để ghi âm?",spell:"chữ A",sentence:"Các chữ cái ghép thành từ.",extra:"chữ cái và cách tạo tiếng, từ"},
+  {topic:"Nhím nâu kết bạn",passage:"Nhím nâu muốn chơi cùng các bạn nhưng còn ngại ngùng. Khi các bạn vui vẻ mời gọi, Nhím nâu mạnh dạn tham gia.",ask:"Điều gì giúp Nhím nâu tham gia chơi cùng các bạn?",ans:"Các bạn vui vẻ mời gọi",bad:["Các bạn xua đuổi","Nhím nâu bỏ đi","Trời bắt đầu tối"],word:"mạnh dạn",wordAsk:"Từ nào gần nghĩa với tự tin, không rụt rè?",spell:"nhím nâu",sentence:"Em vui vẻ làm quen với bạn mới.",extra:"chủ động kết bạn và thân thiện"},
+  {topic:"Thả diều",passage:"Chiều mát, Bình cùng chị thả diều trên bãi cỏ rộng. Gió nâng cánh diều bay cao trên bầu trời.",ask:"Gió làm gì với cánh diều?",ans:"Nâng cánh diều bay cao",bad:["Làm cánh diều thành chiếc thuyền","Kéo cánh diều xuống đất ngay","Biến cánh diều thành chiếc lá"],word:"bay cao",wordAsk:"Cụm từ nào miêu tả chuyển động của cánh diều?",spell:"cánh diều",sentence:"Cánh diều bay cao trên trời.",extra:"hoạt động vui chơi ngoài trời"},
+  {topic:"Tớ là Lê-gô",passage:"Từ những viên gạch nhiều màu, Minh lắp thành một chiếc xe. Bạn thử tháo ra rồi lắp thành ngôi nhà.",ask:"Minh dùng gì để lắp đồ chơi?",ans:"Những viên gạch nhiều màu",bad:["Lá cây và cành khô","Bát đĩa trong bếp","Đất và nước"],word:"lắp ráp",wordAsk:"Cụm từ nào chỉ việc ghép các bộ phận thành đồ vật?",spell:"đồ chơi",sentence:"Minh lắp ráp chiếc xe bằng Lê-gô.",extra:"sáng tạo khi chơi đồ lắp ghép"},
+  {topic:"Rồng rắn lên mây",passage:"Các bạn xếp thành hàng, người sau bám vào người trước và cùng chơi trò Rồng rắn lên mây. Mọi người chú ý nghe lời đối đáp.",ask:"Các bạn làm gì khi chơi trò Rồng rắn lên mây?",ans:"Xếp thành hàng và bám vào người trước",bad:["Ngồi yên đọc sách","Mỗi bạn chơi một nơi","Đứng thành vòng im lặng"],word:"xếp hàng",wordAsk:"Cụm từ nào chỉ việc đứng nối tiếp nhau theo hàng?",spell:"trò chơi",sentence:"Chúng em cùng chơi Rồng rắn lên mây.",extra:"trò chơi dân gian và chơi cùng tập thể"},
+  {topic:"Nặn đồ chơi",passage:"Vy dùng đất nặn tạo thành một chú thỏ. Bạn vuốt tai, nặn mắt rồi khoe sản phẩm với cả nhà.",ask:"Vy nặn thành đồ vật gì?",ans:"Một chú thỏ",bad:["Một chiếc xe đạp","Một quyển sách","Một cái trống"],word:"vuốt",wordAsk:"Từ nào chỉ hành động làm cho bề mặt mịn hoặc phẳng bằng tay?",spell:"đất nặn",sentence:"Vy nặn một chú thỏ đáng yêu.",extra:"các thao tác tạo hình bằng đất nặn"},
+  {topic:"Sự tích hoa tỉ muội",passage:"Hai chị em luôn yêu thương và chăm sóc nhau. Câu chuyện giải thích tên gọi một loài hoa gắn với tình cảm chị em.",ask:"Tình cảm nào nổi bật trong câu chuyện?",ans:"Tình chị em yêu thương, gắn bó",bad:["Sự ganh ghét giữa bạn bè","Nỗi sợ khi đi học","Niềm vui mua đồ chơi"],word:"gắn bó",wordAsk:"Từ nào chỉ sự thân thiết, luôn quan tâm nhau?",spell:"chị em",sentence:"Chị em luôn yêu thương nhau.",extra:"tình thân và sự quan tâm trong gia đình"},
+  {topic:"Em mang về yêu thương",passage:"Sau buổi học, bé mang về một bông hoa tự làm tặng mẹ. Mẹ ôm bé và cảm ơn món quà nhỏ đầy tình cảm.",ask:"Bé tặng mẹ món quà gì?",ans:"Một bông hoa tự làm",bad:["Một chiếc cặp mới","Một quả bóng","Một quyển lịch"],word:"món quà",wordAsk:"Cụm từ nào chỉ vật được tặng để bày tỏ tình cảm?",spell:"yêu thương",sentence:"Em tặng mẹ một bông hoa.",extra:"thể hiện tình cảm qua việc làm nhỏ"},
+  {topic:"Mẹ",passage:"Mẹ chăm lo cho gia đình mỗi ngày. Dù bận rộn, mẹ vẫn dành thời gian hỏi han và ôm con khi con cần.",ask:"Mẹ làm gì để thể hiện sự quan tâm?",ans:"Hỏi han và ở bên con",bad:["Không trò chuyện với con","Cất đồ chơi của con đi","Bỏ mặc mọi việc"],word:"chăm lo",wordAsk:"Từ nào chỉ việc quan tâm, săn sóc?",spell:"mẹ yêu con",sentence:"Em yêu mẹ và biết giúp mẹ.",extra:"tình mẹ và lòng biết ơn"},
+  {topic:"Trò chơi của bố",passage:"Buổi tối, bố cùng con chơi đoán đồ vật. Bố đưa ra gợi ý, còn con chăm chú suy nghĩ rồi vui mừng trả lời.",ask:"Bố và con chơi trò gì?",ans:"Đoán đồ vật",bad:["Thi chạy xe ngoài đường","Nấu ăn trong lớp","Trồng cây ở sân trường"],word:"gợi ý",wordAsk:"Từ nào chỉ thông tin giúp người khác đoán ra đáp án?",spell:"đồ vật",sentence:"Bố cùng em chơi đoán đồ vật.",extra:"niềm vui khi chơi cùng bố"},
+  {topic:"Cánh cửa nhớ bà",passage:"Mỗi lần nhìn cánh cửa cũ, Lan nhớ những ngày được bà đón về nhà và kể chuyện. Cánh cửa gợi lại nhiều kỉ niệm thân thương.",ask:"Cánh cửa gợi cho Lan nhớ điều gì?",ans:"Những kỉ niệm bên bà",bad:["Một buổi thi đấu bóng","Chuyến đi mua sách","Bài kiểm tra Toán"],word:"kỉ niệm",wordAsk:"Từ nào chỉ điều đáng nhớ đã xảy ra trong quá khứ?",spell:"thân thương",sentence:"Lan nhớ những kỉ niệm bên bà.",extra:"kỉ niệm và tình cảm với bà"},
+  {topic:"Thương ông",passage:"Thấy ông đi lại chậm, Hà đỡ ông ngồi xuống ghế và rót nước. Ông xoa đầu Hà, mỉm cười cảm động.",ask:"Hà làm gì để giúp ông?",ans:"Đỡ ông ngồi và rót nước",bad:["Chạy ra sân chơi","Giấu chiếc ghế","Bảo ông tự làm"],word:"đỡ",wordAsk:"Từ nào chỉ hành động hỗ trợ người khác?",spell:"rót nước",sentence:"Hà ân cần giúp ông.",extra:"quan tâm, chăm sóc ông bà"},
+  {topic:"Ánh sáng của yêu thương",passage:"Khi em nhỏ bị ốm, người thân thay nhau chăm sóc. Những lời hỏi han và bàn tay dịu dàng giúp em cảm thấy được yêu thương.",ask:"Điều gì giúp em nhỏ cảm thấy được yêu thương?",ans:"Sự chăm sóc và lời hỏi han",bad:["Sự thờ ơ của mọi người","Những lời trách mắng","Việc bị bỏ ở một mình"],word:"dịu dàng",wordAsk:"Từ nào chỉ cách cư xử nhẹ nhàng, ân cần?",spell:"yêu thương",sentence:"Gia đình chăm sóc em bằng tình yêu thương.",extra:"sự quan tâm khi người thân gặp khó khăn"},
+  {topic:"Chơi chong chóng",passage:"Huy cầm chiếc chong chóng chạy trên sân. Gió thổi làm các cánh quay tít, Huy thích thú nhìn theo.",ask:"Điều gì làm cánh chong chóng quay?",ans:"Gió",bad:["Ánh đèn","Tiếng hát","Màu sắc"],word:"quay tít",wordAsk:"Cụm từ nào diễn tả sự quay nhanh của chong chóng?",spell:"chong chóng",sentence:"Gió làm chong chóng quay tít.",extra:"đồ chơi và chuyển động của gió"}
+ ];
+ const item=lessons[id]||lessons[0];
+ const make=(q,correct,wrong,e)=>{let vals=[correct,...wrong].map(x=>String(x).trim()).filter((x,i,a)=>x&&a.indexOf(x)===i);let k=1;while(vals.length<4){let v="Lựa chọn khác "+k++;if(!vals.includes(v))vals.push(v);}vals=shuffleArray(vals.slice(0,4));return {q,a:vals,c:vals.indexOf(correct),e};};
+ const pool=[
+  make("Đọc đoạn văn về “"+item.topic+"”: “"+item.passage+"” "+item.ask,item.ans,item.bad,"Chi tiết trong đoạn văn cho biết: "+item.ans+"."),
+  make(item.wordAsk,item.word,[item.topic.toLowerCase(),"chiếc bàn","chạy thật nhanh"].filter(x=>x!==item.word),"Từ/cụm từ phù hợp với nội dung bài là “"+item.word+"”."),
+  make("Chọn cách viết đúng liên quan đến bài “"+item.topic+"”.",item.spell,[item.spell.replace(/[ăâđêôơư]/gi,"a"),item.spell.toUpperCase(),item.spell+"g"],"Cách viết đúng là “"+item.spell+"”."),
+  make("Chọn câu phù hợp với chủ điểm “"+item.topic+"”.",item.sentence,["Bàn ghế chạy nhanh qua sân.","Hôm nay em không cần nghe ai.","Quyển vở biết nấu cơm."],"Câu này đúng ngữ pháp và phù hợp với nội dung bài."),
+  make("Nội dung chính gần nhất với bài “"+item.topic+"” là gì?",item.extra,["Cách tính phép cộng có nhớ","Cách xem dự báo thời tiết","Cách sửa một chiếc xe máy"],"Câu hỏi được xây dựng theo chủ đề của bài học: "+item.topic+"."),
+  make("Từ/cụm từ nào là từ trọng tâm của bài “"+item.topic+"”?",item.word,["xa lạ","ồn ào","xô đẩy"],"Từ/cụm từ trọng tâm gắn với bài là “"+item.word+"”."),
+  make("Đọc lại ý chính của bài “"+item.topic+"”. Việc nào phù hợp nhất?",item.ans,item.bad,"Đáp án được xác định từ ngữ liệu tự biên soạn gắn với bài học."),
+  make("Chọn câu kể đúng, phù hợp chủ đề “"+item.topic+"”.",item.sentence,["Phù hợp chủ đề câu không.","Câu em học vui trường?","đẹp quá bạn sách chạy"],"Câu kể cần có trật tự từ rõ ràng và diễn đạt trọn ý."),
+  make("Chi tiết nào phù hợp với bài “"+item.topic+"”?",item.ans,item.bad,"Đáp án bám theo chi tiết của ngữ liệu dành riêng cho bài này."),
+  make("Chọn câu có ý nghĩa gần với nội dung bài “"+item.topic+"”.",item.sentence,["Em bỏ mặc mọi người khi cần giúp đỡ.","Em không cần quan tâm đến bài học.","Em làm ngược lại mọi việc được nhắc đến."],"Câu đúng phù hợp với nội dung và thông điệp của bài.")
+ ];
+ return shuffleArray(pool).slice(0,Math.min(count,pool.length));
 }
 
 function generateNewQuiz(){renderQuiz(true);}
