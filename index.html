@@ -80,6 +80,24 @@ footer{text-align:center;color:var(--muted);font-size:13px;padding:8px 16px 28px
     <div id="score">0/5</div><p id="resultText"></p>
   </section>
 
+
+  <section class="panel" id="bookLessons">
+    <h2>📘 Toán 2 · Tập 1 · Luyện theo từng bài trong sách</h2>
+    <p class="small">Chọn đúng bài theo mục lục sách bạn gửi. Câu hỏi trên website được tự biên soạn theo kiến thức và tên bài, không sao chép nguyên văn bài tập trong sách.</p>
+    <div class="controls">
+      <label class="small" for="bookChapter">Chủ đề:</label>
+      <select id="bookChapter" class="chip" aria-label="Chọn chủ đề sách Toán tập 1"></select>
+      <label class="small" for="bookLesson">Bài học:</label>
+      <select id="bookLesson" class="chip" aria-label="Chọn bài trong sách Toán tập 1"></select>
+    </div>
+    <div class="week-card">
+      <h3 id="bookLessonTitle">Bài 1. Ôn tập các số đến 100</h3>
+      <p id="bookLessonDesc">Luyện tập theo kiến thức của bài học.</p>
+      <button class="primary" type="button" onclick="startBookLesson()">✏️ Làm bài tập của bài này</button>
+    </div>
+    <p class="small">Phiên bản hiện tại triển khai trước Toán 2 · Tập 1 (36 bài theo mục lục trong ảnh). Mỗi lượt tạo đề có câu hỏi tự biên soạn theo bài đã chọn; giáo viên/phụ huynh nên kiểm tra nội dung trước khi dùng làm bài đánh giá chính thức.</p>
+  </section>
+
   <section class="panel" id="weeklyLearning">
     <h2>🗓️ Luyện tập theo tuần lớp 2</h2>
     <p class="small">Chọn học kỳ và tuần để mở bài luyện. Đây là lộ trình ôn tập tự biên soạn theo các mạch kiến thức lớp 2; thứ tự từng tuần là khung tham khảo, chưa phải bản đối chiếu chính thức từng bài trong sách giáo khoa.</p>
@@ -259,6 +277,67 @@ const banks = {
 let subject="math", topicIndex=0, submitted=false, currentQuestions=[];
 const HISTORY_KEY="hoc_vui_lop_2_history_v1";
 
+
+const bookOneChapters = [
+ {name:"1. Ôn tập và bổ sung", lessons:[
+  ["Bài 1. Ôn tập các số đến 100",1],["Bài 2. Tia số. Số liền trước, số liền sau",1],["Bài 3. Các thành phần của phép cộng, phép trừ",1],["Bài 4. Hơn kém nhau bao nhiêu",4],["Bài 5. Ôn tập phép cộng, phép trừ không nhớ trong phạm vi 100",1],["Bài 6. Luyện tập chung",4]]},
+ {name:"2. Phép cộng, phép trừ trong phạm vi 20",lessons:[
+  ["Bài 7. Phép cộng (qua 10) trong phạm vi 20",1],["Bài 8. Bảng cộng (qua 10)",1],["Bài 9. Bài toán về thêm, bớt một số đơn vị",4],["Bài 10. Luyện tập chung",4],["Bài 11. Phép trừ (qua 10) trong phạm vi 20",1],["Bài 12. Bảng trừ (qua 10)",1],["Bài 13. Bài toán về nhiều hơn, ít hơn một số đơn vị",4],["Bài 14. Luyện tập chung",4]]},
+ {name:"3. Làm quen với khối lượng, dung tích",lessons:[
+  ["Bài 15. Ki-lô-gam",3],["Bài 16. Lít",3],["Bài 17. Thực hành và trải nghiệm với các đơn vị ki-lô-gam, lít",3],["Bài 18. Luyện tập chung",3]]},
+ {name:"4. Phép cộng, phép trừ (có nhớ) trong phạm vi 100",lessons:[
+  ["Bài 19. Phép cộng (có nhớ) số có hai chữ số với số có một chữ số",1],["Bài 20. Phép cộng (có nhớ) số có hai chữ số với số có hai chữ số",1],["Bài 21. Luyện tập chung",4],["Bài 22. Phép trừ (có nhớ) số có hai chữ số cho số có một chữ số",1],["Bài 23. Phép trừ (có nhớ) số có hai chữ số cho số có hai chữ số",1],["Bài 24. Luyện tập chung",4]]},
+ {name:"5. Làm quen với hình phẳng",lessons:[
+  ["Bài 25. Điểm, đoạn thẳng, đường thẳng, đường cong, đường gấp khúc, ba điểm thẳng hàng",3],["Bài 26. Đường gấp khúc. Hình tứ giác",3],["Bài 27. Thực hành gấp, cắt, ghép, xếp hình. Vẽ đoạn thẳng",3],["Bài 28. Luyện tập chung",3]]},
+ {name:"6. Ngày – giờ, giờ – phút, ngày – tháng",lessons:[
+  ["Bài 29. Ngày – giờ, giờ – phút",3],["Bài 30. Ngày – tháng",3],["Bài 31. Thực hành và trải nghiệm xem đồng hồ, xem lịch",3],["Bài 32. Luyện tập chung",3]]},
+ {name:"7. Ôn tập học kì I",lessons:[
+  ["Bài 33. Ôn tập phép cộng, phép trừ trong phạm vi 20, 100",4],["Bài 34. Ôn tập hình phẳng",3],["Bài 35. Ôn tập đo lường",3],["Bài 36. Ôn tập chung",4]]}
+];
+let activeBookLesson = null;
+function initBookLessons(){
+ const ch=document.getElementById("bookChapter"), le=document.getElementById("bookLesson");
+ ch.innerHTML="";
+ bookOneChapters.forEach((c,i)=>{const o=document.createElement("option");o.value=i;o.textContent=c.name;ch.appendChild(o);});
+ function fillLessons(){const c=bookOneChapters[Number(ch.value)];le.innerHTML="";c.lessons.forEach((l)=>{const o=document.createElement("option");o.value=bookOneChapters.flatMap(x=>x.lessons).findIndex(x=>x[0]===l[0]);o.textContent=l[0];le.appendChild(o);});updateBookLessonInfo();}
+ ch.addEventListener("change",fillLessons);le.addEventListener("change",updateBookLessonInfo);fillLessons();
+}
+function getBookLessons(){return bookOneChapters.flatMap((c,ci)=>c.lessons.map(l=>({title:l[0],topic:l[1],chapter:ci})));}
+function updateBookLessonInfo(){const l=getBookLessons()[Number(document.getElementById("bookLesson").value)||0];document.getElementById("bookLessonTitle").textContent=l.title;document.getElementById("bookLessonDesc").textContent="Chủ đề luyện tập: "+banks.math[l.topic].name+". Câu hỏi mới được tạo theo kiến thức của bài, với số liệu thay đổi khi tạo đề mới.";}
+function mcq(q,correct,others,e){
+ const vals=[String(correct),...others.map(String)].slice(0,4);while(vals.length<4)vals.push(String(Number(vals[vals.length-1])+3));
+ const shuffled=shuffleArray(vals);return {q,a:shuffled,c:shuffled.indexOf(String(correct)),e};
+}
+function createBookLessonQuestions(id,count){
+ const qs=[]; const rndInt=(a,b)=>Math.floor(Math.random()*(b-a+1))+a;
+ for(let i=0;i<count;i++){
+  let q="",c=0,wrong=[],e="",a,b,n,m,ans;
+  if(id<=2){n=rndInt(10,98);if(id===0){q=`Số ${n} gồm mấy chục và mấy đơn vị?`;c=`${Math.floor(n/10)} chục, ${n%10} đơn vị`;wrong=[`${n%10} chục, ${Math.floor(n/10)} đơn vị`,`${Math.floor(n/10)} chục, 0 đơn vị`,` ${n} chục`];e=`${n} = ${Math.floor(n/10)} chục và ${n%10} đơn vị.`;}else{q=`Số liền ${i%2?"trước":"sau"} của ${n} là số nào?`;c=i%2?n-1:n+1;wrong=[c+2,c-2,n];e=`Số liền ${i%2?"trước":"sau"} của ${n} là ${c}.`;}}
+  else if(id===2){a=rndInt(12,80);b=rndInt(2,19);const add=i%2===0;ans=add?a+b:a-b;q=add?`Trong phép tính ${a} + ${b} = ${ans}, số ${a} gọi là gì?`:`Trong phép tính ${a} − ${b} = ${a-b}, số ${a} gọi là gì?`;c=add?"Số hạng":"Số bị trừ";wrong=["Tổng","Hiệu","Số trừ"];e=add?"Các số được cộng gọi là số hạng.":"Số đứng trước dấu trừ là số bị trừ.";}
+  else if(id===3 || id===8 || id===12){a=rndInt(3,30);b=rndInt(2,20);if(id===3){q=`Mai có ${a+b} nhãn vở, An có ${a} nhãn vở. Mai nhiều hơn An bao nhiêu nhãn vở?`;c=b; e=`${a+b} − ${a} = ${b} nhãn vở.`;}else if(id===8){q=`Có ${a} quả bóng, được thêm ${b} quả. Có tất cả bao nhiêu quả?`;c=a+b;e=`${a} + ${b} = ${c}.`;}else{q=`Lan có ${a+b} chiếc kẹo, cho bạn ${b} chiếc. Lan còn bao nhiêu chiếc?`;c=a;e=`${a+b} − ${b} = ${a}.`;}wrong=[Number(c)+1,Math.max(0,Number(c)-1),Number(c)+3];}
+  else if(id>=4 && id<=23){
+   a=rndInt(id<14?2:12,id<14?19:69);b=rndInt(id<14?1:2,id<14?9:29);const add=[6,7,8,9,10,18,19,20].includes(id)||id===4||id===5||id===9||id===13||id===20||id===21;
+   if(id===10||id===11||id===12||id===22||id===23){ans=a-b;if(ans<0){a=Math.max(a,b+1);ans=a-b;}q=`Tính: ${a} − ${b} = ?`;c=ans;e=`${a} − ${b} = ${ans}.`;}
+   else {ans=a+b;q=`Tính: ${a} + ${b} = ?`;c=ans;e=`${a} + ${b} = ${ans}.`;}
+   wrong=[Number(c)+1,Math.max(0,Number(c)-1),Number(c)+10];
+  }
+  else if(id===14||id===15||id===16){const val=rndInt(2,9);q=id===15?`Bình có ${val} lít nước, mẹ rót thêm 2 lít. Có bao nhiêu lít nước?`:id===14?`Túi gạo nặng ${val} kg, túi khác nặng 2 kg. Cả hai nặng bao nhiêu ki-lô-gam?`:`Một bình có ${val+2} lít nước, đã dùng ${val} lít. Còn bao nhiêu lít?`;c=id===16?2:val+2;wrong=[Number(c)+1,Math.max(0,Number(c)-1),Number(c)+3];e=`Tính theo dữ kiện trong đề: ${c}.`;}
+  else if(id>=24&&id<=27 || id===33){const shapes=["hình tam giác","hình vuông","hình chữ nhật","hình tứ giác"];const s=shapes[rndInt(0,3)];q=`Hình nào có 4 cạnh?`;c="Hình tứ giác";wrong=["Hình tam giác","Hình tròn","Đoạn thẳng"];e="Hình tứ giác có 4 cạnh.";}
+  else if(id>=28&&id<=31 || id===35){const h=rndInt(1,10),add=rndInt(1,3);if(id===29||id===30){q=`Hôm nay là ngày 12 tháng 5. Ngày mai là ngày nào?`;c="Ngày 13 tháng 5";wrong=["Ngày 11 tháng 5","Ngày 12 tháng 6","Ngày 14 tháng 5"];e="Ngày mai là ngày tiếp theo: ngày 13 tháng 5.";}else{q=`Bây giờ là ${h} giờ. Sau ${add} giờ là mấy giờ?`;c=`${(h+add-1)%12+1} giờ`;wrong=[`${h} giờ`,`${Math.max(1,h-1)} giờ`,`${h+add+1} giờ`];e=`Cộng thêm ${add} giờ vào ${h} giờ.`;}}
+  else {a=rndInt(12,55);b=rndInt(2,20);q=`Thư viện có ${a} quyển truyện, được tặng thêm ${b} quyển. Có tất cả bao nhiêu quyển?`;c=a+b;wrong=[c+1,c-1,c+10];e=`${a} + ${b} = ${c} quyển truyện.`;}
+  qs.push(mcq(q,c,wrong,e));
+ }
+ return qs;
+}
+function startBookLesson(){
+ const id=Number(document.getElementById("bookLesson").value)||0;const l=getBookLessons()[id];activeBookLesson=id;subject="math";topicIndex=l.topic;
+ document.getElementById("mathSubject").classList.add("active");document.getElementById("vietSubject").classList.remove("active");
+ renderTopics();renderQuiz(true);document.getElementById("quizTitle").textContent="📘 "+l.title;
+ document.getElementById("quizDesc").textContent="Bài tập tự biên soạn theo kiến thức của bài học này.";
+ document.getElementById("generationNote").textContent="Đề riêng theo "+l.title+" · Có thể tạo đề mới để đổi số liệu.";
+ document.getElementById("quizForm").scrollIntoView({behavior:"smooth",block:"start"});
+}
+
 const weeklyPlan = [
  {w:1,sem:1,title:"Khởi động năm học",focus:"Ôn kiến thức nền tảng và nề nếp học tập.",math:0,mathFocus:"Ôn số đến 100, đọc viết số, số liền trước và liền sau.",viet:0,vietFocus:"Đọc đoạn văn ngắn, tìm nhân vật và sự việc chính."},
  {w:2,sem:1,title:"Số và cách diễn đạt",focus:"Đọc kỹ yêu cầu, trình bày câu trả lời rõ ràng.",math:0,mathFocus:"So sánh số, xếp số theo thứ tự.",viet:1,vietFocus:"Nhận biết từ chỉ sự vật, hoạt động và đặc điểm."},
@@ -314,7 +393,7 @@ function renderWeekCard(){
  document.getElementById("weekViet").textContent=w.vietFocus;
 }
 function startWeeklyPractice(s){
- const w=getWeek();subject=s;topicIndex=s==="math"?w.math:w.viet;
+ const w=getWeek();activeBookLesson=null;subject=s;topicIndex=s==="math"?w.math:w.viet;
  document.getElementById("mathSubject").classList.toggle("active",s==="math");
  document.getElementById("vietSubject").classList.toggle("active",s==="viet");
  renderTopics();renderQuiz(true);
@@ -331,8 +410,8 @@ document.getElementById("weekSelect").addEventListener("change",()=>{
  activeWeek=Number(document.getElementById("weekSelect").value);renderWeekCard();
 });
 
-function chooseSubject(s){subject=s;topicIndex=0;document.getElementById("mathSubject").classList.toggle("active",s==="math");document.getElementById("vietSubject").classList.toggle("active",s==="viet");renderTopics();renderQuiz();}
-function renderTopics(){const el=document.getElementById("topics");el.innerHTML="";banks[subject].forEach((t,i)=>{const b=document.createElement("button");b.className="chip"+(i===topicIndex?" active":"");b.textContent=t.name;b.onclick=()=>{topicIndex=i;renderTopics();renderQuiz()};el.appendChild(b);});}
+function chooseSubject(s){activeBookLesson=null;subject=s;topicIndex=0;document.getElementById("mathSubject").classList.toggle("active",s==="math");document.getElementById("vietSubject").classList.toggle("active",s==="viet");renderTopics();renderQuiz();}
+function renderTopics(){const el=document.getElementById("topics");el.innerHTML="";banks[subject].forEach((t,i)=>{const b=document.createElement("button");b.className="chip"+(i===topicIndex?" active":"");b.textContent=t.name;b.onclick=()=>{activeBookLesson=null;topicIndex=i;renderTopics();renderQuiz()};el.appendChild(b);});}
 function shuffleArray(arr){const a=[...arr];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
 function rnd(min,max){return Math.floor(Math.random()*(max-min+1))+min;}
 function makeDynamicMathQuestion(topicIndex){
@@ -381,13 +460,14 @@ function generateNewQuiz(){renderQuiz(true);}
 function renderQuiz(generate=false){
   submitted=false;
   const topic=banks[subject][topicIndex];
-  document.getElementById("quizTitle").textContent=(subject==="math"?"🔢 Toán: ":"📖 Tiếng Việt: ")+topic.name;
-  document.getElementById("quizDesc").textContent=topic.desc;
+  const bookLesson=activeBookLesson!==null&&subject==="math"?getBookLessons()[activeBookLesson]:null;
+  document.getElementById("quizTitle").textContent=bookLesson?"📘 "+bookLesson.title:(subject==="math"?"🔢 Toán: ":"📖 Tiếng Việt: ")+topic.name;
+  document.getElementById("quizDesc").textContent=bookLesson?"Bài tập tự biên soạn theo kiến thức của bài học này.":topic.desc;
   document.getElementById("result").style.display="none";
   const root=document.getElementById("questions");root.innerHTML="";
   const count=Number(document.getElementById("questionCount")?.value||5);
-  let pool=generate?shuffleArray(topic.qs):[...topic.qs];
-  if(generate && subject==="math"){
+  let pool=bookLesson?(generate?createBookLessonQuestions(activeBookLesson,count):createBookLessonQuestions(activeBookLesson,count)): (generate?shuffleArray(topic.qs):[...topic.qs]);
+  if(generate && subject==="math" && !bookLesson){
     const dynamicCount=Math.min(count, Math.max(0,count-2));
     pool=[...shuffleArray(topic.qs).slice(0,Math.max(0,count-dynamicCount)),...Array.from({length:dynamicCount},()=>makeDynamicMathQuestion(topicIndex))];
     pool=shuffleArray(pool);
@@ -429,11 +509,11 @@ document.getElementById("quizForm").addEventListener("submit",e=>{
   document.getElementById("result").style.display="block";submitted=true;
   document.querySelectorAll("#questions input").forEach(x=>x.disabled=true);
   document.querySelector("#quizForm button[type=submit]").disabled=true;
-  if(!missing){saveHistory({subjectName:subject==="math"?"Toán":"Tiếng Việt",topic:(typeof activeWeek!=="undefined"&&activeWeek?`Tuần ${activeWeek} · `:"")+banks[subject][topicIndex].name,score,total:qs.length,date:new Date().toLocaleString("vi-VN")});}
+  if(!missing){saveHistory({subjectName:subject==="math"?"Toán":"Tiếng Việt",topic:(typeof activeBookLesson!=="undefined"&&activeBookLesson!==null?getBookLessons()[activeBookLesson].title+" · ":typeof activeWeek!=="undefined"&&activeWeek?`Tuần ${activeWeek} · `:"")+banks[subject][topicIndex].name,score,total:qs.length,date:new Date().toLocaleString("vi-VN")});}
   document.getElementById("result").scrollIntoView({behavior:"smooth",block:"center"});
 });
 function resetQuiz(){renderQuiz();document.querySelector("#quizForm button[type=submit]").disabled=false;}
-renderTopics();renderQuiz();renderHistory();renderWeekSelectors();
+renderTopics();renderQuiz();renderHistory();renderWeekSelectors();initBookLessons();
 </script>
 </body>
 </html>
