@@ -703,9 +703,27 @@ function openMainSection(id){
   window.scrollTo(0,0);
 }
 function openPracticeView(){
- ['homeMenu','bookLessons','semesterExam','roadmapPanel','progressPanel','tipsPanel','result'].forEach(x=>{const el=document.getElementById(x);if(el)el.style.display='none';});
- document.getElementById('subjectPicker').style.display=activeBookLesson===null?'block':'none';
- document.getElementById('quizPanel').style.display='block';
+ const hideIds=['homeMenu','bookLessons','semesterExam','roadmapPanel','progressPanel','tipsPanel','result'];
+ hideIds.forEach(id=>{
+  const el=document.getElementById(id);
+  if(el){el.style.setProperty('display','none','important');el.setAttribute('aria-hidden','true');}
+ });
+ const picker=document.getElementById('subjectPicker');
+ if(picker){
+  picker.style.setProperty('display',activeBookLesson===null?'block':'none','important');
+  picker.setAttribute('aria-hidden',activeBookLesson===null?'false':'true');
+ }
+ const panel=document.getElementById('quizPanel');
+ if(panel){
+  panel.hidden=false;
+  panel.style.setProperty('display','block','important');
+  panel.style.setProperty('visibility','visible','important');
+  panel.setAttribute('aria-hidden','false');
+ }
+ const form=document.getElementById('quizForm');
+ if(form){form.hidden=false;form.style.setProperty('display','block','important');}
+ const questions=document.getElementById('questions');
+ if(questions){questions.style.setProperty('display','block','important');questions.style.setProperty('visibility','visible','important');}
  window.scrollTo({top:0,behavior:'smooth'});
 }
 const banks = {
@@ -1455,7 +1473,7 @@ function renderQuiz(generate=false){
   document.getElementById("quizTitle").textContent=bookLesson?"📘 "+bookLesson.title:(subject==="math"?"🔢 Toán: ":"📖 Tiếng Việt: ")+topic.name;
   document.getElementById("quizDesc").textContent=bookLesson?"Bài tập tự biên soạn theo kiến thức của bài học này.":topic.desc;
   document.getElementById("result").style.display="none";
-  const root=document.getElementById("questions");root.innerHTML="";
+  const root=document.getElementById("questions");root.innerHTML="";root.hidden=false;root.style.setProperty("display","block","important");root.style.setProperty("visibility","visible","important");
   const count=Number(document.getElementById("questionCount")?.value||5);
   let pool=bookLesson
     ? (subject==="math"
