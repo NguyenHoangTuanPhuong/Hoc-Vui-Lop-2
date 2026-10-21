@@ -209,10 +209,7 @@ main>section:not(#homeMenu){display:none}
         <option value="1">Học kì 1</option><option value="2">Học kì 2</option>
       </select>
     </div>
-    <div class="controls subject-toggle" role="group" aria-label="Chọn môn học">
-      <button type="button" class="primary subject-tab active" id="mathTab" onclick="switchBookSubject('math')">🔢 Toán</button>
-      <button type="button" class="secondary subject-tab" id="vietTab" onclick="switchBookSubject('viet')">📚 Tiếng Việt</button>
-    </div>
+    <p class="small" id="currentSubjectNotice" style="font-weight:700;color:#1d4ed8"></p>
     <div class="controls">
       <label for="bookChapter" id="chapterLabel">② Chọn chương</label>
       <select id="bookChapter" class="chip" aria-label="Chọn chủ đề sách Toán tập 1"></select>
@@ -366,7 +363,7 @@ function openMainSection(id){
 }
 function openPracticeView(){
  ['homeMenu','bookLessons','semesterExam','roadmapPanel','progressPanel','tipsPanel','result'].forEach(x=>{const el=document.getElementById(x);if(el)el.style.display='none';});
- document.getElementById('subjectPicker').style.display='block';
+ document.getElementById('subjectPicker').style.display=activeBookLesson===null?'block':'none';
  document.getElementById('quizPanel').style.display='block';
  window.scrollTo({top:0,behavior:'smooth'});
 }
@@ -544,12 +541,12 @@ function switchBookSubject(which){
  const math = which === "math";
  const toolsTitle = document.getElementById("subjectToolsTitle");
  if (toolsTitle) toolsTitle.textContent = math ? "📌 Công cụ học Toán" : "📌 Công cụ học Tiếng Việt";
- document.getElementById("mathTab").className = "subject-tab " + (math ? "primary active" : "secondary");
- document.getElementById("vietTab").className = "subject-tab " + (!math ? "primary active" : "secondary");
+ const subjectNotice=document.getElementById("currentSubjectNotice");
+ if(subjectNotice) subjectNotice.textContent = math ? "🔢 Đang ở môn Toán — chỉ hiển thị bài Toán." : "📚 Đang ở môn Tiếng Việt — chỉ hiển thị bài Tiếng Việt.";
  document.getElementById("lessonPickerTitle").textContent = math ? "🔢 Chọn bài Toán em muốn luyện" : "📚 Chọn bài Tiếng Việt em muốn luyện";
  document.getElementById("chapterLabel").textContent = "② Chọn chủ điểm";
- document.getElementById("bookChapter").setAttribute("aria-label", math ? "Chọn chương sách Toán tập 1" : "Chọn chủ điểm Tiếng Việt tập 1");
- document.getElementById("bookLesson").setAttribute("aria-label", math ? "Chọn bài trong sách Toán tập 1" : "Chọn bài trong sách Tiếng Việt tập 1");
+ document.getElementById("bookChapter").setAttribute("aria-label", math ? `Chọn chương sách Toán học kì ${bookSemester}` : `Chọn chủ điểm Tiếng Việt học kì ${bookSemester}`);
+ document.getElementById("bookLesson").setAttribute("aria-label", math ? `Chọn bài Toán học kì ${bookSemester}` : `Chọn bài Tiếng Việt học kì ${bookSemester}`);
  initBookLessons();
 }
 function initBookLessons(){
