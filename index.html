@@ -2045,12 +2045,17 @@ document.getElementById("quizForm").addEventListener("submit",e=>{
   });
   if(missing){document.getElementById("resultText").textContent="Em hãy xem lại những câu chưa chọn đáp án nhé.";}
   else{document.getElementById("resultText").textContent=score===qs.length?"Tuyệt vời! Em đã trả lời đúng tất cả.":score>=Math.ceil(qs.length*.6)?"Khá lắm! Xem lời giải các câu sai rồi thử lại nhé.":"Không sao cả, mình cùng xem lời giải và luyện tập thêm nhé.";}
-  document.getElementById("score").textContent=score+"/"+qs.length+" điểm";
-  document.getElementById("result").style.display="block";submitted=true;
+  const resultPanel=document.getElementById("result");
+  const scorePercent=Math.round(score/qs.length*100);
+  document.getElementById("score").textContent=score+"/"+qs.length+" điểm ("+scorePercent+"%)";
+  resultPanel.style.setProperty("display","block","important");
+  resultPanel.style.setProperty("visibility","visible","important");
+  resultPanel.removeAttribute("aria-hidden");
+  resultPanel.scrollIntoView({behavior:"smooth",block:"center"});
+  submitted=true;
   document.querySelectorAll("#questions input").forEach(x=>x.disabled=true);
   document.querySelector("#quizForm button[type=submit]").disabled=true;
   if(!missing){const historyTopic=(typeof activeBookLesson!=="undefined"&&activeBookLesson!==null?getBookLessons()[activeBookLesson].title:typeof activeWeek!=="undefined"&&activeWeek?`Tuần ${activeWeek} · ${banks[subject][topicIndex].name}`:banks[subject][topicIndex].name);saveHistory({subjectName:subject==="math"?"Toán":"Tiếng Việt",topic:historyTopic,score,total:qs.length,date:new Date().toLocaleString("vi-VN")});}
-  document.getElementById("result").scrollIntoView({behavior:"smooth",block:"center"});
 });
 function resetQuiz(){renderQuiz();document.querySelector("#quizForm button[type=submit]").disabled=false;}
 renderTopics();renderQuiz();renderHistory();renderWeekSelectors();initBookLessons();
