@@ -2075,7 +2075,11 @@ document.getElementById("quizForm").addEventListener("submit",e=>{
   document.querySelector("#quizForm button[type=submit]").disabled=true;
   if(!missing){
     const historyTopic=(typeof activeBookLesson!=="undefined"&&activeBookLesson!==null?getBookLessons()[activeBookLesson].title:typeof activeWeek!=="undefined"&&activeWeek?`Tuần ${activeWeek} · ${banks[subject][topicIndex].name}`:banks[subject][topicIndex].name);
-    const subjectLabel=subject==="math"?"Toán":subject==="viet"?"Tiếng Việt":String(subject||"Môn học");
+    const rawSubject=String(subject||"").trim().toLowerCase();
+    const rawBookSubject=String(typeof bookSubject!=="undefined"?bookSubject:"").trim().toLowerCase();
+    const isMath=rawSubject==="math"||rawBookSubject==="math";
+    const isVietnamese=["viet","vietnamese","tiếng việt","tieng viet"].includes(rawSubject)||["viet","vietnamese","tiếng việt","tieng viet"].includes(rawBookSubject);
+    const subjectLabel=isMath?"Toán":isVietnamese?"Tiếng Việt":String(subject||"Môn học");
     saveHistory({subjectName:subjectLabel,topic:historyTopic,score,total:qs.length,percent:scorePercent,date:new Date().toLocaleString("vi-VN")});
     document.dispatchEvent(new CustomEvent("trucGiang:quiz-completed",{detail:{subject:subjectLabel,topic:historyTopic,score,total:qs.length,percent:scorePercent}}));
   }
