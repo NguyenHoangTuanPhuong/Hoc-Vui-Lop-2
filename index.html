@@ -84,6 +84,8 @@ h2{font-size:23px}
 @media(max-width:520px){.subject-tab{min-height:58px;font-size:18px!important}}
 
 /* Giao diện thi thử thân thiện với học sinh lớp 2 */
+#examSubjectBanner{padding:12px 14px;margin:12px 0;border-radius:14px;background:#dbeafe;border:2px solid #93c5fd;color:#1d4ed8;font-size:19px;font-weight:800;text-align:center}
+#examSubjectBanner.viet{background:#ffedd5;border-color:#fdba74;color:#9a3412}
 #semesterExam{background:linear-gradient(180deg,#fff 0%,#f8fbff 100%);border:2px solid #dbeafe}
 #semesterExam>h2{font-size:25px;color:#1d4ed8}
 .exam-intro{display:flex;gap:12px;align-items:flex-start;background:#fff7d6;border:2px solid #fde68a;border-radius:16px;padding:14px;margin:12px 0}
@@ -275,10 +277,7 @@ main>section:not(#homeMenu){display:none}
   <button class="back-home" type="button" onclick="openMainSection('homeMenu')">🏠 Về trang chủ</button>
   <h2>🌟 Câu hỏi tổng hợp & đề thi học kì</h2>
   <div class="exam-intro"><span class="mascot" aria-hidden="true">🦉</span><p><strong>Em làm bài thật bình tĩnh nhé!</strong><br>Đọc câu hỏi, chọn một đáp án. Làm xong, bấm nút xanh để xem kết quả và lời giải.</p></div>
-  <div class="controls exam-subjects" role="group" aria-label="Chọn môn thi thử">
-    <button type="button" class="primary" id="examMathBtn" onclick="startSemesterExam('math')">🔢 Toán vui</button>
-    <button type="button" class="secondary" id="examVietBtn" onclick="startSemesterExam('viet')">📚 Tiếng Việt</button>
-  </div>
+  <div class="exam-subject-banner" id="examSubjectBanner" role="status">🔢 Đề thi môn Toán</div>
   <div class="exam-settings"><label for="examQuestionCount">Em muốn làm bao nhiêu câu?</label><select id="examQuestionCount"><option value="5">5 câu · Làm quen</option><option value="10" selected>10 câu · Thử sức</option></select></div>
   <div class="week-card">
     <h3 id="examHeading">Chọn môn em thích để bắt đầu nhé!</h3>
@@ -1313,8 +1312,11 @@ function startSemesterExam(which){
  openMainSection("semesterExam");
  activeExamSubject=which; examSubmitted=false;
  const isMath=which==="math";
- document.getElementById("examMathBtn").className=isMath?"primary":"secondary";
- document.getElementById("examVietBtn").className=isMath?"secondary":"primary";
+ const banner=document.getElementById("examSubjectBanner");
+ if(banner){
+  banner.textContent=isMath?"🔢 Đề thi môn Toán":"📚 Đề thi môn Tiếng Việt";
+  banner.className="exam-subject-banner"+(isMath?"":" viet");
+ }
  document.getElementById("examHeading").textContent=isMath?"Đề tham khảo Toán – Học kì I":"Đề tham khảo Tiếng Việt – Học kì I";
  document.getElementById("examInstructions").textContent=isMath
   ?"Đề Toán có câu hỏi về số, phép tính và bài toán ngắn. Em đọc kỹ rồi chọn một đáp án nhé!"
