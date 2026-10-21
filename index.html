@@ -198,9 +198,14 @@ main>section:not(#homeMenu){display:none}
 @keyframes confettiFall{to{transform:translate(var(--drift),105vh) rotate(720deg);opacity:.1}}
 @media(prefers-reduced-motion:reduce){#result,#score.score-pop,#result .reward,#result .score-stars,.confetti-piece{animation:none!important}}
 
+
+#soundToggle{position:fixed;right:16px;bottom:18px;z-index:10000;border:0;border-radius:999px;padding:11px 15px;background:#172554;color:#fff;font-weight:800;box-shadow:0 5px 18px #17255444;cursor:pointer;font-size:14px}
+#soundToggle:focus-visible{outline:3px solid #facc15;outline-offset:3px}
+@media(max-width:520px){#soundToggle{right:10px;bottom:10px;padding:10px 12px}}
 </style>
 </head>
 <body>
+<button id="soundToggle" type="button" aria-pressed="true" title="Bật hoặc tắt âm thanh">🔊 Âm thanh: Bật</button>
 <header class="site-header">
   <div class="logo" aria-hidden="true">🌈 📚</div>
   <h1>Góc học tập của<br class="title-break"> Nguyễn Vũ Trúc Giang</h1>
@@ -1192,7 +1197,38 @@ function startSemesterExam(which){
  const reset=document.createElement("button");reset.type="button";reset.className="secondary";reset.textContent="🔄 Làm đề khác";reset.onclick=()=>startSemesterExam(which);
  actions.append(submit,reset);form.appendChild(actions);
  const score=document.createElement("div");score.className="exam-score";score.id="examScore";score.style.display="none";
- form.addEventListener("submit",function(ev){
+ 
+let learningSoundsOn = true;
+function playLearningSound(kind){
+  if(!learningSoundsOn) return;
+  try {
+    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+    if(!AudioCtx) return;
+    const ctx = new AudioCtx();
+    const notes = kind === "perfect" ? [523.25,659.25,783.99,1046.5] : kind === "good" ? [523.25,659.25,783.99] : [392,330];
+    notes.forEach((freq,i)=>{
+      const osc=ctx.createOscillator(), gain=ctx.createGain();
+      osc.type="sine"; osc.frequency.value=freq;
+      const start=ctx.currentTime+i*0.13;
+      gain.gain.setValueAtTime(0.0001,start);
+      gain.gain.exponentialRampToValueAtTime(0.12,start+0.025);
+      gain.gain.exponentialRampToValueAtTime(0.0001,start+0.22);
+      osc.connect(gain);gain.connect(ctx.destination);osc.start(start);osc.stop(start+0.24);
+    });
+    setTimeout(()=>ctx.close().catch(()=>{}), notes.length*140+500);
+  } catch(e) { /* Âm thanh là phần bổ trợ; bài kiểm tra vẫn hoạt động nếu trình duyệt chặn âm thanh. */ }
+}
+const soundToggleButton=document.getElementById("soundToggle");
+if(soundToggleButton){
+  soundToggleButton.addEventListener("click",()=>{
+    learningSoundsOn=!learningSoundsOn;
+    soundToggleButton.textContent=learningSoundsOn?"🔊 Âm thanh: Bật":"🔇 Âm thanh: Tắt";
+    soundToggleButton.setAttribute("aria-pressed",String(learningSoundsOn));
+    if(learningSoundsOn) playLearningSound("good");
+  });
+}
+
+form.addEventListener("submit",function(ev){
   ev.preventDefault();if(examSubmitted)return;
   let scoreValue=0,answered=0;
   examQuestions.forEach((item,i)=>{
@@ -1206,6 +1242,7 @@ function startSemesterExam(which){
   const cheer=scoreValue===total?"Tuyệt vời! Em làm đúng tất cả các câu! 🌈":scoreValue>=Math.ceil(total*.7)?"Giỏi lắm! Em đã cố gắng rất tốt. ⭐":"Cố gắng thêm nhé! Xem lời giải rồi thử một đề mới nào. 💪";
   score.innerHTML=`<div>🌟 Em được ${scoreValue}/${total} điểm</div><div class="exam-encourage">${cheer}</div><div style="font-size:15px;font-weight:500;margin-top:6px">Em đã trả lời ${answered}/${total} câu.</div>`;
   score.style.display="block";examSubmitted=true;
+  playLearningSound(scoreValue===total?"perfect":scoreValue>=Math.ceil(total*.7)?"good":"try");
   form.querySelectorAll("input").forEach(input=>input.disabled=true);
   submit.disabled=true;
   progressText.textContent=`Hoàn thành ${answered}/${total} câu`;
@@ -1269,6 +1306,7 @@ document.getElementById("quizForm").addEventListener("submit",e=>{
   scoreEl.textContent=score+"/"+qs.length+" điểm · "+percent+"%";
   scoreEl.classList.remove("score-pop");void scoreEl.offsetWidth;scoreEl.classList.add("score-pop");
   resultPanel.style.display="block";submitted=true;
+  playLearningSound(percent===100?"perfect":percent>=60?"good":"try");
   if(percent>=60) launchConfetti(percent===100?42:22);
   document.querySelectorAll("#questions input").forEach(x=>x.disabled=true);
   document.querySelector("#quizForm button[type=submit]").disabled=true;
