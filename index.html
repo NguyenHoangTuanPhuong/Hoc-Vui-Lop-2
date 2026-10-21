@@ -248,58 +248,64 @@ footer{padding:18px 16px 30px;text-align:center}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition:none!important;animation:none!important}}
 
 
-/* FIX GIAO DIEN TRANG CHU V3 - dung selector thuc te */
+
+/* FIX GIAO DIEN MAY TINH V4 - the mon co chieu rong co dinh */
 html,body{width:100%;max-width:100%;overflow-x:hidden}
-body{font-size:16px}
-.site-header{width:100%;padding:30px 18px 42px}
-.site-header h1{max-width:900px;margin:8px auto 12px;font-size:clamp(28px,3.4vw,46px);line-height:1.18}
+body{font-size:16px;line-height:1.55}
+.site-header{padding:32px 22px 46px;text-align:center}
+.site-header h1{max-width:920px;margin:8px auto 12px;font-size:clamp(30px,3.3vw,46px);line-height:1.18}
 .site-header p{max-width:760px;margin-left:auto;margin-right:auto}
-main{width:min(1120px,calc(100% - 40px));margin:-22px auto 40px}
+main{width:min(1120px,calc(100% - 48px));margin:-22px auto 42px}
 #homeMenu{
  display:grid!important;
  grid-template-columns:repeat(4,minmax(0,1fr))!important;
+ gap:18px!important;
  align-items:stretch;
- gap:16px!important;
  width:100%;
- padding:clamp(20px,3vw,32px);
+ padding:30px;
 }
 #homeMenu h2,#homeMenu .menu-intro{grid-column:1/-1;min-width:0}
-#homeMenu h2{font-size:clamp(22px,2.2vw,29px);line-height:1.35;margin:0}
+#homeMenu h2{font-size:28px;line-height:1.35;margin:0}
 #homeMenu .menu-intro{font-size:16px;margin:0 0 4px;color:#52627a}
 #homeMenu .menu-card{
- display:flex;
+ display:flex!important;
  flex-direction:column;
  align-items:flex-start;
  justify-content:flex-start;
- gap:8px;
- width:100%;
+ gap:12px;
+ width:100%!important;
  min-width:0;
- min-height:170px;
- height:100%;
- padding:20px 18px;
- border-radius:18px;
+ min-height:185px;
+ height:auto!important;
+ padding:22px 20px!important;
+ border-radius:20px;
  text-align:left;
- overflow-wrap:anywhere;
+ overflow-wrap:normal;
  word-break:normal;
 }
-#homeMenu .menu-icon{font-size:36px;line-height:1.15;margin:0 0 2px}
-#homeMenu .menu-card strong{font-size:clamp(17px,1.5vw,21px);line-height:1.3}
-#homeMenu .menu-card small{font-size:14px;line-height:1.45;margin-top:0}
-@media(min-width:700px) and (max-width:1000px){
+#homeMenu .menu-icon{font-size:38px;line-height:1.1;margin:0 0 2px}
+#homeMenu .menu-card strong{font-size:21px;line-height:1.3;white-space:normal;word-break:keep-all}
+#homeMenu .menu-card small{font-size:14px;line-height:1.5;max-width:100%;white-space:normal;word-break:normal}
+@media(min-width:1100px){
+ main{width:min(1120px,calc(100% - 64px))}
+ #homeMenu{gap:20px!important;padding:32px}
+ #homeMenu .menu-card{min-height:175px;padding:22px!important}
+}
+@media(min-width:700px) and (max-width:1099px){
  main{width:calc(100% - 36px)}
- #homeMenu{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:14px!important}
- #homeMenu .menu-card{min-height:145px}
+ #homeMenu{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:14px!important;padding:24px}
+ #homeMenu .menu-card{min-height:150px;padding:18px!important}
 }
 @media(max-width:699px){
  .site-header{padding:24px 15px 34px}
  .site-header h1{font-size:clamp(26px,7vw,34px);line-height:1.18}
  main{width:calc(100% - 20px);margin:-14px auto 26px}
- #homeMenu{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:10px!important;padding:16px;border-radius:18px}
+ #homeMenu{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:10px!important;padding:16px}
  #homeMenu h2{font-size:22px}
  #homeMenu .menu-intro{font-size:14px;line-height:1.5}
- #homeMenu .menu-card{min-height:148px;padding:14px 12px;border-radius:16px;gap:8px}
+ #homeMenu .menu-card{min-height:145px;padding:14px 12px!important;gap:8px}
  #homeMenu .menu-icon{font-size:30px}
- #homeMenu .menu-card strong{font-size:18px;line-height:1.28}
+ #homeMenu .menu-card strong{font-size:18px;line-height:1.3}
  #homeMenu .menu-card small{font-size:13px;line-height:1.4}
 }
 @media(max-width:360px){
