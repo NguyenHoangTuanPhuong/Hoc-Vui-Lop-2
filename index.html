@@ -190,69 +190,60 @@ main>section:not(#homeMenu){display:none}
 .english-note{font-size:.9rem;opacity:.88}
 
 
-/* Giao dien de doc hon tren may tinh va dien thoai */
-:root{--blue:#2457d6;--ink:#18264b;--muted:#52627a;--bg:#f2f6fc;--card:#fff}
-body{font-size:17px;line-height:1.6;background:linear-gradient(180deg,#eef4ff 0,#f8fafc 420px,#f8fafc 100%);color:var(--ink)}
-.site-header,header{padding:34px 24px 48px;text-align:center;background:linear-gradient(120deg,#2457d6 0%,#6545df 55%,#7c3aed 100%)}
-header .logo{font-size:42px;margin-bottom:8px}
-header h1{max-width:900px;margin:0 auto 12px;font-size:clamp(30px,3.6vw,48px);line-height:1.15;letter-spacing:-.025em}
-header p{max-width:760px}
-.school-line{display:inline-block;padding:8px 18px;border:1px solid #ffffff65;border-radius:999px;background:#ffffff12;font-weight:700}
-.motto{font-size:18px}
-main{width:min(1120px,calc(100% - 40px));margin:-22px auto 48px}
-.panel{padding:28px;border:1px solid #e0e9f8;border-radius:24px;box-shadow:0 12px 32px #1e3a8a0c;margin-bottom:22px}
-h2{font-size:clamp(23px,2vw,29px);line-height:1.3;letter-spacing:-.015em}
-.small{color:#53627a;font-size:15px}
-#homeMenu{padding:30px}
-#homeMenu h2{margin-bottom:8px}
-#homeMenu .menu-intro{margin-bottom:20px;font-size:16px}
-.home-subjects{grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;margin-top:18px}
-.home-subjects .subject{min-height:176px;display:flex;flex-direction:column;align-items:flex-start;justify-content:flex-start;gap:12px;padding:22px 20px;border-radius:20px;border-width:2px;box-shadow:0 4px 0 #17255408;text-align:left}
-.home-subjects .subject .emoji{font-size:38px;line-height:1.1}
-.home-subjects .subject strong{display:block;font-size:21px;line-height:1.35;margin-bottom:5px}
-.home-subjects .subject .small{font-size:15px;line-height:1.5}
-.home-subjects .subject:hover{transform:translateY(-3px);box-shadow:0 9px 22px #1e3a8a14}
-.home-subjects .subject:focus-visible,button:focus-visible,select:focus-visible,a:focus-visible{outline:3px solid #f59e0b;outline-offset:3px}
-button,select,input{touch-action:manipulation}
-button{transition:background-color .15s ease,border-color .15s ease,transform .15s ease}
-.controls{gap:10px}
-.chip,button{min-height:44px}
-.question h3{font-size:20px;line-height:1.5}
-.answer{line-height:1.5}
-#semesterExam{padding:26px}
-#semesterExam>h2{font-size:clamp(24px,2.1vw,30px)}
-.exam-intro{padding:18px;gap:16px}
-.exam-intro p{font-size:17px;line-height:1.6}
-.exam-subjects{gap:16px}
-.exam-subjects button{min-height:68px}
-.exam-question{padding:20px;margin:16px 0}
-.exam-question h4{font-size:20px}
-footer{padding:16px 20px 34px}
-@media(min-width:1200px){main{width:min(1120px,calc(100% - 64px))}.panel{padding:30px}}
-@media(max-width:900px){main{width:calc(100% - 28px)}.home-subjects{grid-template-columns:repeat(2,minmax(0,1fr))}.home-subjects .subject{min-height:150px}}
-@media(max-width:560px){
+
+/* Layout fix v2: cân đối màn hình nhỏ, vừa và lớn */
+html{box-sizing:border-box;max-width:100%;overflow-x:hidden}
+*,*::before,*::after{box-sizing:inherit}
+body{margin:0;width:100%;max-width:100%;overflow-x:hidden;font-size:16px;line-height:1.55}
+img,svg,video,canvas{max-width:100%;height:auto}
+button,select,input,textarea{max-width:100%;font:inherit}
+header,.site-header{padding:32px 20px 44px;text-align:center}
+header h1{width:min(100%,900px);margin:0 auto 12px;font-size:clamp(27px,3.2vw,44px);line-height:1.18;overflow-wrap:anywhere}
+header p{max-width:720px;margin-left:auto;margin-right:auto}
+main{width:min(1080px,calc(100% - 32px));margin:-22px auto 42px}
+.panel,#homeMenu,#semesterExam{width:100%;min-width:0;padding:clamp(18px,2.5vw,30px);border-radius:22px}
+#homeMenu h2{font-size:clamp(22px,2.2vw,28px);line-height:1.35;margin:0 0 10px}
+#homeMenu .menu-intro{font-size:16px;margin:0 0 20px;color:#53627a}
+.home-subjects{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;width:100%;margin-top:18px}
+.home-subjects .subject{width:100%;min-width:0;min-height:160px;height:auto;padding:20px 18px;display:flex;flex-direction:column;align-items:flex-start;justify-content:flex-start;gap:10px;text-align:left;border-radius:18px;overflow-wrap:anywhere;word-break:normal}
+.home-subjects .subject .emoji{font-size:34px;line-height:1.1}
+.home-subjects .subject strong{font-size:clamp(17px,1.6vw,21px);line-height:1.3}
+.home-subjects .subject .small{font-size:14px;line-height:1.45;color:#52627a}
+h2{line-height:1.3;overflow-wrap:anywhere}
+p{max-width:100%;overflow-wrap:anywhere}
+button{min-height:44px;white-space:normal;overflow-wrap:anywhere}
+button:focus-visible,select:focus-visible,input:focus-visible,a:focus-visible{outline:3px solid #f59e0b;outline-offset:3px}
+footer{padding:18px 16px 30px;text-align:center}
+@media(min-width:1100px){
+ main{width:min(1080px,calc(100% - 64px))}
+ .home-subjects{gap:18px}
+ .home-subjects .subject{min-height:170px;padding:22px}
+}
+@media(min-width:600px) and (max-width:900px){
+ main{width:calc(100% - 36px)}
+ .home-subjects{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+ .home-subjects .subject{min-height:145px}
+}
+@media(max-width:599px){
  body{font-size:16px}
- header,.site-header{padding:25px 16px 40px}
- header .logo{font-size:34px}
- header h1{font-size:clamp(27px,7vw,34px);line-height:1.18}
- .school-line{border-radius:16px;padding:7px 12px;font-size:14px}
- .motto{font-size:16px}
- main{width:calc(100% - 20px);margin:-16px auto 28px}
- .panel,#homeMenu,#semesterExam{padding:17px;border-radius:20px}
- #homeMenu .menu-intro{margin-bottom:14px}
- .home-subjects{grid-template-columns:1fr 1fr;gap:10px}
- .home-subjects .subject{min-height:148px;padding:15px 13px;gap:9px;border-radius:16px}
- .home-subjects .subject .emoji{font-size:31px}
- .home-subjects .subject strong{font-size:18px}
+ header,.site-header{padding:24px 16px 36px}
+ header h1{font-size:clamp(26px,7vw,34px);line-height:1.17}
+ header .logo{font-size:32px}
+ .school-line{max-width:100%;white-space:normal;border-radius:14px;padding:7px 12px;font-size:14px}
+ .motto{font-size:15px}
+ main{width:calc(100% - 20px);margin:-14px auto 26px}
+ .panel,#homeMenu,#semesterExam{padding:16px;border-radius:18px}
+ #homeMenu h2{font-size:22px;line-height:1.35}
+ #homeMenu .menu-intro{font-size:14px;margin-bottom:16px}
+ .home-subjects{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:14px}
+ .home-subjects .subject{min-height:142px;padding:14px 12px;gap:9px;border-radius:16px}
+ .home-subjects .subject .emoji{font-size:30px}
+ .home-subjects .subject strong{font-size:18px;line-height:1.28}
  .home-subjects .subject .small{font-size:13px;line-height:1.4}
- h2{font-size:22px}
- .exam-intro{padding:12px;gap:10px}
- .exam-intro .mascot{font-size:30px}
- .exam-intro p{font-size:15px}
- .exam-subjects{grid-template-columns:1fr;gap:10px}
- .exam-subjects button{min-height:56px}
- .exam-question{padding:14px}
- .exam-question h4{font-size:18px}
+}
+@media(max-width:360px){
+ .home-subjects{grid-template-columns:1fr}
+ .home-subjects .subject{min-height:unset}
 }
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition:none!important;animation:none!important}}
 
