@@ -399,9 +399,12 @@ main{width:min(1120px,calc(100% - 48px))!important;max-width:1120px!important;ma
 @media(max-width:699px){.reward-panel{padding:15px}.reward-panel h3{font-size:19px}.reward-summary{gap:7px}.reward-stat{padding:10px 6px}.reward-stat strong{font-size:20px}.reward-stat span{font-size:12px}}
 
 
-/* BUOC 3: chuyen man hinh mon hoc, khong cuon xuong duoi trang chu */
-main>section[hidden]{display:none!important}
-main>section:not(#homeMenu){width:100%;max-width:100%;min-width:0;box-sizing:border-box}
+/* NAVIGATION FIX STEP 4: active section fills screen */
+main{display:block}
+main>#homeMenu{width:100%;max-width:100%}
+main>section[aria-hidden="true"]{display:none!important}
+main>section[aria-hidden="false"]{display:block!important}
+main>#homeMenu[aria-hidden="false"]{display:grid!important}
 
 </style>
 </head>
@@ -635,27 +638,31 @@ main>section:not(#homeMenu){width:100%;max-width:100%;min-width:0;box-sizing:bor
 <footer>🌈 Góc học tập của Nguyễn Vũ Trúc Giang · Bố làm tặng con yêu · Không yêu cầu đăng nhập<br><strong>Người sáng tạo: Nguyễn Hoàng Tuấn Phương</strong></footer>
 <script>
 function openMainSection(id){
- const ids=['homeMenu','bookLessons','englishLessons','subjectPicker','quizPanel','result','semesterExam','roadmapPanel','progressPanel','tipsPanel'];
- // Chuyển hẳn sang màn hình được chọn: ẩn các màn hình khác, không để nội dung môn học nối dài bên dưới trang chủ.
- ids.forEach(x=>{
-   const el=document.getElementById(x);
-   if(el) el.style.display='none';
- });
- const target=document.getElementById(id);
- if(target){
-   target.style.display = id==='homeMenu' ? 'grid' : 'block';
-   target.hidden = false;
-   target.setAttribute('aria-hidden','false');
- }
- // Đưa người học lên đầu phần nội dung vừa mở, thay vì phải tự cuộn tìm.
- window.scrollTo({top:0,behavior:'instant'});
- if(target){
-   const heading=target.querySelector('h1,h2,h3');
-   if(heading){
-     if(!heading.hasAttribute('tabindex')) heading.setAttribute('tabindex','-1');
-     try{heading.focus({preventScroll:true});}catch(e){}
-   }
- }
+  const main = document.querySelector("main") || document.body;
+  const known = ["homeMenu","bookLessons","englishLessons","subjectPicker","quizPanel","result","semesterExam","roadmapPanel","progressPanel","tipsPanel","weeklyLearning"];
+  Array.from(main.children).forEach(el => {
+    if (el.tagName === "SECTION" || el.tagName === "DIV") {
+      el.style.setProperty("display","none","important");
+      el.setAttribute("aria-hidden","true");
+    }
+  });
+  known.forEach(key => {
+    const el = document.getElementById(key);
+    if (el) {
+      el.style.setProperty("display","none","important");
+      el.setAttribute("aria-hidden","true");
+    }
+  });
+  const target = document.getElementById(id);
+  if (target) {
+    target.style.setProperty("display", id === "homeMenu" ? "grid" : "block", "important");
+    target.hidden = false;
+    target.setAttribute("aria-hidden","false");
+    target.style.width = "100%";
+    target.style.maxWidth = "100%";
+    target.style.boxSizing = "border-box";
+  }
+  window.scrollTo(0,0);
 }
 function openPracticeView(){
  ['homeMenu','bookLessons','semesterExam','roadmapPanel','progressPanel','tipsPanel','result'].forEach(x=>{const el=document.getElementById(x);if(el)el.style.display='none';});
@@ -2052,6 +2059,30 @@ renderTopics();renderQuiz();renderHistory();renderWeekSelectors();initBookLesson
   });
   paint();
 })();
+</script>
+
+
+<script>
+/* NAVIGATION FIX STEP 4: explicit subject screen navigation */
+document.addEventListener("click", function(event) {
+  const card = event.target.closest("#homeMenu .subject");
+  if (!card) return;
+  const action = card.getAttribute("onclick") || "";
+  if (action.includes("openSubject('math')")) {
+    event.preventDefault();
+    if (typeof openSubject === "function") openSubject("math");
+  } else if (action.includes("openSubject('viet')")) {
+    event.preventDefault();
+    if (typeof openSubject === "function") openSubject("viet");
+  } else if (action.includes("englishLessons")) {
+    event.preventDefault();
+    openMainSection("englishLessons");
+    if (typeof initEnglishLessons === "function") initEnglishLessons();
+  } else if (action.includes("tipsPanel")) {
+    event.preventDefault();
+    openMainSection("tipsPanel");
+  }
+}, true);
 </script>
 
 </body>
