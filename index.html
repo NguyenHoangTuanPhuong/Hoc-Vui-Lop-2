@@ -1095,6 +1095,8 @@ function pickSemesterExam(which,count=10){
 let activeExamSubject = null;
 let examSubmitted = false;
 function startSemesterExam(which){
+ // Luôn mở khu vực đề thi trước khi dựng câu hỏi; trước đây hàm chỉ tạo câu hỏi trong một panel đang bị ẩn.
+ openMainSection("semesterExam");
  activeExamSubject=which; examSubmitted=false;
  const isMath=which==="math";
  document.getElementById("examMathBtn").className=isMath?"primary":"secondary";
