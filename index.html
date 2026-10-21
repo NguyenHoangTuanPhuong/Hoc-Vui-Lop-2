@@ -634,7 +634,7 @@ function makeDynamicMathQuestion(topicIndex){
   let q,a,c,e,x,y;
   if(topicIndex===0){
     const n=rnd(10,99), type=rnd(0,3);
-    if(type===0){q=`Số liền sau của ${n} là số nào?`;c=(n===99?99:n+1);a=[String(Math.max(0,c-2)),String(c),String(Math.min(100,c+10)),String(Math.max(0,c-1))];e=`Số liền sau của ${n} là ${c}.`;}
+    if(type===0){q=`Số liền sau của ${n} là số nào?`;c=n+1;a=[String(Math.max(0,c-2)),String(c),String(Math.min(100,c+10)),String(Math.max(0,c-1))];e=`Số liền sau của ${n} là ${c}.`;}
     else if(type===1){q=`Số liền trước của ${n} là số nào?`;c=n-1;a=[String(c+1),String(c),String(Math.max(0,c-10)),String(c+2)];e=`Số liền trước của ${n} là ${c}.`;}
     else if(type===2){const tens=rnd(1,9),ones=rnd(0,9);q=`Số gồm ${tens} chục và ${ones} đơn vị là số nào?`;c=tens*10+ones;a=[String(ones*10+tens),String(c),String(tens*10),String(c+1)];e=`${tens} chục là ${tens*10}; thêm ${ones} đơn vị được ${c}.`;}
     else {x=rnd(10,89);y=rnd(10,99);q=`Điền dấu thích hợp: ${x} ☐ ${y}`;c=x<y?"<":x>y?">":"=";a=[">","<","=","+" ];e=`${x} ${x<y?"nhỏ hơn":x>y?"lớn hơn":"bằng"} ${y}.`;}
@@ -666,11 +666,22 @@ function makeDynamicMathQuestion(topicIndex){
     a=[String(c),String(c+2),String(Math.max(0,c-2)),String(c+5)];
   }
   // Make answer choices unique, preserving the correct answer at its original index.
-  const correct=String(c), vals=[...new Set(a.map(String))];
-  while(vals.length<4) vals.push(String(Number(vals[vals.length-1]||0)+7));
-  const correctIndex=vals.indexOf(correct);
+  const correct=String(c), vals=[...new Set(a.map(v=>String(v).trim()))];
+  // Nếu các phương án bị trùng, tạo phương án nhiễu mới và giữ đơn vị (cm, giờ, phút...).
+  const correctOption=vals.find(v=>v===correct || v.startsWith(correct+" "))||correct;
+  const unitMatch=correctOption.match(/^[-]?\d+(\s+.*)?$/);
+  const unit=unitMatch&&unitMatch[1]?unitMatch[1]:"";
+  let offset=1;
+  while(vals.length<4){
+    const candidate=Number(c)+offset*3;
+    const fallback=Number.isFinite(candidate)?String(candidate)+unit:"Phương án khác "+offset;
+    if(!vals.includes(fallback)) vals.push(fallback);
+    offset++;
+  }
+  // Đáp án có thể kèm đơn vị như “33 cm”, “2 giờ”; tìm theo giá trị và giữ nguyên đơn vị.
+  const correctValue=vals.find(v=>v===correct || v.startsWith(correct+" "));
   const shuffled=shuffleArray(vals.slice(0,4));
-  return {q,a:shuffled,c:shuffled.indexOf(correct),e};
+  return {q,a:shuffled,c:correctValue===undefined?-1:shuffled.indexOf(correctValue),e};
 }
 
 function createVietLessonQuestions(id,count){
@@ -782,7 +793,7 @@ function renderQuiz(generate=false){
     pool=shuffleArray(pool);
   }
   currentQuestions=pool.slice(0,Math.min(count,pool.length));
-  if(generate){document.getElementById("generationNote").textContent=subject==="math"?"Đề mới gồm câu hỏi trong ngân hàng và câu hỏi Toán được tạo theo mẫu với số liệu thay đổi. Hãy kiểm tra phép tính và lời giải sau khi nộp bài.":"Đề mới được tạo ngẫu nhiên từ ngân hàng câu hỏi và các mẫu biến thể tự biên soạn theo chủ điểm. Mỗi lượt có thể khác câu hỏi và thứ tự đáp án.";}
+  if(generate){document.getElementById("generationNote").textContent=subject==="math"?"Đề mới gồm câu hỏi trong ngân hàng và câu hỏi Toán được tạo theo mẫu với số liệu thay đổi. Mỗi câu có lời giải ngắn để em hiểu cách làm sau khi nộp bài.":"Đề mới được tạo ngẫu nhiên từ ngân hàng câu hỏi và các mẫu biến thể tự biên soạn theo chủ điểm. Mỗi lượt có thể khác câu hỏi và thứ tự đáp án.";}
   currentQuestions.forEach((q,i)=>{
     const section=document.createElement("div");section.className="question";
     const h=document.createElement("h3");h.textContent=`Câu ${i+1}. ${q.q}`;section.appendChild(h);
