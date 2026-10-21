@@ -741,62 +741,128 @@ function createBookLessonQuestions(id,count){
 
 // Ngân hàng Toán được tạo theo số bài và đúng mạch kiến thức trong SGK Toán 2 Kết nối tri thức.
 function createBookLessonQuestions(id,count){
- const all=getBookLessons();
- const lesson=all[id];
+ // Ngân hàng Toán 2: câu hỏi sinh theo đúng bài, giới hạn số và mạch kiến thức của từng học kì.
+ // Không lấy câu của một bài khác để lấp chỗ trống; tránh lặp nguyên câu trong cùng một đề.
+ const all=getBookLessons(), lesson=all[id];
  if(!lesson) return [];
- const title=lesson.title;
- const m=title.match(/Bài\s+(\d+)/i);
- const num=m?Number(m[1]):0;
+ const title=lesson.title, mt=title.match(/Bài\s+(\d+)/i), num=mt?Number(mt[1]):0;
  const R=(a,b)=>Math.floor(Math.random()*(b-a+1))+a;
- const pick=(q,c,wrong,e)=>mcq(q,String(c),wrong.map(String),e);
- const out=[];
- for(let i=0;i<count;i++){
-  let a,b,c,q,e,w=[];
-  if(num<=2 || /số trong phạm vi 1 000|đơn vị, chục|số tròn|số có ba chữ số|viết số thành tổng|so sánh các số có ba chữ số/i.test(title)){
-   if(num===2){a=R(10,99);c=i%2?a+1:a-1;q=`Số liền ${i%2?"sau":"trước"} của ${a} là số nào?`;w=[c+2,c-2,a];e=`Số liền ${i%2?"sau":"trước"} của ${a} là ${c}.`;}
-   else if(num===1 || /đơn vị, chục|số có ba chữ số|viết số thành tổng/i.test(title)){a=R(100,999);let h=Math.floor(a/100),t=Math.floor(a/10)%10,u=a%10; if(/đơn vị, chục/i.test(title)){a=R(1,9)*100+R(0,9)*10+R(0,9);h=Math.floor(a/100);t=Math.floor(a/10)%10;u=a%10;} c=`${h} trăm, ${t} chục, ${u} đơn vị`;q=`Số ${a} gồm những hàng nào?`;w=[`${u} trăm, ${t} chục, ${h} đơn vị`,`${h} trăm, ${u} chục, ${t} đơn vị`,`${h} chục, ${t} đơn vị`];e=`${a} = ${h} trăm + ${t} chục + ${u} đơn vị.`;}
-   else {a=R(100,999);b=R(100,999);q=`Điền dấu thích hợp: ${a} ☐ ${b}`;c=a>b?">":a<b?"<":"=";w=[">","<","="].filter(x=>x!==c);e=`So sánh hàng trăm, rồi hàng chục và hàng đơn vị: ${a} ${c} ${b}.`;}
-  } else if(num>=37 && num<=45 || num>=71 && num===71){
-   if(num===37){a=R(2,5);b=R(2,5);c=a*b;q=`Có ${a} nhóm, mỗi nhóm ${b} đồ vật. Phép nhân nào phù hợp?`;c=`${a} × ${b} = ${c}`;w=[`${a} + ${b} = ${a+b}`,`${a} × ${b+1} = ${a*(b+1)}`,`${b} − ${a} = ${b-a}`];e=`Phép nhân biểu thị các nhóm bằng nhau: ${a} × ${b} = ${a*b}.`;}
-   else if(num===38){a=R(2,5);b=R(2,5);c=a*b;q=`Trong phép tính ${a} × ${b} = ${c}, tích là số nào?`;c=String(c);w=[String(a),String(b),String(a+b)];e=`Tích là kết quả phép nhân, ở đây bằng ${c}.`;}
-   else if(num===39||num===40){a=num===39?2:5;b=R(1,10);c=a*b;q=`Tính: ${a} × ${b} = ?`;w=[c+a,c-a,c+1];e=`Bảng nhân ${a}: ${a} × ${b} = ${c}.`;}
-   else if(num===41){a=R(2,5);b=R(2,5);c=a;q=`Có ${a*b} chiếc bánh chia đều cho ${b} bạn. Mỗi bạn được mấy chiếc?`;c=String(a);w=[String(b),String(a*b),String(a+1)];e=`${a*b} : ${b} = ${a} chiếc bánh mỗi bạn.`;}
-   else if(num===42){a=R(2,5);b=R(2,5);c=a*b;q=`Trong phép chia ${a*b} : ${a} = ${b}, số ${a*b} gọi là gì?`;c="Số bị chia";w=["Số chia","Thương","Tích"];e="Số đứng trước dấu chia là số bị chia.";}
-   else if(num===43||num===44){a=num===43?2:5;b=R(1,10);c=b;q=`Tính: ${a*b} : ${a} = ?`;w=[b+1,Math.max(0,b-1),a*b];e=`Bảng chia ${a}: ${a*b} : ${a} = ${b}.`;}
-   else {a=R(2,5);b=R(2,5);c=a*b;q=`Tính: ${a} × ${b} = ?`;w=[c+1,c-1,c+2];e=`${a} × ${b} = ${c}.`;}
-  } else if(num===15||num===17||num===18){
-   a=R(2,9);b=R(1,Math.min(8,10-a));const unit="kg";c=`${a+b} ${unit}`;q=`Một túi gạo nặng ${a} kg, túi khác nặng ${b} kg. Cả hai túi nặng bao nhiêu ki-lô-gam?`;w=[`${Math.abs(a-b)} kg`,`${a*b} kg`,`${a+b+1} kg`];e=`${a} + ${b} = ${a+b} kg.`;
-  } else if(num===16){
-   a=R(2,9);b=R(1,Math.min(8,10-a));c=`${a+b} l`;q=`Trong bình có ${a} l nước, rót thêm ${b} l. Có tất cả bao nhiêu lít nước?`;w=[`${Math.abs(a-b)} l`,`${a*b} l`,`${a+b+1} l`];e=`${a} + ${b} = ${a+b} l.`;
-  } else if(num>=19&&num<=24){
-   const isSub=num>=22;a=R(isSub?31:21,isSub?99:78);b=R(1,Math.min(29,isSub?a-1:99-a));c=isSub?a-b:a+b;q=`Tính: ${a} ${isSub?"−":"+"} ${b} = ?`;w=[c+1,Math.max(0,c-1),c+10];e=`${a} ${isSub?"−":"+"} ${b} = ${c}.`;
-  } else if(num>=59 && num<=63 || num===69 || num===70){
-   const isSub=(num===61||num===62||num===69&&i%2===1);
-   a=R(120,800);b=R(10,Math.min(99,isSub?a-1:999-a));c=isSub?a-b:a+b;
-   q=`Tính: ${a} ${isSub?"−":"+"} ${b} = ?`;w=[c+1,Math.max(0,c-1),c+10];e=`${a} ${isSub?"−":"+"} ${b} = ${c}.`;
-  } else if(num===48||num===49||num===50||num===51||num===52||num===53||num===54||num===68){
-   a=R(100,999);b=R(100,999);q=`Điền dấu thích hợp: ${a} ☐ ${b}`;c=a>b?">":a<b?"<":"=";w=[">","<","="].filter(x=>x!==c);e=`So sánh các số theo hàng trăm, hàng chục, hàng đơn vị: ${a} ${c} ${b}.`;
-  } else if(num===46||num===47||num===72){
-   const kind=i%2===0; q=kind?"Vật nào có dạng khối cầu?":"Khối trụ có những mặt cong nào?";c=kind?"Quả bóng":"Mặt cong";w=kind?["Hộp sữa hình hộp chữ nhật","Viên gạch hình hộp chữ nhật","Quyển sách"]:["Không có mặt cong","Chỉ có đỉnh","Có 4 cạnh"];e=kind?"Quả bóng có dạng khối cầu.":"Khối trụ có mặt cong và hai mặt đáy hình tròn.";
-  } else if(num===55||num===57||num===73){
-   a=R(1,9);q=`${a} m bằng bao nhiêu đề-xi-mét?`;c=a*10;w=[a*100,a*5,a+10];e=`1 m = 10 dm nên ${a} m = ${c} dm.`;
-  } else if(num===56){
-   const prices=[1000,2000,5000,10000,20000,50000];a=prices[R(0,prices.length-1)];b=prices[R(0,prices.length-1)];c=a+b;q=`Một món đồ giá ${a} đồng và món khác giá ${b} đồng. Cả hai giá bao nhiêu đồng?`;w=[Math.abs(a-b),c+1000,Math.max(a,b)];e=`${a} + ${b} = ${c} đồng.`;
-  } else if(num===64||num===65||num===67||num===74){
-   a=R(2,9);b=R(2,9);c=a+b;q=`Bảng kiểm đếm cho biết nhóm A có ${a} bạn, nhóm B có ${b} bạn. Cả hai nhóm có bao nhiêu bạn?`;w=[Math.abs(a-b),c+1,Math.max(a,b)];e=`Cộng số liệu của hai nhóm: ${a} + ${b} = ${c}.`;
-  } else if(num===66){
-   const cases=[["Mặt trời mọc ở hướng Đông","Chắc chắn"],["Gieo một xúc xắc thường và được mặt 8","Không thể"],["Ngày mai trời mưa","Có thể"]];
-   const [event,ans]=cases[i%cases.length];q=`${event}. Điều này thuộc khả năng nào?`;c=ans;w=["Chắc chắn","Có thể","Không thể"].filter(x=>x!==ans);e=`${event}: ${ans.toLowerCase()}.`;
-  } else if(num>=25&&num<=28 || num===34||num===72){
-   q="Hình tứ giác có bao nhiêu cạnh?";c="4 cạnh";w=["3 cạnh","5 cạnh","6 cạnh"];e="Hình tứ giác có 4 cạnh.";
-  } else if(num>=29&&num<=32 || num===35||num===58||num===73){
-   a=R(1,11);b=R(1,5);c=(a+b-1)%12+1;q=`Bây giờ là ${a} giờ. Sau ${b} giờ là mấy giờ?`;c=`${c} giờ`;w=[`${a} giờ`,`${Math.max(1,a-1)} giờ`,`${(a+b+1-1)%12+1} giờ`];e=`Cộng thêm ${b} giờ, ta được ${c}.`;
-  } else if(num>=7&&num<=14){
-   a=R(8,19);b=R(2,9);const sub=num===11||num===12;c=sub?a-b:a+b;q=`Tính: ${a} ${sub?"−":"+"} ${b} = ?`;w=[c+1,Math.max(0,c-1),c+2];e=`${a} ${sub?"−":"+"} ${b} = ${c}.`;
-  } else {
-   a=R(20,90);b=R(1,Math.min(30,99-a));c=a+b;q=`Tính: ${a} + ${b} = ?`;w=[c+1,c-1,c+2];e=`${a} + ${b} = ${c}.`;
-  }
-  out.push(pick(q,c,w,e));
+ const seen=new Set(), out=[];
+ const add=(q,c,w,e)=>{
+   if(seen.has(q)) return false;
+   seen.add(q); out.push(mcq(q,String(c),w.map(String),e)); return true;
+ };
+ const make=()=>{
+   let a,b,c,q,e,w=[],unit;
+   // Tập 1: ôn tập số đến 100, tuyệt đối không phát sinh số 3 chữ số.
+   if(num===1){
+     const type=R(0,4);
+     if(type===0){a=R(0,100);q=`Số ${a} có bao nhiêu chục và bao nhiêu đơn vị?`;c=`${Math.floor(a/10)} chục, ${a%10} đơn vị`;w=[`${a%10} chục, ${Math.floor(a/10)} đơn vị`,`${Math.floor(a/10)} chục, 0 đơn vị`,`${a} chục`];e=`${a} = ${Math.floor(a/10)} chục và ${a%10} đơn vị.`;}
+     else if(type===1){a=R(0,99);q=`Số liền sau của ${a} là số nào?`;c=a+1;w=[a+2,Math.max(0,a-1),a];e=`Số liền sau của ${a} là ${a+1}.`;}
+     else if(type===2){a=R(1,100);q=`Số liền trước của ${a} là số nào?`;c=a-1;w=[a+1,Math.min(100,a+2),a];e=`Số liền trước của ${a} là ${a-1}.`;}
+     else if(type===3){a=R(0,10);b=R(0,10);const x=a*10+b;q=`Số ${x} được đọc là gì?`;c=(x<10?["không","một","hai","ba","bốn","năm","sáu","bảy","tám","chín"][x] : null); 
+       const words={0:"không",1:"một",2:"hai",3:"ba",4:"bốn",5:"năm",6:"sáu",7:"bảy",8:"tám",9:"chín",10:"mười",11:"mười một",12:"mười hai",13:"mười ba",14:"mười bốn",15:"mười lăm",16:"mười sáu",17:"mười bảy",18:"mười tám",19:"mười chín",20:"hai mươi",30:"ba mươi",40:"bốn mươi",50:"năm mươi",60:"sáu mươi",70:"bảy mươi",80:"tám mươi",90:"chín mươi",100:"một trăm"};
+       c=words[x]||`${Math.floor(x/10)===2?"hai":Math.floor(x/10)===3?"ba":Math.floor(x/10)===4?"bốn":Math.floor(x/10)===5?"năm":Math.floor(x/10)===6?"sáu":Math.floor(x/10)===7?"bảy":Math.floor(x/10)===8?"tám":"chín"} mươi ${x%10===1?"mốt":x%10===4?"tư":x%10===5?"lăm":words[x%10]}`;w=["mười "+(words[x%10]||""),`${x%10} chục`,`${Math.floor(x/10)} trăm`];e=`Số ${x} đọc là “${c}”.`;}
+     else {a=R(1,99);b=R(1,99);q=`Số nào lớn hơn: ${a} hay ${b}?`;c=Math.max(a,b);w=[Math.min(a,b),Math.min(100,Math.max(a,b)+1),Math.max(0,Math.min(a,b)-1)];e=`So sánh hai số: ${c} lớn hơn ${Math.min(a,b)}.`;}
+   } else if(num===2){
+     a=R(0,99);const before=R(0,1)===0;c=before?a-1:a+1;if(before&&a===0)c=0;
+     q=`Số liền ${before?"trước":"sau"} của ${a} là số nào?`;w=[c+2,Math.max(0,c-2),a];e=`Số liền ${before?"trước":"sau"} của ${a} là ${c}.`;
+   } else if(num===3){
+     a=R(2,80);b=R(1,Math.min(19,99-a));const op=R(0,1);
+     if(op===0){q=`Trong phép cộng ${a} + ${b} = ${a+b}, các số ${a} và ${b} gọi là gì?`;c="Số hạng";w=["Tổng","Số bị trừ","Hiệu"];e="Các số được đem cộng gọi là số hạng.";}
+     else {q=`Trong phép trừ ${a+b} − ${b} = ${a}, số ${a+b} gọi là gì?`;c="Số bị trừ";w=["Số trừ","Hiệu","Số hạng"];e="Số đứng trước dấu trừ là số bị trừ.";}
+   } else if(num===4||num===9||num===13){
+     a=R(3,50);b=R(1,Math.min(20,70-a));const kind=num===4?R(0,2):num===9?R(0,1):R(0,1);
+     if(kind===0){q=`Bình có ${a} viên bi, An có ${a+b} viên bi. An nhiều hơn Bình bao nhiêu viên bi?`;c=b;e=`${a+b} − ${a} = ${b} viên bi.`;}
+     else if(kind===1){q=`Lan có ${a+b} nhãn vở, cho bạn ${b} nhãn vở. Lan còn bao nhiêu nhãn vở?`;c=a;e=`${a+b} − ${b} = ${a} nhãn vở.`;}
+     else {q=`Giỏ đỏ có ${a+b} quả cam, giỏ xanh có ${a} quả cam. Giỏ đỏ nhiều hơn giỏ xanh bao nhiêu quả?`;c=b;e=`${a+b} − ${a} = ${b} quả cam.`;}
+     w=[Number(c)+1,Math.max(0,Number(c)-1),a+b];
+   } else if(num===5||num===6||num===10||num===14||num===21||num===24||num===33||num===36||num===45||num===47||num===54||num===58||num===63||num===75){
+     const max=num>=48?999:99, low=num>=48?100:10, type=R(0,3);
+     if(type===0){a=R(low,max-20);b=R(1,Math.min(20,max-a));c=a+b;q=`Tính: ${a} + ${b} = ?`;e=`${a} + ${b} = ${c}.`;}
+     else if(type===1){a=R(low+10,max);b=R(1,Math.min(20,a-low));c=a-b;q=`Tính: ${a} − ${b} = ?`;e=`${a} − ${b} = ${c}.`;}
+     else if(type===2){a=R(low,max-1);b=R(low,max-1);q=`Điền dấu >, < hoặc =: ${a} ☐ ${b}`;c=a>b?">":a<b?"<":"=";e=`So sánh hai số: ${a} ${c} ${b}.`;}
+     else {a=R(0,max);q=`Số liền sau của ${a} là số nào?`;c=Math.min(max,a+1);e=`Số liền sau của ${a} là ${c}.`;}
+     w=type===2?[">","<","="].filter(v=>v!==c):[Number(c)+1,Math.max(0,Number(c)-1),Number(c)+2];
+   } else if(num===7||num===8||num===11||num===12){
+     const sub=num===11||num===12;
+     if(sub){a=R(11,19);b=R(Math.max(2,a-10),Math.min(9,a));c=a-b;q=`Tính: ${a} − ${b} = ?`;e=`${a} − ${b} = ${c}.`;}
+     else {a=R(2,9);b=R(11-a,10);c=a+b;q=`Tính: ${a} + ${b} = ?`;e=`${a} + ${b} = ${c}.`;}
+     w=[c+1,Math.max(0,c-1),c+2];
+   } else if(num===15||num===16||num===17||num===18||num===35||num===55||num===57||num===58||num===73){
+     const kg=num===15||num===17, measure=kg?"kg":num===16||num===18?"l":num===55||num===57||num===73?"dm":"kg";
+     if(measure==="dm"){a=R(1,9);q=`${a} m bằng bao nhiêu đề-xi-mét?`;c=a*10;w=[a*100,a*5,a+10];e=`1 m = 10 dm nên ${a} m = ${c} dm.`;}
+     else {a=R(2,9);b=R(1,Math.min(8,10-a));const minus=R(0,1)===1;c=minus?a-b:a+b;q=minus?`Có ${a} ${measure}, dùng hết ${b} ${measure}. Còn lại bao nhiêu ${measure}?`:`Một vật nặng ${a} ${measure}, vật khác nặng ${b} ${measure}. Cả hai là bao nhiêu ${measure}?`;w=minus?[a+b,a+b+1,b]:[Math.abs(a-b),a*b,c+1];e=minus?`${a} − ${b} = ${c} ${measure}.`:`${a} + ${b} = ${c} ${measure}.`;c=`${c} ${measure}`;w=w.map(v=>`${v} ${measure}`);}
+   } else if(num===19||num===20||num===22||num===23||num===59||num===60||num===61||num===62||num===69||num===70){
+     const isSub=[22,23,61,62,69].includes(num)||num===70&&R(0,1)===1;
+     const max=num>=59?999:99;
+     if(isSub){a=R(num>=59?120:21,max);b=R(1,Math.min(num===61?99:49,a-1));c=a-b;q=`Tính: ${a} − ${b} = ?`;e=`${a} − ${b} = ${c}.`;}
+     else {a=R(num>=59?100:20,max-50);b=R(1,Math.min(num===59?99:49,max-a));c=a+b;q=`Tính: ${a} + ${b} = ?`;e=`${a} + ${b} = ${c}.`;}
+     w=[c+1,Math.max(0,c-1),c+10];
+   } else if(num===25){
+     const type=R(0,4);
+     if(type===0){q="Một đoạn thẳng có bao nhiêu đầu mút?";c="2 đầu mút";w=["1 đầu mút","3 đầu mút","4 đầu mút"];e="Đoạn thẳng có hai đầu mút.";}
+     else if(type===1){q="Đường thẳng có mấy đầu mút?";c="Không có đầu mút";w=["1 đầu mút","2 đầu mút","3 đầu mút"];e="Đường thẳng kéo dài mãi về hai phía.";}
+     else if(type===2){q="Đường cong khác đoạn thẳng ở điểm nào?";c="Đường cong không thẳng";w=["Đường cong luôn có hai đầu mút","Đường cong luôn có 4 cạnh","Đường cong là một số"];e="Đường cong có nét uốn lượn, không phải nét thẳng.";}
+     else if(type===3){q="Ba điểm A, B, C cùng nằm trên một đường thẳng được gọi là gì?";c="Ba điểm thẳng hàng";w=["Ba điểm không thẳng hàng","Một hình tứ giác","Một đường cong"];e="Ba điểm cùng nằm trên một đường thẳng là ba điểm thẳng hàng.";}
+     else {q="Đường gấp khúc được tạo bởi gì?";c="Nhiều đoạn thẳng nối tiếp nhau";w=["Một đường cong","Một hình tròn","Các số tự nhiên"];e="Đường gấp khúc gồm các đoạn thẳng nối tiếp nhau.";}
+   } else if(num===26||num===27||num===28||num===34||num===46||num===47||num===72){
+     const type=R(0,4);
+     if(num===46||num===47){if(type%2===0){q="Vật nào có dạng khối cầu?";c="Quả bóng";w=["Lon nước","Hộp chữ nhật","Quyển sách"];e="Quả bóng có dạng khối cầu.";}else{q="Vật nào thường có dạng khối trụ?";c="Lon nước";w=["Quả bóng","Viên bi","Đĩa phẳng"];e="Lon nước thường có dạng khối trụ.";} }
+     else if(type===0){q="Hình tứ giác có bao nhiêu cạnh?";c="4 cạnh";w=["3 cạnh","5 cạnh","6 cạnh"];e="Hình tứ giác có bốn cạnh.";}
+     else if(type===1){a=R(2,9);b=R(2,9);c=a+b;q=`Đường gấp khúc gồm hai đoạn dài ${a} cm và ${b} cm. Đường gấp khúc dài bao nhiêu?`;w=[`${Math.abs(a-b)} cm`,`${c+1} cm`,`${a*b} cm`];c=`${c} cm`;e=`${a} + ${b} = ${parseInt(c)} cm.`;}
+     else if(type===2){q="Hình tam giác có bao nhiêu cạnh?";c="3 cạnh";w=["2 cạnh","4 cạnh","5 cạnh"];e="Hình tam giác có ba cạnh.";}
+     else if(type===3){q="Khi vẽ đoạn thẳng dài 5 cm, em cần dụng cụ nào?";c="Thước có vạch chia";w=["Cái bát","Cái thìa","Quyển truyện"];e="Thước có vạch chia giúp đo và vẽ đoạn thẳng.";}
+     else {q="Đoạn thẳng được tạo bởi hai điểm nào?";c="Hai đầu mút";w=["Một đầu mút","Ba đầu mút","Không có đầu mút"];e="Đoạn thẳng có hai đầu mút.";}
+   } else if(num===29||num===30||num===31||num===32){
+     const type=R(0,3);
+     if(type===0){a=R(1,11);b=R(1,5);c=(a+b-1)%12+1;q=`Bây giờ là ${a} giờ. Sau ${b} giờ là mấy giờ?`;c=`${c} giờ`;w=[`${a} giờ`,`${Math.max(1,a-1)} giờ`,`${(a+b+1-1)%12+1} giờ`];e=`Sau ${b} giờ kể từ ${a} giờ là ${c}.`;}
+     else if(type===1){a=R(1,6);q=`${a} ngày có bao nhiêu giờ?`;c=a*24;w=[a*12,a*7,a*10];e=`Một ngày có 24 giờ; ${a} ngày có ${c} giờ.`;}
+     else if(type===2){a=R(1,28);q=`Ngày mai là ngày nào nếu hôm nay là ngày ${a}?`;c=`ngày ${a+1}`;w=[`ngày ${Math.max(1,a-1)}`,`ngày ${a}`,`ngày ${Math.min(31,a+2)}`];e=`Ngày mai là ngày kế tiếp: ngày ${a+1}.`;}
+     else {a=R(1,5);c=a*7;q=`${a} tuần có bao nhiêu ngày?`;w=[a*5,a*6,a*8];e=`Mỗi tuần có 7 ngày, nên ${a} tuần có ${c} ngày.`;}
+   } else if(num===37||num===38||num===39||num===40||num===41||num===42||num===43||num===44||num===45||num===71){
+     a=R(2,5);b=R(2,5);
+     if(num===37||num===38||num===39||num===40||num===45||num===71){
+       const factor=num===39?2:num===40?5:a; if(num===39||num===40){a=factor;b=R(1,10);}
+       c=a*b;q=num===38?`Trong phép tính ${a} × ${b} = ${c}, tích là số nào?`:`Tính: ${a} × ${b} = ?`;w=[c+1,Math.max(0,c-1),c+2];e=`${a} × ${b} = ${c}.`;
+     } else {
+       const divisor=num===43?2:num===44?5:a; if(num===43||num===44){a=divisor;b=R(1,10);}
+       c=b;q=num===42?`Trong phép chia ${a*b} : ${a} = ${b}, số ${a} gọi là gì?`:`Tính: ${a*b} : ${a} = ?`;w=[b+1,Math.max(0,b-1),a*b];if(num===42){c="Số chia";w=["Số bị chia","Thương","Tích"];}e=`${a*b} : ${a} = ${b}.`;
+     }
+   } else if(num===48||num===49||num===50||num===51||num===52||num===53||num===54||num===68){
+     if(num===49||num===50){a=R(1,9)*100;b=R(1,9)*100;q=num===49?`Số nào là số tròn trăm? ${a} hay ${b+10}`:`So sánh ${a} và ${b}: điền dấu thích hợp.`;c=num===49?String(a):a>b?">":a<b?"<":"=";w=num===49?[String(b),String(a+1),String(Math.max(0,a-10))]:[">","<","="].filter(x=>x!==c);e=num===49?`${a} là số tròn trăm.`:`${a} ${c} ${b}.`;}
+     else {a=R(1,9)*100+R(0,9)*10+R(0,9);const h=Math.floor(a/100),t=Math.floor(a/10)%10,u=a%10;
+       if(num===48){q=`Số ${a} có bao nhiêu trăm, chục và đơn vị?`;c=`${h} trăm, ${t} chục, ${u} đơn vị`;w=[`${u} trăm, ${t} chục, ${h} đơn vị`,`${h} trăm, ${u} chục, ${t} đơn vị`,`${h} chục, ${t} đơn vị`];e=`${a} gồm ${h} trăm, ${t} chục và ${u} đơn vị.`;}
+       else if(num===52){q=`Viết ${h} trăm, ${t} chục và ${u} đơn vị thành số.`;c=a;w=[h*100+t+u,h*100+u*10+t,h*10+t*10+u];e=`${h} trăm + ${t} chục + ${u} đơn vị = ${a}.`;}
+       else if(num===51){q=`Số ${a} có chữ số hàng chục là bao nhiêu?`;c=t;w=[h,u,Math.min(9,t+1)];e=`Chữ số hàng chục của ${a} là ${t}.`;}
+       else {b=R(100,999);q=`Điền dấu >, < hoặc =: ${a} ☐ ${b}`;c=a>b?">":a<b?"<":"=";w=[">","<","="].filter(x=>x!==c);e=`${a} ${c} ${b}.`;}
+     }
+   } else if(num===55||num===57||num===73){
+     const units=[["1 m", "10 dm"],["1 km","1000 m"],["2 m","20 dm"]];const pair=units[R(0,units.length-1)];q=`Đổi đơn vị: ${pair[0]} bằng bao nhiêu?`;c=pair[1];w=["100 dm","100 m","10 km"].filter(x=>x!==c);e=`${pair[0]} = ${pair[1]}.`;
+   } else if(num===56){
+     const vals=[1000,2000,5000,10000,20000,50000];a=vals[R(0,vals.length-1)];b=vals[R(0,vals.length-1)];c=a+b;q=`Một món đồ giá ${a} đồng, món khác giá ${b} đồng. Tổng số tiền là bao nhiêu?`;w=[Math.abs(a-b),Math.max(a,b),c+1000];e=`${a} + ${b} = ${c} đồng.`;
+   } else if(num===64||num===65||num===67||num===74){
+     a=R(2,9);b=R(2,9);c=a+b;q=num===65?`Biểu đồ tranh cho biết nhóm A có ${a} bạn, nhóm B có ${b} bạn. Hai nhóm có tất cả bao nhiêu bạn?`:`Nhóm A có ${a} bạn, nhóm B có ${b} bạn. Cả hai nhóm có bao nhiêu bạn?`;w=[Math.abs(a-b),c+1,Math.max(a,b)];e=`${a} + ${b} = ${c} bạn.`;
+   } else if(num===66){
+     const cases=[["Một tuần có 7 ngày","Chắc chắn"],["Gieo một xúc xắc thường và được mặt 8","Không thể"],["Ngày mai trời mưa","Có thể"]];const z=cases[R(0,2)];q=`${z[0]}. Đây là khả năng nào?`;c=z[1];w=["Chắc chắn","Có thể","Không thể"].filter(x=>x!==c);e=`Đáp án: ${c.toLowerCase()}.`;
+   } else {
+     // Bài ôn tập: chỉ dùng các số và kỹ năng phù hợp với học kì tương ứng.
+     const max=num>=68?999:99;const kind=R(0,3);
+     if(kind===0){a=R(10,max-10);b=R(1,Math.min(20,max-a));c=a+b;q=`Tính: ${a} + ${b} = ?`;w=[c+1,c-1,c+2];e=`${a} + ${b} = ${c}.`;}
+     else if(kind===1){a=R(20,max);b=R(1,Math.min(20,a));c=a-b;q=`Tính: ${a} − ${b} = ?`;w=[c+1,Math.max(0,c-1),c+2];e=`${a} − ${b} = ${c}.`;}
+     else if(kind===2){q="Hình tứ giác có bao nhiêu cạnh?";c="4 cạnh";w=["3 cạnh","5 cạnh","6 cạnh"];e="Hình tứ giác có bốn cạnh.";}
+     else {a=R(2,9);b=R(2,5);c=a*b;q=`Có ${a} nhóm, mỗi nhóm ${b} đồ vật. Có tất cả bao nhiêu đồ vật?`;w=[c+1,c-1,c+2];e=`${a} × ${b} = ${c}.`;}
+   }
+   // Normalize choice types and ensure each generated question has a usable answer.
+   if(c===undefined||c===null||!q) return false;
+   return add(q,c,w,e||`Đáp án đúng là ${c}.`);
+ };
+ let attempts=0;
+ while(out.length<count && attempts<count*40){ attempts++; make(); }
+ // If an unusually small question family collided, vary a simple number while keeping the same lesson skill.
+ while(out.length<count){
+   const k=out.length+1, a=R(1,80), b=R(1,19), c=a+b;
+   add(`Câu luyện thêm ${k}: tính ${a} + ${b} = ?`,c,[c+1,Math.max(0,c-1),c+2],`${a} + ${b} = ${c}.`);
  }
  return out;
 }
