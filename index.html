@@ -327,16 +327,12 @@ main>section:not(#homeMenu){display:none}
 
 <section class="panel" id="semesterExam">
   <button class="back-home" type="button" onclick="openMainSection('homeMenu')">🏠 Về trang chủ</button>
-  <h2>🌟 Câu hỏi tổng hợp & đề thi học kì</h2>
-  <div class="exam-intro"><span class="mascot" aria-hidden="true">🦉</span><p><strong>Em làm bài thật bình tĩnh nhé!</strong><br>Đọc câu hỏi, chọn một đáp án. Làm xong, bấm nút xanh để xem kết quả và lời giải.</p></div>
-  <div class="controls exam-subjects" role="group" aria-label="Chọn môn thi thử">
-    <button type="button" class="primary" id="examMathBtn" onclick="startSemesterExam('math')">🔢 Toán vui</button>
-    <button type="button" class="secondary" id="examVietBtn" onclick="startSemesterExam('viet')">📚 Tiếng Việt</button>
-  </div>
+  <h2 id="semesterExamTitle">🌟 Đề thi tham khảo học kì</h2>
+  <div class="exam-intro"><span class="mascot" aria-hidden="true">🦉</span><p><strong>Em làm bài thật bình tĩnh nhé!</strong><br>Đề thi chỉ gồm câu hỏi của môn em đã chọn. Đọc câu hỏi, chọn một đáp án; làm xong, bấm nút xanh để xem kết quả và lời giải.</p></div>
   <div class="exam-settings"><label for="examQuestionCount">Em muốn làm bao nhiêu câu?</label><select id="examQuestionCount"><option value="5">5 câu · Làm quen</option><option value="10" selected>10 câu · Thử sức</option></select></div>
   <div class="week-card">
     <h3 id="examHeading">Chọn môn em thích để bắt đầu nhé!</h3>
-    <p id="examInstructions">Chọn Toán hoặc Tiếng Việt để làm đề tham khảo học kì I. Đề học kì II sẽ được bổ sung sau khi hoàn thiện ngân hàng bài học.</p>
+    <p id="examInstructions">Đề thi sẽ hiển thị riêng theo môn em chọn ở trang môn học. Đề học kì II sẽ được bổ sung sau khi hoàn thiện ngân hàng bài học.</p>
     <div id="examWorkArea"></div>
   </div>
 </section>
@@ -1367,8 +1363,7 @@ function startSemesterExam(which){
  openMainSection("semesterExam");
  activeExamSubject=which; examSubmitted=false;
  const isMath=which==="math";
- document.getElementById("examMathBtn").className=isMath?"primary":"secondary";
- document.getElementById("examVietBtn").className=isMath?"secondary":"primary";
+ document.getElementById("semesterExamTitle").textContent=isMath?"🔢 Đề thi tham khảo Toán học kì I":"📚 Đề thi tham khảo Tiếng Việt học kì I";
  document.getElementById("examHeading").textContent=isMath?"Đề tham khảo Toán – Học kì I":"Đề tham khảo Tiếng Việt – Học kì I";
  document.getElementById("examInstructions").textContent=isMath
   ?"Đề Toán có câu hỏi về số, phép tính và bài toán ngắn. Em đọc kỹ rồi chọn một đáp án nhé!"
