@@ -404,7 +404,45 @@ main{display:block}
 main>#homeMenu{width:100%;max-width:100%}
 main>section[aria-hidden="true"]{display:none!important}
 main>section[aria-hidden="false"]{display:block!important}
-main>#homeMenu[aria-hidden="false"]{display:grid!important}
+main>#homeMenu[aria-hidden="false"]{display:block!important}
+
+
+/* HOME SCREEN LAYOUT FIX STEP 5: panel is block; only its card wrapper is a grid */
+main>#homeMenu{display:block!important;width:100%;max-width:100%;box-sizing:border-box}
+#homeMenu>.home-subjects{
+ display:grid!important;
+ grid-template-columns:repeat(4,minmax(0,1fr))!important;
+ gap:16px!important;
+ width:100%!important;
+ max-width:100%!important;
+ margin:14px 0 0!important;
+ align-items:stretch;
+}
+#homeMenu>.home-subjects>.subject{
+ width:100%!important;min-width:0!important;min-height:150px;
+ box-sizing:border-box;padding:18px 16px;
+ display:flex;align-items:flex-start;gap:10px;text-align:left;
+ overflow-wrap:normal;word-break:normal;
+}
+#homeMenu>.home-subjects>.subject>span:last-child{min-width:0;display:block}
+#homeMenu>.home-subjects>.subject strong{display:inline;font-size:19px;line-height:1.35;word-break:normal}
+#homeMenu>.home-subjects>.subject .small{font-size:13px;line-height:1.45;word-break:normal;overflow-wrap:normal}
+#homeMenu>.home-subjects>.subject>.emoji{font-size:30px;line-height:1.15;flex-shrink:0}
+@media(min-width:700px) and (max-width:1000px){
+ #homeMenu>.home-subjects{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+}
+@media(max-width:699px){
+ #homeMenu{padding:16px!important}
+ #homeMenu>.home-subjects{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:10px!important}
+ #homeMenu>.home-subjects>.subject{min-height:135px;padding:13px 11px;gap:7px;flex-direction:column}
+ #homeMenu>.home-subjects>.subject>.emoji{font-size:29px}
+ #homeMenu>.home-subjects>.subject strong{font-size:17px}
+ #homeMenu>.home-subjects>.subject .small{font-size:12px}
+}
+@media(max-width:360px){
+ #homeMenu>.home-subjects{grid-template-columns:1fr!important}
+ #homeMenu>.home-subjects>.subject{min-height:unset}
+}
 
 </style>
 </head>
@@ -655,7 +693,7 @@ function openMainSection(id){
   });
   const target = document.getElementById(id);
   if (target) {
-    target.style.setProperty("display", id === "homeMenu" ? "grid" : "block", "important");
+    target.style.setProperty("display", "block", "important");
     target.hidden = false;
     target.setAttribute("aria-hidden","false");
     target.style.width = "100%";
@@ -2067,6 +2105,8 @@ renderTopics();renderQuiz();renderHistory();renderWeekSelectors();initBookLesson
 document.addEventListener("click", function(event) {
   const card = event.target.closest("#homeMenu .subject");
   if (!card) return;
+  event.preventDefault();
+  event.stopPropagation();
   const action = card.getAttribute("onclick") || "";
   if (action.includes("openSubject('math')")) {
     event.preventDefault();
