@@ -1198,33 +1198,48 @@ function startSemesterExam(which){
  actions.append(submit,reset);form.appendChild(actions);
  const score=document.createElement("div");score.className="exam-score";score.id="examScore";score.style.display="none";
  
-let learningSoundsOn = true;
+let learningSoundsOn = false;
+let learningAudioContext = null;
 function playLearningSound(kind){
   if(!learningSoundsOn) return;
   try {
     const AudioCtx = window.AudioContext || window.webkitAudioContext;
     if(!AudioCtx) return;
-    const ctx = new AudioCtx();
-    const notes = kind === "perfect" ? [523.25,659.25,783.99,1046.5] : kind === "good" ? [523.25,659.25,783.99] : [392,330];
-    notes.forEach((freq,i)=>{
-      const osc=ctx.createOscillator(), gain=ctx.createGain();
-      osc.type="sine"; osc.frequency.value=freq;
-      const start=ctx.currentTime+i*0.13;
-      gain.gain.setValueAtTime(0.0001,start);
-      gain.gain.exponentialRampToValueAtTime(0.12,start+0.025);
-      gain.gain.exponentialRampToValueAtTime(0.0001,start+0.22);
-      osc.connect(gain);gain.connect(ctx.destination);osc.start(start);osc.stop(start+0.24);
-    });
-    setTimeout(()=>ctx.close().catch(()=>{}), notes.length*140+500);
-  } catch(e) { /* Âm thanh là phần bổ trợ; bài kiểm tra vẫn hoạt động nếu trình duyệt chặn âm thanh. */ }
+    if(!learningAudioContext) learningAudioContext = new AudioCtx();
+    const ctx = learningAudioContext;
+    const play = () => {
+      const notes = kind === "perfect" ? [523.25,659.25,783.99,1046.5] : kind === "good" ? [523.25,659.25,783.99] : [392,330];
+      notes.forEach((freq,i)=>{
+        const osc=ctx.createOscillator(), gain=ctx.createGain();
+        osc.type="sine"; osc.frequency.value=freq;
+        const start=ctx.currentTime+i*0.16;
+        gain.gain.setValueAtTime(0.0001,start);
+        gain.gain.exponentialRampToValueAtTime(0.16,start+0.025);
+        gain.gain.exponentialRampToValueAtTime(0.0001,start+0.25);
+        osc.connect(gain);gain.connect(ctx.destination);osc.start(start);osc.stop(start+0.27);
+      });
+    };
+    if(ctx.state === "suspended") ctx.resume().then(play).catch(()=>{});
+    else play();
+  } catch(e) { /* Keep the quiz working if audio is unavailable. */ }
 }
 const soundToggleButton=document.getElementById("soundToggle");
 if(soundToggleButton){
+  soundToggleButton.textContent="🔇 Âm thanh: Tắt";
+  soundToggleButton.setAttribute("aria-pressed","false");
   soundToggleButton.addEventListener("click",()=>{
     learningSoundsOn=!learningSoundsOn;
     soundToggleButton.textContent=learningSoundsOn?"🔊 Âm thanh: Bật":"🔇 Âm thanh: Tắt";
     soundToggleButton.setAttribute("aria-pressed",String(learningSoundsOn));
-    if(learningSoundsOn) playLearningSound("good");
+    if(learningSoundsOn){
+      const AudioCtx=window.AudioContext||window.webkitAudioContext;
+      if(AudioCtx){
+        try { if(!learningAudioContext) learningAudioContext=new AudioCtx();
+          const ready=learningAudioContext.state==="suspended"?learningAudioContext.resume():Promise.resolve();
+          ready.then(()=>playLearningSound("good")).catch(()=>{});
+        } catch(e) {}
+      }
+    }
   });
 }
 
