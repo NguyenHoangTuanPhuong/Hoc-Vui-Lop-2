@@ -544,11 +544,11 @@ const bookTwoChapters = [
  {name:"14. Ôn tập cuối năm",lessons:[["Bài 71. Ôn tập phép nhân, phép chia",4],["Bài 72. Ôn tập hình học",4],["Bài 73. Ôn tập đo lường",4],["Bài 74. Ôn tập kiểm đếm số liệu và lựa chọn khả năng",4],["Bài 75. Ôn tập chung",4]]}
 ];
 const vietTwoChapters = [
- {name:"1. Vẻ đẹp quanh em",lessons:[["Chuyện bốn mùa",0],["Mùa nước nổi",0],["Hoa mi hót",0],["Tết đến rồi",0],["Giọt nước và biển lớn",0],["Mùa vàng",0]]},
- {name:"2. Thiên nhiên, cây cối và muông thú",lessons:[["Hạt thóc",0],["Lũy tre",0],["Về chim",0],["Khủng long",0],["Sự tích cây thị",0],["Bờ tre đón khách",0],["Tiếng chổi tre",0],["Cỏ non cười rồi",0]]},
- {name:"3. Hành tinh xanh của em",lessons:[["Những con sao biển",0],["Tạm biệt cánh cam",0],["Bảo vệ môi trường",1]]},
- {name:"4. Giao tiếp và kết nối",lessons:[["Những cách chào độc đáo",0],["Thư viện biết đi",0],["Cảm ơn anh hà mã",0],["Từ chú bồ câu đến in-tơ-nét",0]]},
- {name:"5. Con người Việt Nam",lessons:[["Mai An Tiêm",0],["Thư gửi bố ngoài đảo",0],["Nghề nghiệp quanh em",1],["Ôn tập cuối học kì 2",1]]}
+ {name:"1. Vẻ đẹp quanh em",lessons:[["Bài 1. Chuyện bốn mùa",0],["Bài 2. Mùa nước nổi",0],["Bài 3. Họa mi hót",0],["Bài 4. Tết đến rồi",0],["Bài 5. Giọt nước và biển lớn",0],["Bài 6. Mùa vàng",0]]},
+ {name:"2. Hành tinh xanh của em",lessons:[["Bài 7. Hạt thóc",0],["Bài 8. Lũy tre",0],["Bài 9. Về chim",0],["Bài 10. Khủng long",0],["Bài 11. Sự tích cây thì là",0],["Bài 12. Bờ tre đón khách",0],["Bài 13. Tiếng chổi tre",0],["Bài 14. Cỏ non cười rồi",0],["Bài 15. Những con sao biển",0],["Bài 16. Tạm biệt cánh cam",0]]},
+ {name:"3. Giao tiếp và kết nối",lessons:[["Bài 17. Những cách chào độc đáo",0],["Bài 18. Thư viện biết đi",0],["Bài 19. Cảm ơn anh hà mã",0],["Bài 20. Từ chú bồ câu đến in-tơ-nét",0]]},
+ {name:"4. Con người Việt Nam",lessons:[["Bài 21. Mai An Tiêm",0],["Bài 22. Thư gửi bố ngoài đảo",0],["Bài 23. Bóp nát quả cam",0],["Bài 24. Chiếc rễ đa tròn",0]]},
+ {name:"5. Việt Nam quê hương em",lessons:[["Bài 25. Đất nước chúng mình",0],["Bài 26. Trên các miền đất nước",0],["Bài 27. Chuyện quả bầu",0],["Bài 28. Khám phá đáy biển ở Trường Sa",0],["Bài 29. Hồ Gươm",0],["Bài 30. Cánh đồng quê em",0]]}
 ];
 let activeBookLesson = null;
 let bookSubject = "math";
@@ -877,17 +877,51 @@ function makeDynamicMathQuestion(topicIndex){
 }
 
 function createSecondSemesterVietQuestions(id,count){
- const lesson=getBookLessons()[id]; const title=lesson?.title||"Bài đọc"; const qs=[];
- const themes=[
-  {keys:/mùa|nước|tết|vàng|hoa mi|giọt nước|bốn mùa/i,passage:"Mỗi mùa trong năm mang một vẻ đẹp riêng. Mùa xuân có cây cối đâm chồi, mùa hè nắng ấm, mùa thu dịu mát và mùa đông se lạnh.",ask:"Đoạn văn nói về điều gì?",ans:"Vẻ đẹp của các mùa",wrong:["Các môn thể thao","Cách đi học","Đồ dùng trong bếp"],word:"mùa",meaning:"Từ nào chỉ một khoảng thời gian trong năm?"},
-  {keys:/chim|khủng long|thóc|tre|cây|cỏ|con vật|sao biển|cánh cam|môi trường|chổi/i,passage:"Khu vườn nhỏ có nhiều cây xanh. Các bạn nhỏ nhặt rác, tưới cây và quan sát những con vật bé xíu mà không làm chúng bị đau.",ask:"Các bạn nhỏ làm gì để chăm sóc môi trường?",ans:"Nhặt rác và tưới cây",wrong:["Bẻ cành cây","Đuổi bắt mọi con vật","Vứt rác xuống ao"],word:"môi trường",meaning:"Từ nào chỉ không gian sống xung quanh chúng ta?"},
-  {keys:/chào|thư viện|bồ câu|in-tơ-nét|hà mã|kết nối|giao tiếp|thư/i,passage:"Khi gặp người khác, An mỉm cười chào hỏi và lắng nghe khi bạn nói. Nếu được giúp đỡ, An nói lời cảm ơn.",ask:"An làm gì khi được người khác giúp đỡ?",ans:"Nói lời cảm ơn",wrong:["Quay đi không nói","La hét thật to","Giấu đồ của bạn"],word:"lắng nghe",meaning:"Cụm từ nào chỉ việc chú ý nghe người khác nói?"},
-  {keys:/mai an tiêm|đảo|bố|nghề|việt nam|con người/i,passage:"Mỗi người đều có việc làm và trách nhiệm riêng. Các chú bộ đội bảo vệ biển đảo, người nông dân trồng lúa, thầy cô dạy học sinh.",ask:"Ai trồng lúa?",ans:"Người nông dân",wrong:["Người lái tàu vũ trụ","Bác sĩ thú y luôn luôn","Người thợ sửa đồng hồ"],word:"trách nhiệm",meaning:"Từ nào chỉ điều mỗi người cần làm và hoàn thành?"}
+ // Câu hỏi bổ trợ tự biên soạn theo tên bài và trọng tâm chủ điểm trong SGK; không chép nguyên văn văn bản đọc.
+ const bank = [
+  ["Chuyện bốn mùa","bốn mùa trong năm","Mỗi mùa có nét thời tiết và cảnh sắc riêng.","Đoạn bổ trợ nhắc đến điều gì?","Các mùa trong năm",["Các phương tiện giao thông","Các môn thể thao","Đồ dùng học tập"],"mùa"],
+  ["Mùa nước nổi","nước nổi ở miền sông nước","Khi nước dâng, người dân vùng sông nước thích nghi với sinh hoạt và đi lại theo mùa.","Đoạn bổ trợ nói về điều gì?","Sinh hoạt khi nước nổi",["Trượt tuyết trên núi","Ngày hội ở trường","Cách chăm sóc thú cưng"],"sông nước"],
+  ["Họa mi hót","tiếng hót của chim họa mi","Chim họa mi cất tiếng hót trong trẻo, làm khu vườn buổi sáng thêm vui.","Tiếng hót của họa mi được miêu tả thế nào?","Trong trẻo",["Ồn ào như máy móc","Không phát ra âm thanh","Giống tiếng còi xe"],"trong trẻo"],
+  ["Tết đến rồi","không khí ngày Tết","Ngày Tết, gia đình dọn dẹp nhà cửa, chuẩn bị hoa và thăm hỏi người thân.","Gia đình làm gì để chuẩn bị Tết?","Dọn dẹp nhà cửa và chuẩn bị hoa",["Thu dọn lớp học sau giờ thể dục","Đóng cửa đi ngủ cả ngày","Mang đồ chơi ra sân trường"],"ngày Tết"],
+  ["Giọt nước và biển lớn","sự gắn kết của những giọt nước","Nhiều giọt nước cùng hòa vào dòng suối rồi chảy ra biển rộng.","Các giọt nước cùng tạo nên điều gì?","Dòng nước lớn hơn",["Một chiếc cặp sách","Một ngọn núi lửa","Một quyển truyện"],"giọt nước"],
+  ["Mùa vàng","mùa lúa chín","Cánh đồng lúa chín vàng báo hiệu vụ mùa thu hoạch, người nông dân vui vì thành quả lao động.","Màu vàng của cánh đồng báo hiệu điều gì?","Lúa chín, đến mùa thu hoạch",["Trời sắp có tuyết","Cây vừa được trồng","Đêm đã xuống"],"thu hoạch"],
+  ["Hạt thóc","hạt thóc và công sức lao động","Để có hạt thóc, người nông dân phải gieo mạ, cấy lúa, chăm sóc và thu hoạch.","Hạt thóc có được nhờ điều gì?","Công sức lao động của người nông dân",["Chỉ nhờ đồ chơi","Nhờ những chiếc lá rụng","Nhờ một cơn gió"],"hạt thóc"],
+  ["Lũy tre","tre ở làng quê","Lũy tre xanh che bóng đường làng, gắn bó với cảnh vật và cuộc sống quê hương.","Lũy tre gắn với nơi nào?","Làng quê",["Giữa lòng đại dương sâu","Trong nhà ga vũ trụ","Bên trong lớp học"],"lũy tre"],
+  ["Về chim","đặc điểm của các loài chim","Các loài chim có hình dáng, tiếng kêu và cách kiếm ăn khác nhau.","Các loài chim có thể khác nhau ở điểm nào?","Hình dáng, tiếng kêu và cách kiếm ăn",["Đều có cùng một tiếng kêu","Đều sống dưới nước","Đều không có cánh"],"loài chim"],
+  ["Khủng long","loài khủng long thời xa xưa","Khủng long từng sống trên Trái Đất từ rất lâu trước đây; các loài có kích thước và cách sống khác nhau.","Khủng long sống vào thời gian nào?","Từ thời xa xưa",["Chỉ trong tuần trước","Ngày mai","Chỉ vào mùa hè năm nay"],"thời xa xưa"],
+  ["Sự tích cây thì là","câu chuyện giải thích tên cây thì là","Một câu chuyện dân gian có thể giải thích cách sự vật có tên gọi và gửi gắm bài học cho người đọc.","Truyện sự tích thường giúp người đọc hiểu điều gì?","Nguồn gốc hoặc cách giải thích một sự vật",["Cách giải một phép chia","Lịch học trong tuần","Luật chơi bóng rổ chuyên nghiệp"],"sự tích"],
+  ["Bờ tre đón khách","bờ tre và các vị khách","Bờ tre ven đường là nơi nhiều loài vật ghé qua, tạo nên cảnh quê gần gũi và sinh động.","Bờ tre được miêu tả như thế nào?","Gần gũi với cảnh quê và các loài vật",["Là một chiếc tàu biển","Là phòng học trên tầng cao","Là cửa hàng đồ điện"],"bờ tre"],
+  ["Tiếng chổi tre","công việc quét dọn đường phố","Người lao công quét đường khi phố còn yên tĩnh để giữ đường phố sạch đẹp.","Công việc quét đường đem lại ích lợi gì?","Giữ đường phố sạch đẹp",["Làm đường phố nhiều rác hơn","Làm cây cối ngừng lớn","Làm lớp học đóng cửa"],"lao công"],
+  ["Cỏ non cười rồi","cỏ non và thiên nhiên","Sau cơn mưa, những ngọn cỏ non xanh mướt đón nắng, khiến khu vườn trông tươi mới.","Sau cơn mưa, cỏ non trông thế nào?","Xanh mướt và tươi mới",["Khô thành cát","Biến thành đá","Mất hết màu sắc mãi mãi"],"cỏ non"],
+  ["Những con sao biển","sao biển dưới biển","Sao biển sống ở biển, có hình dáng đặc biệt và cần được quan sát, bảo vệ trong môi trường tự nhiên.","Sao biển sống ở đâu?","Ở biển",["Trên ngọn cây cao","Trong tủ sách","Trên mái nhà"],"sao biển"],
+  ["Tạm biệt cánh cam","cánh cam và thế giới tự nhiên","Một bạn nhỏ quan sát cánh cam rồi để nó trở về nơi sống, không làm hại con vật bé nhỏ.","Bạn nhỏ nên làm gì với con vật bé nhỏ?","Quan sát nhẹ nhàng và không làm hại nó",["Làm đau con vật","Phá nơi sống của nó","Bắt để trêu chọc"],"cánh cam"],
+  ["Những cách chào độc đáo","cách chào ở các nơi khác nhau","Mỗi nơi có thể có cách chào riêng; lời chào lịch sự thể hiện sự thân thiện và tôn trọng.","Lời chào lịch sự thể hiện điều gì?","Sự thân thiện và tôn trọng",["Sự giận dữ","Sự thờ ơ","Ý muốn gây gổ"],"lời chào"],
+  ["Thư viện biết đi","đưa sách đến với người đọc","Một thư viện lưu động mang sách đến nơi xa để nhiều bạn nhỏ có cơ hội đọc sách.","Thư viện lưu động giúp ích thế nào?","Đưa sách đến với nhiều bạn đọc",["Cất sách để không ai đọc","Thay sách bằng đồ chơi","Ngăn mọi người học đọc"],"thư viện"],
+  ["Cảm ơn anh hà mã","lòng biết ơn và lời cảm ơn","Khi được giúp đỡ, bạn nhỏ nói lời cảm ơn để thể hiện sự trân trọng với người giúp mình.","Khi được giúp đỡ, em nên làm gì?","Nói lời cảm ơn",["Giả vờ không biết","Giận dữ bỏ đi","Đòi hỏi thêm mà không nói gì"],"cảm ơn"],
+  ["Từ chú bồ câu đến in-tơ-nét","cách con người gửi thông tin","Con người có nhiều cách liên lạc, từ gửi thư đến sử dụng internet để trao đổi thông tin nhanh hơn.","Internet có thể giúp con người làm gì?","Trao đổi thông tin",["Làm cây tự ra hoa ngay","Thay thế mọi tình cảm gia đình","Khiến sách không cần đọc"],"liên lạc"],
+  ["Mai An Tiêm","sự chăm chỉ và tự lập của Mai An Tiêm","Trong câu chuyện dân gian, Mai An Tiêm vượt khó bằng lao động và tìm cách xây dựng cuộc sống.","Phẩm chất nào phù hợp với nhân vật Mai An Tiêm?","Chăm chỉ, tự lập",["Lười biếng, bỏ cuộc","Không chịu làm việc","Chỉ chờ người khác giúp"],"tự lập"],
+  ["Thư gửi bố ngoài đảo","tình cảm với người thân làm nhiệm vụ xa nhà","Một bức thư có thể gửi lời hỏi thăm, tình yêu thương và niềm tự hào tới người thân ở xa.","Bức thư giúp người viết thể hiện điều gì?","Tình cảm và lời hỏi thăm",["Bảng cửu chương","Danh sách đồ dùng lớp học","Dự báo thời tiết"],"bức thư"],
+  ["Bóp nát quả cam","lòng yêu nước của Trần Quốc Toản","Câu chuyện lịch sử kể về Trần Quốc Toản còn nhỏ nhưng có lòng yêu nước và mong muốn góp sức bảo vệ đất nước.","Trần Quốc Toản thể hiện tình cảm gì với đất nước?","Lòng yêu nước",["Sự thờ ơ","Ý muốn bỏ học mãi mãi","Niềm thích thú phá đồ chơi"],"yêu nước"],
+  ["Chiếc rễ đa tròn","sự quan tâm và cách làm sáng tạo","Một việc làm nhỏ nhưng sáng tạo có thể tạo niềm vui cho mọi người và giúp cảnh vật thêm đẹp.","Việc làm sáng tạo có thể đem lại điều gì?","Niềm vui và ích lợi",["Chỉ gây phiền phức","Làm mọi người không vui","Khiến cây không thể lớn"],"sáng tạo"],
+  ["Đất nước chúng mình","đặc điểm của đất nước Việt Nam","Việt Nam có cảnh sắc thiên nhiên đa dạng, nhiều vùng miền và những con người cần cù, thân thiện.","Đất nước Việt Nam có điều gì?","Nhiều cảnh sắc và vùng miền",["Chỉ có một kiểu cảnh vật","Không có người dân","Chỉ toàn sa mạc băng giá"],"đất nước"],
+  ["Trên các miền đất nước","sự đa dạng của các vùng miền","Mỗi vùng miền có cảnh quan, sản vật và nét văn hóa riêng, cùng góp phần làm nên vẻ đẹp đất nước.","Các vùng miền có thể khác nhau ở điểm nào?","Cảnh quan, sản vật và văn hóa",["Tất cả đều giống hệt nhau","Không có cảnh quan","Chỉ có một món ăn"],"vùng miền"],
+  ["Chuyện quả bầu","truyện dân gian về nguồn gốc các dân tộc","Truyện dân gian thường kể lại cách người xưa hình dung về nguồn gốc cộng đồng và nhắc mọi người sống hòa thuận.","Truyện dân gian thường gửi gắm điều gì?","Cách nhìn của người xưa và bài học sống",["Công thức nấu ăn","Hướng dẫn sửa máy tính","Bảng điểm thi đấu"],"truyện dân gian"],
+  ["Khám phá đáy biển ở Trường Sa","thiên nhiên biển đảo Trường Sa","Vùng biển Trường Sa có hệ sinh thái biển phong phú; con người cần tìm hiểu và bảo vệ môi trường biển.","Vì sao cần bảo vệ môi trường biển?","Để giữ gìn hệ sinh thái biển",["Để làm biển ô nhiễm hơn","Để phá nơi sống của sinh vật","Để vứt rác xuống nước"],"Trường Sa"],
+  ["Hồ Gươm","cảnh đẹp và ý nghĩa lịch sử Hồ Gươm","Hồ Gươm ở Hà Nội là danh thắng nổi tiếng, gắn với truyền thuyết lịch sử và là nơi nhiều người đến tham quan.","Hồ Gươm nằm ở đâu?","Hà Nội",["Cần Thơ","Đà Lạt","Sa Pa"],"danh thắng"],
+  ["Cánh đồng quê em","cảnh đồng quê và lao động nông nghiệp","Buổi sáng, cánh đồng xanh mướt; người nông dân chăm sóc lúa để mong mùa màng tốt tươi.","Ai chăm sóc lúa trên cánh đồng?","Người nông dân",["Người lái máy bay","Người bán sách trong thư viện","Người thợ làm đồng hồ"],"cánh đồng"]
  ];
- const item=themes.find(x=>x.keys.test(title))||themes[0];
- const make=(q,c,w,e)=>{let a=shuffleArray([c,...w]);return {q,a,c:a.indexOf(c),e};};
- const pool=[make(`Bài “${title}”: ${item.ask}`,item.ans,item.wrong,`Đáp án: ${item.ans}.`),make(item.meaning,item.word,["cái bàn","chạy nhanh","màu xanh"],`Từ phù hợp là “${item.word}”.`),make(`Chọn câu phù hợp với chủ điểm “${title}”.`,"Em chăm chú đọc và tìm hiểu bài.",["Em vứt rác ra sân trường.","Em ngắt hết hoa trong vườn.","Em không lắng nghe ai."],"Câu trả lời phù hợp với tinh thần học tập và chủ điểm."),make(`Nội dung nào gần với chủ điểm “${title}”?`,title,["Bảng nhân 2","Phép trừ có nhớ","Đơn vị đo độ dài"],`Câu hỏi được xây dựng theo tiêu đề bài học “${title}”.`),make(`Đọc đoạn văn tự biên soạn: “${item.passage}” ${item.ask}`,item.ans,item.wrong,`Đáp án dựa vào đoạn văn luyện đọc tự biên soạn.`)];
- return Array.from({length:count},(_,i)=>pool[i%pool.length]);
+ const item=bank[id]||bank[0];
+ const make=(q,correct,wrong,explain)=>{let a=shuffleArray([correct,...wrong]);return {q,a,c:a.indexOf(correct),e:explain};};
+ const passage=`Đoạn đọc bổ trợ tự biên soạn về “${item[0]}”: ${item[2]}`;
+ const pool=[
+  make(`${passage} ${item[3]}`,item[4],item[5],`Đáp án đúng: ${item[4]}. Câu hỏi này là bài luyện bổ trợ theo chủ điểm, không phải câu trích nguyên văn SGK.`),
+  make(`Từ/cụm từ nào gắn trực tiếp với bài “${item[0]}”?`,item[6],["bảng nhân","chiếc máy tính","đường cao tốc"],`Từ khóa liên quan đến bài là “${item[6]}”.`),
+  make(`Chọn câu phù hợp với chủ điểm “${item[0]}”.`,item[2],["Em vứt rác bừa bãi và phá hoại cây cối.","Em không lắng nghe và không tôn trọng người khác.","Em làm hỏng đồ vật chỉ để trêu đùa."],`Câu đúng phù hợp với nội dung bổ trợ của chủ điểm “${item[0]}”.`),
+  make(`Bài “${item[0]}” thuộc mạch nội dung nào gần nhất?`,item[1],["Phép tính trong Toán học","Quy tắc an toàn giao thông đường sắt","Cách sử dụng thiết bị điện gia dụng"],`Mạch nội dung được chọn dựa trên tên bài và chủ điểm trong mục lục.`),
+  make(`Sau khi đọc nội dung bổ trợ về “${item[0]}”, em rút ra điều gì phù hợp?`,item[4],["Không cần quan tâm đến người khác.","Nên làm ngược lại mọi việc tốt.","Không cần tìm hiểu bài học."],`Đáp án được suy ra từ đoạn đọc bổ trợ tự biên soạn về “${item[0]}”.`),
+  make(`Chọn từ khóa đúng cho bài “${item[0]}”.`,item[6],["phép chia","hình vuông","bảng nhân 5"],`Từ khóa được gắn theo nội dung chủ điểm.`)
+ ];
+ return shuffleArray(pool).slice(0,Math.min(count,pool.length));
 }
 
 function createVietLessonQuestions(id,count){
@@ -1154,51 +1188,6 @@ function pickSemesterExam(which,count=10){
 }
 let activeExamSubject = null;
 let examSubmitted = false;
-let learningSoundsOn = false;
-let learningAudioContext = null;
-function playLearningSound(kind){
-  if(!learningSoundsOn) return;
-  try {
-    const AudioCtx = window.AudioContext || window.webkitAudioContext;
-    if(!AudioCtx) return;
-    if(!learningAudioContext) learningAudioContext = new AudioCtx();
-    const ctx = learningAudioContext;
-    const play = () => {
-      const notes = kind === "perfect" ? [523.25,659.25,783.99,1046.5] : kind === "good" ? [523.25,659.25,783.99] : [392,330];
-      notes.forEach((freq,i)=>{
-        const osc=ctx.createOscillator(), gain=ctx.createGain();
-        osc.type="sine"; osc.frequency.value=freq;
-        const start=ctx.currentTime+i*0.16;
-        gain.gain.setValueAtTime(0.0001,start);
-        gain.gain.exponentialRampToValueAtTime(0.16,start+0.025);
-        gain.gain.exponentialRampToValueAtTime(0.0001,start+0.25);
-        osc.connect(gain);gain.connect(ctx.destination);osc.start(start);osc.stop(start+0.27);
-      });
-    };
-    if(ctx.state === "suspended") ctx.resume().then(play).catch(()=>{});
-    else play();
-  } catch(e) { /* Keep the quiz working if audio is unavailable. */ }
-}
-const soundToggleButton=document.getElementById("soundToggle");
-if(soundToggleButton){
-  soundToggleButton.textContent="🔇 Âm thanh: Tắt";
-  soundToggleButton.setAttribute("aria-pressed","false");
-  soundToggleButton.addEventListener("click",()=>{
-    learningSoundsOn=!learningSoundsOn;
-    soundToggleButton.textContent=learningSoundsOn?"🔊 Âm thanh: Bật":"🔇 Âm thanh: Tắt";
-    soundToggleButton.setAttribute("aria-pressed",String(learningSoundsOn));
-    if(learningSoundsOn){
-      const AudioCtx=window.AudioContext||window.webkitAudioContext;
-      if(AudioCtx){
-        try { if(!learningAudioContext) learningAudioContext=new AudioCtx();
-          const ready=learningAudioContext.state==="suspended"?learningAudioContext.resume():Promise.resolve();
-          ready.then(()=>{ if(learningAudioContext.state === "running") playLearningSound("good"); }).catch(()=>{});
-        } catch(e) {}
-      }
-    }
-  });
-}
-
 function startSemesterExam(which){
  activeExamSubject=which; examSubmitted=false;
  const isMath=which==="math";
@@ -1243,6 +1232,50 @@ function startSemesterExam(which){
  actions.append(submit,reset);form.appendChild(actions);
  const score=document.createElement("div");score.className="exam-score";score.id="examScore";score.style.display="none";
  
+let learningSoundsOn = false;
+let learningAudioContext = null;
+function playLearningSound(kind){
+  if(!learningSoundsOn) return;
+  try {
+    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+    if(!AudioCtx) return;
+    if(!learningAudioContext) learningAudioContext = new AudioCtx();
+    const ctx = learningAudioContext;
+    const play = () => {
+      const notes = kind === "perfect" ? [523.25,659.25,783.99,1046.5] : kind === "good" ? [523.25,659.25,783.99] : [392,330];
+      notes.forEach((freq,i)=>{
+        const osc=ctx.createOscillator(), gain=ctx.createGain();
+        osc.type="sine"; osc.frequency.value=freq;
+        const start=ctx.currentTime+i*0.16;
+        gain.gain.setValueAtTime(0.0001,start);
+        gain.gain.exponentialRampToValueAtTime(0.16,start+0.025);
+        gain.gain.exponentialRampToValueAtTime(0.0001,start+0.25);
+        osc.connect(gain);gain.connect(ctx.destination);osc.start(start);osc.stop(start+0.27);
+      });
+    };
+    if(ctx.state === "suspended") ctx.resume().then(play).catch(()=>{});
+    else play();
+  } catch(e) { /* Keep the quiz working if audio is unavailable. */ }
+}
+const soundToggleButton=document.getElementById("soundToggle");
+if(soundToggleButton){
+  soundToggleButton.textContent="🔇 Âm thanh: Tắt";
+  soundToggleButton.setAttribute("aria-pressed","false");
+  soundToggleButton.addEventListener("click",()=>{
+    learningSoundsOn=!learningSoundsOn;
+    soundToggleButton.textContent=learningSoundsOn?"🔊 Âm thanh: Bật":"🔇 Âm thanh: Tắt";
+    soundToggleButton.setAttribute("aria-pressed",String(learningSoundsOn));
+    if(learningSoundsOn){
+      const AudioCtx=window.AudioContext||window.webkitAudioContext;
+      if(AudioCtx){
+        try { if(!learningAudioContext) learningAudioContext=new AudioCtx();
+          const ready=learningAudioContext.state==="suspended"?learningAudioContext.resume():Promise.resolve();
+          ready.then(()=>playLearningSound("good")).catch(()=>{});
+        } catch(e) {}
+      }
+    }
+  });
+}
 
 form.addEventListener("submit",function(ev){
   ev.preventDefault();if(examSubmitted)return;
